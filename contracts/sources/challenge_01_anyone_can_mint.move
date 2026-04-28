@@ -45,11 +45,11 @@ public fun is_solved(instance: &ChallengeInstance): bool {
     instance.solved
 }
 
-public entry fun vulnerable_mint(instance: &mut ChallengeInstance, amount: u64) {
+public(package) entry fun vulnerable_mint(instance: &mut ChallengeInstance, amount: u64) {
     instance.minted_amount = instance.minted_amount + amount;
 }
 
-public entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
+public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &TxContext) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
