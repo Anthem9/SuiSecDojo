@@ -5,6 +5,7 @@ use sui::object::{Self, ID, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
 use suisec_dojo::badge;
+use suisec_dojo::challenge_events;
 use suisec_dojo::user_progress::{Self, UserProgress};
 
 public struct ChallengeInstance has key, store {
@@ -77,6 +78,7 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
         user_progress::record_badge(progress, BADGE_TYPE_CAPABILITY_PATTERN, sender);
         transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_CAPABILITY_PATTERN, ctx), sender);
     };
+    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_CAPABILITY_PATTERN, ctx);
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 {

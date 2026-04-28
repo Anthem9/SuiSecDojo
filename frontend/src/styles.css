@@ -39,6 +39,30 @@ a {
   padding: 20px clamp(20px, 5vw, 72px);
 }
 
+.locale-switch {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 0 clamp(20px, 5vw, 72px);
+}
+
+.locale-switch button,
+.report-controls button,
+.report-controls select {
+  background: #ffffff;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  color: #172018;
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+.locale-switch button.active {
+  background: #172018;
+  color: #ffffff;
+}
+
 .brand,
 .wallet-button,
 .section-heading,
@@ -334,7 +358,10 @@ dd {
   text-decoration: none;
 }
 
-.profile-panel {
+.profile-panel,
+.leaderboard-panel,
+.tool-panel,
+.passport-panel {
   margin: 0 clamp(20px, 5vw, 72px) 72px;
 }
 
@@ -344,6 +371,99 @@ dd {
   border-radius: 8px;
   margin: 0 clamp(20px, 5vw, 72px) 72px;
   padding: 22px;
+}
+
+.leaderboard-panel,
+.tool-panel,
+.passport-panel {
+  background: #ffffff;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  padding: 22px;
+}
+
+.section-copy {
+  color: #4b5563;
+  line-height: 1.7;
+  max-width: 760px;
+}
+
+.leaderboard-grid,
+.report-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+.leaderboard-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.leaderboard-list li {
+  background: #fbfdfb;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.leaderboard-list span,
+.leaderboard-list small {
+  color: #647067;
+  display: block;
+}
+
+.report-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.report-controls button {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 8px;
+}
+
+.report-grid textarea {
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  font: 0.95rem ui-monospace, SFMono-Regular, Menlo, monospace;
+  min-height: 360px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.report-preview {
+  background: #fbfdfb;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  min-height: 360px;
+  padding: 12px;
+}
+
+.certificate-preview {
+  background: #fbfdfb;
+  border: 1px solid #0f766e;
+  border-radius: 8px;
+  margin-top: 18px;
+  padding: 24px;
+}
+
+.certificate-preview > span {
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.certificate-preview h3 {
+  font-size: 2rem;
+  margin: 10px 0;
 }
 
 .profile-grid {
@@ -493,6 +613,16 @@ dd {
     align-items: flex-start;
     gap: 16px;
     flex-direction: column;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .locale-switch {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 100%;
   }
 
   .hero,
@@ -504,7 +634,10 @@ dd {
   }
 
   .profile-panel,
-  .docs-hub {
+  .docs-hub,
+  .leaderboard-panel,
+  .tool-panel,
+  .passport-panel {
     margin-left: 16px;
     margin-right: 16px;
     max-width: calc(100vw - 32px);
@@ -512,14 +645,23 @@ dd {
 
   .progress-panel,
   .challenge-list,
-  .detail-panel {
+  .detail-panel,
+  .leaderboard-panel,
+  .tool-panel,
+  .passport-panel {
     max-width: calc(100vw - 32px);
     width: calc(100vw - 32px);
   }
 
+  .leaderboard-grid,
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+
   .filters {
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    overflow-x: visible;
     padding-bottom: 4px;
   }
 

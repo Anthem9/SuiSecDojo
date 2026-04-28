@@ -1,16 +1,22 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
-import { BookOpen, FileText, Shield, Wallet } from "lucide-react";
+import { BookOpen, FileText, Languages, Shield, Wallet } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ChallengeDetailPanel } from "./components/ChallengeDetailPanel";
+import { LeaderboardPanel } from "./components/LeaderboardPanel";
 import { MarkdownRenderer } from "./components/MarkdownRenderer";
+import { PassportPanel } from "./components/PassportPanel";
 import { ProfilePanel } from "./components/ProfilePanel";
 import { ProgressPanel } from "./components/ProgressPanel";
+import { ReportPanel } from "./components/ReportPanel";
+import { TutorPanel } from "./components/TutorPanel";
 import { challenges } from "./data/challenges";
 import { useChallenge01Actions } from "./hooks/useChallenge01Actions";
 import { useDojoObjects } from "./hooks/useDojoObjects";
+import { useLeaderboardEvents } from "./hooks/useLeaderboardEvents";
 import { getChallenge01ActionState } from "./lib/challengeRuntime";
 import { CONTRACTS, SUI_NETWORK } from "./lib/constants";
 import { filterChallenges } from "./lib/challengeFilters";
+import { dictionaries, type Locale } from "./lib/i18n";
 import { summarizeProgress } from "./lib/progress";
 import { summarizeProfile } from "./lib/profile";
 import type { ChallengeDifficulty } from "./types";
@@ -39,13 +45,16 @@ export function App() {
   const account = useCurrentAccount();
   const packageId = CONTRACTS.PACKAGE_ID;
   const [difficulty, setDifficulty] = useState<ChallengeDifficulty | "all">("all");
+  const [locale, setLocale] = useState<Locale>("zh");
   const [selectedSlug, setSelectedSlug] = useState(challenges[0]?.slug ?? "");
   const [selectedDocUrl, setSelectedDocUrl] = useState("content/challenges/01-anyone-can-mint/statement.md");
+  const t = dictionaries[locale];
   const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, suiBalanceMist, refetchObjects } = useDojoObjects(
     account?.address,
     packageId,
   );
   const challengeActions = useChallenge01Actions(packageId, chainState, refetchObjects);
+  const leaderboardQuery = useLeaderboardEvents(packageId, account?.address);
   const progress = summarizeProgress(challenges, chainProgress);
   const visibleChallenges = useMemo(() => filterChallenges(challenges, { difficulty }), [difficulty]);
   const selectedChallenge = challenges.find((challenge) => challenge.slug === selectedSlug) ?? challenge01;
@@ -86,18 +95,24 @@ export function App() {
         </div>
         <ConnectButton className="wallet-button" connectText={<WalletLabel />} />
       </header>
+      <div className="locale-switch" aria-label="Language switch">
+        <Languages aria-hidden="true" />
+        {(["zh", "en"] as const).map((item) => (
+          <button key={item} className={locale === item ? "active" : ""} type="button" onClick={() => setLocale(item)}>
+            {item.toUpperCase()}
+          </button>
+        ))}
+      </div>
 
       <section className="hero">
         <div>
           <p className="eyebrow">Sui Move Security Training Ground</p>
-          <h1>Sui Move 安全训练场</h1>
-          <p className="hero-copy">
-            浏览挑战、领取链上实例、通过 Sui 交易完成判题，并把学习进度写入链上对象。
-          </p>
+          <h1>{t.heroTitle}</h1>
+          <p className="hero-copy">{t.heroCopy}</p>
           <p className="safety-notice">{safetyNotice}</p>
           <div className="hero-actions">
-            <a href="#challenges">Start Learning</a>
-            <a className="secondary" href="#profile">View Progress</a>
+            <a href="#challenges">{t.startLearning}</a>
+            <a className="secondary" href="#profile">{t.viewProgress}</a>
           </div>
         </div>
 
@@ -213,10 +228,20 @@ export function App() {
         />
       </section>
       <ProfilePanel summary={profile} />
+      <LeaderboardPanel
+        currentRank={leaderboardQuery.leaderboard.currentRank}
+        entries={leaderboardQuery.leaderboard.entries}
+        error={leaderboardQuery.query.error}
+        isLoading={leaderboardQuery.query.isFetching}
+        recent={leaderboardQuery.leaderboard.recent}
+      />
+      <TutorPanel challenge={selectedChallenge} locale={locale} />
+      <ReportPanel />
+      <PassportPanel profile={profile} />
       <section className="docs-hub" id="docs">
         <div className="section-heading">
           <FileText aria-hidden="true" />
-          <h2>Docs</h2>
+          <h2>{t.docs}</h2>
         </div>
         <p className="safety-notice">{safetyNotice}</p>
         <div className="docs-layout">
@@ -235,7 +260,7 @@ export function App() {
             ))}
           </div>
           <div className="docs-reader">
-            <MarkdownRenderer sourceUrl={selectedDocUrl} />
+            <MarkdownRenderer locale={locale} sourceUrl={selectedDocUrl} />
           </div>
         </div>
       </section>

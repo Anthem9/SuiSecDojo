@@ -1,33 +1,72 @@
 {
   "network": "testnet",
   "deployer": "0xda68b5b7583cf1515ad207e1ce1b5d5a630a9c5832023cf2381936743b3dd0a7",
-  "packageId": "0x7bb5509a643d2d3a02dfe51d65368849f260e8104276d72cc2eb3c8f89667018",
-  "upgradeCapId": "0x83dc01d2a045280887121ab80f3c66245134f71efc18570b14795ad01a113035",
-  "publishDigest": "6u31vP8kJS1x4baEHebJgxiPjKE7iDXKaAwg3Lbw6Gs3",
-  "challengeRegistryId": "0xf9c611881bb8e5b30dc24008b597da074f4933164fd731b5f76b786fc6508999",
-  "registryInitDigest": "FHhD73iGTXFxfC4ni5vMFhwE2TwBSJ8JKhsBbivB92u5",
+  "packageId": "0xdbf7e00e86c32f9f985230f0f51dfbdee91e96d1168d033b84de3c738967b26e",
+  "upgradeCapId": "0x008469022e83a0c4560f15c9ad422d51a4e30565a7bd1d64692498dd920277e1",
+  "publishDigest": "H4HNoeSaVMyjnyV6KaqowhSXGGS837gALEWVPMRiXtcK",
+  "challengeRegistryId": "0x1080d10372793d04363449566909b54b1e52c856af9067aa527b15ae8826ae46",
+  "registryInitDigest": "2D52FwmX8hXqV5hc8gKogPprdo2A5JUFv1TJbwUkgRDw",
   "registryChallengeDigests": {
-    "1": "5Qri1HUQyr87gBBmhg6yDfssUTjv6ksFPUKbrNqSSrHR",
-    "2": "CjaAdyu6uedNfX3RwXiQXH8PEAEqmg8baubCQdv3urXY",
-    "3": "B4FBgbXeuoeJNhLAXF5rJ9KAAAHsBTP2WSNbNYTtAQ3V",
-    "4": "89t6a9EcJSvjPHtig1yEBNh8gKdjfAcHSmYYrYjfs4ND",
-    "5": "57WMiu77Q1V9ByDpciwDiT9ntVV34fPADa4rro4Kf9ET",
-    "6": "5QDWhxx2hCc7VsyUGP9w5bGujiT3atNKRTbKK98HQ8cU",
-    "7": "DS3wEn21kwS6s3KzJtKkBTw42uUXtdU1gsXytjW76T9s",
-    "8": "AvHspXrKn1XDFzzgHQxVN1D9JjMnUXDke1fRtbtqMLsF",
-    "9": "EwFqfu4aJm12kjFPD7nCZCAkezN88BVPSXCrV7YqA3J3",
-    "10": "pfha2pZ6hGrZXvfXNQzB4HvbsbMtqiEwt2RsNBUSBos"
+    "1": "HQuzcgFoEUMEudAeCeSN1TBSw7hgBTtFzjp2xfenYWvY",
+    "2": "EYVuVGjf9b3wNrhfnC4MZGtMsGySGE3KZYqCh4uA6R8D",
+    "3": "F898Sk3PTLa7zdqbFKudFskj1x7Jce7p6dybxktRBMSi",
+    "4": "CunCMuZKGXo197dPBxNPYEWyganZRNb8t8n27LLvgs8S",
+    "5": "4LycBaMbLzfjHSC4xvB9DnZSBKoLsTCZDVziwYKqQFdb",
+    "6": "9LUa3vGYYRSwGzYBXCyDAsU52wMVsvzDpuG4XpVFqU9R",
+    "7": "6kqRhTpNHRYqwvYA42axDy3XGKVBd9Ft5R9xh71LrdWa",
+    "8": "FjBRG49atpaSbJSz64wkMJsa1rUg6YBtgngPu6pUygN6",
+    "9": "FK4oTNTQyzp8pqv3Sd1bt59UAkUcr1g6PYAyah58w9fo",
+    "10": "A5BPmE6uCzcdPb5ewyFuHxoSmSivZNimQ3av6vpKkF9E"
   },
-  "phase3": {
-    "badgeObjects": true,
-    "replayDocs": [
-      "amm-math-error-replay",
-      "capability-leak-replay",
-      "shared-object-pollution-replay"
+  "phase4": {
+    "completionEvents": true,
+    "leaderboardFromPackage": true,
+    "tutorMode": "static",
+    "reportTraining": "local-only",
+    "locales": [
+      "en",
+      "zh"
     ],
-    "qaChecklist": "PUBLIC_MVP_QA.md"
+    "passport": "testnet-preview"
   },
   "previousPackages": [
+    {
+      "packageId": "0x7bb5509a643d2d3a02dfe51d65368849f260e8104276d72cc2eb3c8f89667018",
+      "upgradeCapId": "0x83dc01d2a045280887121ab80f3c66245134f71efc18570b14795ad01a113035",
+      "publishDigest": "6u31vP8kJS1x4baEHebJgxiPjKE7iDXKaAwg3Lbw6Gs3",
+      "challengeRegistryId": "0xf9c611881bb8e5b30dc24008b597da074f4933164fd731b5f76b786fc6508999",
+      "registryInitDigest": "FHhD73iGTXFxfC4ni5vMFhwE2TwBSJ8JKhsBbivB92u5",
+      "registryChallengeDigests": {
+        "1": "5Qri1HUQyr87gBBmhg6yDfssUTjv6ksFPUKbrNqSSrHR",
+        "2": "CjaAdyu6uedNfX3RwXiQXH8PEAEqmg8baubCQdv3urXY",
+        "3": "B4FBgbXeuoeJNhLAXF5rJ9KAAAHsBTP2WSNbNYTtAQ3V",
+        "4": "89t6a9EcJSvjPHtig1yEBNh8gKdjfAcHSmYYrYjfs4ND",
+        "5": "57WMiu77Q1V9ByDpciwDiT9ntVV34fPADa4rro4Kf9ET",
+        "6": "5QDWhxx2hCc7VsyUGP9w5bGujiT3atNKRTbKK98HQ8cU",
+        "7": "DS3wEn21kwS6s3KzJtKkBTw42uUXtdU1gsXytjW76T9s",
+        "8": "AvHspXrKn1XDFzzgHQxVN1D9JjMnUXDke1fRtbtqMLsF",
+        "9": "EwFqfu4aJm12kjFPD7nCZCAkezN88BVPSXCrV7YqA3J3",
+        "10": "pfha2pZ6hGrZXvfXNQzB4HvbsbMtqiEwt2RsNBUSBos"
+      },
+      "cliSmoke": {
+        "challenge01ProgressObjectId": "0x7185a03f454d29c1d96b1a0cf4cda5e446be5510b561e732a5f0caf9f18859a8",
+        "challenge01InstanceId": "0xa763551daa765ddbc7d6e483dd2663adfe6f60680fb33bd658d1760d948fd48c",
+        "challenge01BadgeObjectId": "0xaf057881eb68ea48e63ccacb8f0db78c06b7976ac9a87dfb25a66564d46352f4",
+        "createProgressDigest": "ATdmW2bzrCNpVitZh31QTh5VDiqwovyQbkFpPxh5v4hG",
+        "claimChallenge01Digest": "AnBLDThga8mBvYHYceQFRpWEWGtrZnHpNFejj7P1yGN8",
+        "mintChallenge01Digest": "FnMn7LybizGKxXnSxtJ3DsscGKnwCkDAREj4Epwhi6kp",
+        "solveChallenge01Digest": "A2CXkUge51mfYK3vEGxwjsJc3XaofeL7dmpVrf37uKM8"
+      },
+      "phase3": {
+        "badgeObjects": true,
+        "replayDocs": [
+          "amm-math-error-replay",
+          "capability-leak-replay",
+          "shared-object-pollution-replay"
+        ],
+        "qaChecklist": "PUBLIC_MVP_QA.md"
+      }
+    },
     {
       "packageId": "0x9b2478a6cac5d960d11a3f38a829f6312d784712314bd3107b5fc20794111eee",
       "upgradeCapId": "0x41a67930fa41d482939abfe301f7f4a16d404a15ebeddd54191945b0363e0660",
@@ -182,12 +221,17 @@
     }
   ],
   "cliSmoke": {
-    "challenge01ProgressObjectId": "0x7185a03f454d29c1d96b1a0cf4cda5e446be5510b561e732a5f0caf9f18859a8",
-    "challenge01InstanceId": "0xa763551daa765ddbc7d6e483dd2663adfe6f60680fb33bd658d1760d948fd48c",
-    "challenge01BadgeObjectId": "0xaf057881eb68ea48e63ccacb8f0db78c06b7976ac9a87dfb25a66564d46352f4",
-    "createProgressDigest": "ATdmW2bzrCNpVitZh31QTh5VDiqwovyQbkFpPxh5v4hG",
-    "claimChallenge01Digest": "AnBLDThga8mBvYHYceQFRpWEWGtrZnHpNFejj7P1yGN8",
-    "mintChallenge01Digest": "FnMn7LybizGKxXnSxtJ3DsscGKnwCkDAREj4Epwhi6kp",
-    "solveChallenge01Digest": "A2CXkUge51mfYK3vEGxwjsJc3XaofeL7dmpVrf37uKM8"
+    "challenge01ProgressObjectId": "0xc9add9a3634fd26ad3e3930625659cc09e62c6f386e62fdf22efcf4958b69785",
+    "challenge01InstanceId": "0xb53f8c7a0d6f4aca8eb851a300f2d4a421f9bfb3664b767d03a410c826667dcc",
+    "challenge01BadgeObjectId": "0xbd9b01bbea20f72b53c59b9fadf85a053df78a0e30f01a133af766dfe46ab637",
+    "createProgressDigest": "GyoX6Sc4YrQ3RdQYpB2NRuwdAraJf3QHxvDk5a4taDqe",
+    "claimChallenge01Digest": "FHJKC3apv5eyQGtx6zsAgGAaDpdD8pKBq2dAUQMHPvKD",
+    "mintChallenge01Digest": "ERT3jPiUenJiXzhQ5xXXKLqFhtBpjEFzVxA6v7gF6EQA",
+    "solveChallenge01Digest": "8kkdCchGJG781Bi85TF5pVP7zT9FARzYGNtc7jo2NvBs",
+    "completionEvent": {
+      "challengeId": "1",
+      "badgeType": "1",
+      "epoch": "1083"
+    }
   }
 }

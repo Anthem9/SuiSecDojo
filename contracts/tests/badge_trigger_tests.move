@@ -2,12 +2,14 @@
 module suisec_dojo::badge_trigger_tests;
 
 use sui::test_scenario;
+use sui::event;
 use suisec_dojo::badge::{Self, Badge};
 use suisec_dojo::challenge_01_anyone_can_mint as challenge_01;
 use suisec_dojo::challenge_02_shared_vault as challenge_02;
 use suisec_dojo::challenge_04_leaky_capability as challenge_04;
 use suisec_dojo::challenge_06_price_rounding as challenge_06;
 use suisec_dojo::challenge_10_mini_amm_incident as challenge_10;
+use suisec_dojo::challenge_events::{Self, ChallengeCompleted};
 use suisec_dojo::user_progress;
 
 const ALICE: address = @0xA11CE;
@@ -24,6 +26,7 @@ fun should_record_object_security_badge_after_challenge_01() {
         challenge_01::solve(&mut instance, &mut progress, ctx);
 
         assert!(user_progress::has_badge(&progress, 1));
+        assert_latest_event(1, ALICE, 1);
 
         challenge_01::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);
@@ -51,6 +54,7 @@ fun should_record_shared_object_badge_after_challenge_02() {
         challenge_02::solve(&mut instance, &vault, &mut progress, ctx);
 
         assert!(user_progress::has_badge(&progress, 2));
+        assert_latest_event(2, ALICE, 2);
 
         challenge_02::destroy_vault_for_testing(vault);
         challenge_02::destroy_instance_for_testing(instance);
@@ -79,6 +83,7 @@ fun should_record_capability_badge_after_challenge_04() {
         challenge_04::solve(&mut instance, &mut progress, ctx);
 
         assert!(user_progress::has_badge(&progress, 3));
+        assert_latest_event(4, ALICE, 3);
 
         challenge_04::destroy_cap_for_testing(cap);
         challenge_04::destroy_instance_for_testing(instance);
@@ -114,6 +119,7 @@ fun should_record_defi_badge_after_challenges_06_and_10() {
         challenge_10::vulnerable_swap(&mut challenge_10_instance, 100);
         challenge_10::solve(&mut challenge_10_instance, &mut progress, ctx);
         assert!(user_progress::has_badge(&progress, 4));
+        assert_latest_event(10, ALICE, 4);
 
         challenge_06::destroy_for_testing(challenge_06_instance);
         challenge_10::destroy_for_testing(challenge_10_instance);
@@ -127,4 +133,12 @@ fun should_record_defi_badge_after_challenges_06_and_10() {
         badge::destroy_for_testing(badge);
     };
     test_scenario::end(scenario);
+}
+
+fun assert_latest_event(challenge_id: u64, solver: address, badge_type: u64) {
+    let events = event::events_by_type<ChallengeCompleted>();
+    let latest = vector::borrow(&events, (event::num_events() as u64) - 1);
+    assert!(challenge_events::challenge_id(latest) == challenge_id);
+    assert!(challenge_events::solver(latest) == solver);
+    assert!(challenge_events::badge_type(latest) == badge_type);
 }

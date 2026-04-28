@@ -1,10 +1,12 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useEffect, useState } from "react";
-import { externalLinkProps, markdownSourceUrl } from "../lib/markdown";
+import { localizedContentCandidates, type Locale } from "../lib/i18n";
+import { externalLinkProps } from "../lib/markdown";
 
 type MarkdownRendererProps = {
   sourceUrl?: string;
+  locale?: Locale;
 };
 
 type MarkdownState =
@@ -13,23 +15,26 @@ type MarkdownState =
   | { kind: "ready"; markdown: string }
   | { kind: "failed"; message: string };
 
-export function MarkdownRenderer({ sourceUrl }: MarkdownRendererProps) {
+export function MarkdownRenderer({ locale = "en", sourceUrl }: MarkdownRendererProps) {
   const [state, setState] = useState<MarkdownState>({ kind: "idle" });
-  const normalizedUrl = markdownSourceUrl(sourceUrl);
+  const sourceCandidates = localizedContentCandidates(sourceUrl, locale);
 
   useEffect(() => {
-    if (!normalizedUrl) {
+    if (sourceCandidates.length === 0) {
       setState({ kind: "failed", message: "Challenge documentation is not configured." });
       return;
     }
 
     let cancelled = false;
     setState({ kind: "loading" });
-    fetch(normalizedUrl)
-      .then((response) => {
-        if (!response.ok) throw new Error(`Failed to load ${normalizedUrl}`);
-        return response.text();
-      })
+    Promise.any(
+      sourceCandidates.map((candidate) =>
+        fetch(candidate).then((response) => {
+          if (!response.ok) throw new Error(`Failed to load ${candidate}`);
+          return response.text();
+        }),
+      ),
+    )
       .then((markdown) => {
         if (!cancelled) setState({ kind: "ready", markdown });
       })
@@ -40,7 +45,7 @@ export function MarkdownRenderer({ sourceUrl }: MarkdownRendererProps) {
     return () => {
       cancelled = true;
     };
-  }, [normalizedUrl]);
+  }, [sourceCandidates.join("|")]);
 
   if (state.kind === "loading") return <p className="markdown-status">Loading documentation...</p>;
   if (state.kind === "failed") return <p className="markdown-status error">{state.message}</p>;
@@ -63,4 +68,3 @@ export function MarkdownRenderer({ sourceUrl }: MarkdownRendererProps) {
     </div>
   );
 }
-

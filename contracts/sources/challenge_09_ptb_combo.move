@@ -4,6 +4,7 @@ module suisec_dojo::challenge_09_ptb_combo;
 use sui::object::{Self, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
+use suisec_dojo::challenge_events;
 use suisec_dojo::user_progress::{Self, UserProgress};
 
 public struct ChallengeInstance has key, store {
@@ -47,6 +48,7 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
     assert!(instance.combo_ready, EInvalidSolution);
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
+    challenge_events::emit_completion(CHALLENGE_ID, sender, 0, ctx);
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 { instance.challenge_id }
