@@ -1,0 +1,13 @@
+.DS_Store
+node_modules/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+.env
+.env.local
+build/
+target/
+Move.lock
