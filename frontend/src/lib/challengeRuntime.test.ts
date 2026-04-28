@@ -14,6 +14,7 @@ describe("challenge runtime state", () => {
     expect(state.createProgressReason).toBe("Connect a wallet first.");
     expect(state.canClaim).toBe(false);
     expect(state.canExploit).toBe(false);
+    expect(state.canUseCapability).toBe(false);
     expect(state.canSolve).toBe(false);
   });
 
@@ -191,5 +192,105 @@ describe("challenge runtime state", () => {
     expect(state.canExploit).toBe(false);
     expect(state.canSolve).toBe(true);
     expect(state.solveReason).toBe("Ready to solve Fake Owner.");
+  });
+
+  it("should enable Challenge 04 exploit before the admin capability is claimed", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "4",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["4"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge04Instance: {
+          objectId: "0xinstance4",
+          challengeId: "4",
+          owner: "0xalice",
+          capClaimed: false,
+          adminFlag: false,
+          solved: false,
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canExploit).toBe(true);
+    expect(state.exploitReason).toBe("Ready to claim the leaked admin capability.");
+    expect(state.canSolve).toBe(false);
+  });
+
+  it("should require using the Challenge 04 admin capability before solve", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "4",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["4"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge04Instance: {
+          objectId: "0xinstance4",
+          challengeId: "4",
+          owner: "0xalice",
+          capClaimed: true,
+          adminFlag: false,
+          solved: false,
+        },
+        challenge04AdminCap: {
+          objectId: "0xcap4",
+          instanceId: "0xinstance4",
+          owner: "0xalice",
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.canExploit).toBe(false);
+    expect(state.canUseCapability).toBe(true);
+    expect(state.useCapabilityReason).toBe("Ready to use the leaked admin capability.");
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Use the admin capability before solving.");
+  });
+
+  it("should enable Challenge 04 solve after the admin flag is set", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "4",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["4"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge04Instance: {
+          objectId: "0xinstance4",
+          challengeId: "4",
+          owner: "0xalice",
+          capClaimed: true,
+          adminFlag: true,
+          solved: false,
+        },
+        challenge04AdminCap: {
+          objectId: "0xcap4",
+          instanceId: "0xinstance4",
+          owner: "0xalice",
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to solve Leaky Capability.");
   });
 });

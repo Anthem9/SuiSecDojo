@@ -14,6 +14,9 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
           { StructType: `${packageId}::challenge_01_anyone_can_mint::ChallengeInstance` },
           { StructType: `${packageId}::challenge_02_shared_vault::ChallengeInstance` },
           { StructType: `${packageId}::challenge_03_fake_owner::ChallengeInstance` },
+          { StructType: `${packageId}::challenge_04_leaky_capability::ChallengeInstance` },
+          { StructType: `${packageId}::challenge_04_leaky_capability::AdminCap` },
+          { StructType: `${packageId}::badge::Badge` },
         ],
       },
       options: {
@@ -25,6 +28,16 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
     },
     {
       enabled: Boolean(accountAddress && packageId),
+    },
+  );
+
+  const suiBalanceQuery = useSuiClientQuery(
+    "getBalance",
+    {
+      owner: accountAddress ?? "",
+    },
+    {
+      enabled: Boolean(accountAddress),
     },
   );
 
@@ -64,9 +77,12 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
   const chainProgress: ChallengeProgress = useMemo(
     () => ({
       completedChallengeIds: fullChainState.progress?.completedChallengeIds ?? [],
-      badgeIds: [],
+      badgeIds: [
+        ...(fullChainState.progress?.badgeIds ?? []),
+        ...(fullChainState.badges ?? []).map((badge) => badge.badgeType),
+      ],
     }),
-    [fullChainState.progress],
+    [fullChainState.progress, fullChainState.badges],
   );
 
   const isSolved =
@@ -81,8 +97,11 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
     refetchObjects: async () => {
       await ownedObjectsQuery.refetch();
       await challenge02VaultQuery.refetch();
+      await suiBalanceQuery.refetch();
     },
     ownedObjectsQuery,
     challenge02VaultQuery,
+    suiBalanceQuery,
+    suiBalanceMist: suiBalanceQuery.data?.totalBalance,
   };
 }

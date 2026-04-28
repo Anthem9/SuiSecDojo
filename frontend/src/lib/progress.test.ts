@@ -10,8 +10,8 @@ describe("progress summary", () => {
     });
 
     expect(summary.completed).toBe(1);
-    expect(summary.total).toBe(3);
-    expect(summary.percent).toBe(33);
+    expect(summary.total).toBe(4);
+    expect(summary.percent).toBe(25);
     expect(summary.nextChallenge?.slug).toBe("shared-vault");
   });
 
@@ -30,4 +30,3 @@ describe("progress summary", () => {
     expect(isChallengeCompleted({ completedChallengeIds: ["1"], badgeIds: [] }, "2")).toBe(false);
   });
 });
-

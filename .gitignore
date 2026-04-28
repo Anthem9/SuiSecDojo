@@ -6,6 +6,7 @@ coverage/
 *.tsbuildinfo
 frontend/vite.config.js
 frontend/vite.config.d.ts
+frontend/public/content/
 .env
 .env.local
 build/

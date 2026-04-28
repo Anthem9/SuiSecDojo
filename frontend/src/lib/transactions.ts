@@ -87,3 +87,39 @@ export function solveChallenge03Transaction(packageId: string, progressId: strin
   });
   return tx;
 }
+
+export function claimChallenge04Transaction(packageId: string, progressId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_04_leaky_capability::claim`,
+    arguments: [tx.object(progressId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge04Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_04_leaky_capability::vulnerable_claim_cap`,
+    arguments: [tx.object(instanceId)],
+  });
+  return tx;
+}
+
+export function setChallenge04AdminFlagTransaction(packageId: string, instanceId: string, capId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_04_leaky_capability::admin_set_flag`,
+    arguments: [tx.object(instanceId), tx.object(capId)],
+  });
+  return tx;
+}
+
+export function solveChallenge04Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_04_leaky_capability::solve`,
+    arguments: [tx.object(instanceId), tx.object(progressId)],
+  });
+  return tx;
+}

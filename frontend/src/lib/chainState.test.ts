@@ -5,6 +5,9 @@ import {
   getChallenge02InstanceType,
   getChallenge02VaultType,
   getChallenge03InstanceType,
+  getChallenge04AdminCapType,
+  getChallenge04InstanceType,
+  getBadgeType,
   getUserProgressType,
   hasPhase0Deployment,
   parseChallenge02VaultObject,
@@ -25,6 +28,7 @@ describe("chain state adapter", () => {
       moveObject("0xprogress", getUserProgressType(packageId), {
         claimed_challenges: ["1"],
         completed_challenges: ["1"],
+        badges: ["1"],
       }),
       moveObject("0xinstance", getChallenge01InstanceType(packageId), {
         challenge_id: "1",
@@ -42,6 +46,22 @@ describe("chain state adapter", () => {
         restricted_flag: true,
         solved: false,
       }),
+      moveObject("0xinstance4", getChallenge04InstanceType(packageId), {
+        challenge_id: "4",
+        owner: "0xalice",
+        cap_claimed: true,
+        admin_flag: true,
+        solved: false,
+      }),
+      moveObject("0xcap4", getChallenge04AdminCapType(packageId), {
+        instance_id: "0xinstance4",
+        owner: "0xalice",
+      }),
+      moveObject("0xbadge", getBadgeType(packageId), {
+        owner: "0xalice",
+        badge_type: "1",
+        issued_at_epoch: "12",
+      }),
     ];
 
     expect(parseChainChallengeState(objects, packageId)).toEqual({
@@ -49,6 +69,7 @@ describe("chain state adapter", () => {
         objectId: "0xprogress",
         claimedChallengeIds: ["1"],
         completedChallengeIds: ["1"],
+        badgeIds: ["1"],
       },
       challenge01Instance: {
         objectId: "0xinstance",
@@ -69,6 +90,20 @@ describe("chain state adapter", () => {
         restrictedFlag: true,
         solved: false,
       },
+      challenge04Instance: {
+        objectId: "0xinstance4",
+        challengeId: "4",
+        owner: "0xalice",
+        capClaimed: true,
+        adminFlag: true,
+        solved: false,
+      },
+      challenge04AdminCap: {
+        objectId: "0xcap4",
+        instanceId: "0xinstance4",
+        owner: "0xalice",
+      },
+      badges: [{ objectId: "0xbadge", owner: "0xalice", badgeType: "1", issuedAtEpoch: "12" }],
     });
   });
 
@@ -94,7 +129,7 @@ describe("chain state adapter", () => {
       { data: null },
     ];
 
-    expect(parseChainChallengeState(objects, packageId)).toEqual({});
+    expect(parseChainChallengeState(objects, packageId)).toEqual({ badges: [] });
   });
 });
 

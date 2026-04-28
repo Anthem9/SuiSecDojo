@@ -16,6 +16,8 @@ export type ChallengeActionState = {
   claimReason: string;
   canExploit: boolean;
   exploitReason: string;
+  canUseCapability: boolean;
+  useCapabilityReason: string;
   canSolve: boolean;
   solveReason: string;
   runtimeState: ChallengeRuntimeState;
@@ -36,15 +38,20 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const isChallenge01Selected = input.selectedChallengeId === "1";
   const isChallenge02Selected = input.selectedChallengeId === "2";
   const isChallenge03Selected = input.selectedChallengeId === "3";
+  const isChallenge04Selected = input.selectedChallengeId === "4";
   const selectedInstance = isChallenge02Selected
     ? input.chainState.challenge02Instance
     : isChallenge03Selected
       ? input.chainState.challenge03Instance
-      : input.chainState.challenge01Instance;
+      : isChallenge04Selected
+        ? input.chainState.challenge04Instance
+        : input.chainState.challenge01Instance;
   const hasInstance = Boolean(selectedInstance);
   const hasVault = Boolean(input.chainState.challenge02Vault);
   const isChallenge02Drained = input.chainState.challenge02Vault?.balance === "0";
   const isChallenge03FlagSet = input.chainState.challenge03Instance?.restrictedFlag === true;
+  const isChallenge04AdminFlagSet = input.chainState.challenge04Instance?.adminFlag === true;
+  const hasChallenge04Cap = Boolean(input.chainState.challenge04AdminCap);
   const isSolved =
     selectedInstance?.solved === true || input.chainState.progress?.completedChallengeIds.includes(input.selectedChallengeId) === true;
   const actionBusy = input.actionBusy === true;
@@ -55,9 +62,12 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
     hasProgress,
     hasInstance,
     isSolved,
-    readyToSolve: (isChallenge02Selected && hasVault && isChallenge02Drained) || (isChallenge03Selected && isChallenge03FlagSet),
+    readyToSolve:
+      (isChallenge02Selected && hasVault && isChallenge02Drained) ||
+      (isChallenge03Selected && isChallenge03FlagSet) ||
+      (isChallenge04Selected && isChallenge04AdminFlagSet),
   });
-  const supportsOnChain = isChallenge01Selected || isChallenge02Selected || isChallenge03Selected;
+  const supportsOnChain = isChallenge01Selected || isChallenge02Selected || isChallenge03Selected || isChallenge04Selected;
 
   return {
     runtimeState,
@@ -74,7 +84,9 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       hasPackage &&
       hasProgress &&
       hasInstance &&
-      ((isChallenge02Selected && hasVault && !isChallenge02Drained) || (isChallenge03Selected && !isChallenge03FlagSet)) &&
+      ((isChallenge02Selected && hasVault && !isChallenge02Drained) ||
+        (isChallenge03Selected && !isChallenge03FlagSet) ||
+        (isChallenge04Selected && !hasChallenge04Cap)) &&
       !isSolved &&
       !actionBusy,
     exploitReason: actionBusy
@@ -90,6 +102,30 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge02Drained,
           isChallenge03Selected,
           isChallenge03FlagSet,
+          isChallenge04Selected,
+          hasChallenge04Cap,
+          isSolved,
+        ),
+    canUseCapability:
+      isConnected &&
+      hasPackage &&
+      hasProgress &&
+      hasInstance &&
+      isChallenge04Selected &&
+      hasChallenge04Cap &&
+      !isChallenge04AdminFlagSet &&
+      !isSolved &&
+      !actionBusy,
+    useCapabilityReason: actionBusy
+      ? "Transaction or chain refresh pending."
+      : reasonForUseCapability(
+          isConnected,
+          hasPackage,
+          hasProgress,
+          hasInstance,
+          isChallenge04Selected,
+          hasChallenge04Cap,
+          isChallenge04AdminFlagSet,
           isSolved,
         ),
     canSolve:
@@ -99,7 +135,7 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       hasInstance &&
       !isSolved &&
       supportsOnChain &&
-      (isChallenge01Selected || isChallenge02Drained || isChallenge03FlagSet) &&
+      (isChallenge01Selected || isChallenge02Drained || isChallenge03FlagSet || isChallenge04AdminFlagSet) &&
       !actionBusy,
     solveReason: actionBusy
       ? "Transaction or chain refresh pending."
@@ -116,8 +152,32 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge02Drained,
           isChallenge03Selected,
           isChallenge03FlagSet,
+          isChallenge04Selected,
+          hasChallenge04Cap,
+          isChallenge04AdminFlagSet,
         ),
   };
+}
+
+function reasonForUseCapability(
+  isConnected: boolean,
+  hasPackage: boolean,
+  hasProgress: boolean,
+  hasInstance: boolean,
+  isChallenge04Selected: boolean,
+  hasChallenge04Cap: boolean,
+  isChallenge04AdminFlagSet: boolean,
+  isSolved: boolean,
+): string {
+  if (!isConnected) return "Connect a wallet first.";
+  if (!hasPackage) return "Set VITE_PACKAGE_ID before using the capability.";
+  if (!isChallenge04Selected) return "Capability action is enabled for Challenge 04 only.";
+  if (!hasProgress) return "Create a progress object first.";
+  if (!hasInstance) return "Claim an instance first.";
+  if (isSolved) return "Challenge 04 already completed.";
+  if (!hasChallenge04Cap) return "Claim the leaked admin capability first.";
+  if (isChallenge04AdminFlagSet) return "Admin flag already set; solve the challenge.";
+  return "Ready to use the leaked admin capability.";
 }
 
 function getRuntimeState(input: {
@@ -171,11 +231,13 @@ function reasonForExploit(
   isChallenge02Drained: boolean,
   isChallenge03Selected: boolean,
   isChallenge03FlagSet: boolean,
+  isChallenge04Selected: boolean,
+  hasChallenge04Cap: boolean,
   isSolved: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before exploiting.";
-  if (!isChallenge02Selected && !isChallenge03Selected) {
+  if (!isChallenge02Selected && !isChallenge03Selected && !isChallenge04Selected) {
     return `Exploit action is not enabled for Challenge ${formatChallengeId(selectedChallengeId)}.`;
   }
   if (!hasProgress) return "Create a progress object first.";
@@ -185,6 +247,8 @@ function reasonForExploit(
   if (isChallenge02Selected && isChallenge02Drained) return "Vault already drained; solve the challenge.";
   if (isChallenge03Selected && isChallenge03FlagSet) return "Restricted flag already set; solve the challenge.";
   if (isChallenge03Selected) return "Ready to exploit the trusted owner parameter.";
+  if (isChallenge04Selected && hasChallenge04Cap) return "Admin capability already claimed; set the admin flag.";
+  if (isChallenge04Selected) return "Ready to claim the leaked admin capability.";
   return "Ready to exploit the missing withdraw authorization.";
 }
 
@@ -201,6 +265,9 @@ function reasonForSolve(
   isChallenge02Drained: boolean,
   isChallenge03Selected: boolean,
   isChallenge03FlagSet: boolean,
+  isChallenge04Selected: boolean,
+  hasChallenge04Cap: boolean,
+  isChallenge04AdminFlagSet: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before solving.";
@@ -213,6 +280,9 @@ function reasonForSolve(
   if (isChallenge02Selected) return "Ready to solve Shared Vault.";
   if (isChallenge03Selected && !isChallenge03FlagSet) return "Set the restricted flag before solving.";
   if (isChallenge03Selected) return "Ready to solve Fake Owner.";
+  if (isChallenge04Selected && !hasChallenge04Cap) return "Claim the leaked admin capability first.";
+  if (isChallenge04Selected && !isChallenge04AdminFlagSet) return "Use the admin capability before solving.";
+  if (isChallenge04Selected) return "Ready to solve Leaky Capability.";
   return "Ready to run vulnerable mint and solve.";
 }
 

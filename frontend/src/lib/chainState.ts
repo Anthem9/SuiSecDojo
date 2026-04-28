@@ -4,6 +4,7 @@ export type UserProgressObject = {
   objectId: string;
   claimedChallengeIds: string[];
   completedChallengeIds: string[];
+  badgeIds?: string[];
 };
 
 export type ChallengeInstanceObject = {
@@ -34,12 +35,37 @@ export type Challenge03InstanceObject = {
   solved: boolean;
 };
 
+export type Challenge04InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  capClaimed: boolean;
+  adminFlag: boolean;
+  solved: boolean;
+};
+
+export type Challenge04AdminCapObject = {
+  objectId: string;
+  instanceId: string;
+  owner: string;
+};
+
+export type BadgeObject = {
+  objectId: string;
+  owner: string;
+  badgeType: string;
+  issuedAtEpoch: string;
+};
+
 export type ChainChallengeState = {
   progress?: UserProgressObject;
   challenge01Instance?: ChallengeInstanceObject;
   challenge02Instance?: Challenge02InstanceObject;
   challenge02Vault?: SharedVaultObject;
   challenge03Instance?: Challenge03InstanceObject;
+  challenge04Instance?: Challenge04InstanceObject;
+  challenge04AdminCap?: Challenge04AdminCapObject;
+  badges?: BadgeObject[];
 };
 
 type MoveObjectContent = {
@@ -68,11 +94,26 @@ export function getChallenge03InstanceType(packageId: string): string {
   return `${packageId}::challenge_03_fake_owner::ChallengeInstance`;
 }
 
+export function getChallenge04InstanceType(packageId: string): string {
+  return `${packageId}::challenge_04_leaky_capability::ChallengeInstance`;
+}
+
+export function getChallenge04AdminCapType(packageId: string): string {
+  return `${packageId}::challenge_04_leaky_capability::AdminCap`;
+}
+
+export function getBadgeType(packageId: string): string {
+  return `${packageId}::badge::Badge`;
+}
+
 export function parseChainChallengeState(objects: SuiObjectResponse[], packageId: string): ChainChallengeState {
   const progressType = getUserProgressType(packageId);
   const challenge01Type = getChallenge01InstanceType(packageId);
   const challenge02Type = getChallenge02InstanceType(packageId);
   const challenge03Type = getChallenge03InstanceType(packageId);
+  const challenge04Type = getChallenge04InstanceType(packageId);
+  const challenge04AdminCapType = getChallenge04AdminCapType(packageId);
+  const badgeType = getBadgeType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
     const data = object.data;
@@ -89,6 +130,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
           objectId: data.objectId,
           claimedChallengeIds: toStringArray(content.fields.claimed_challenges),
           completedChallengeIds: toStringArray(content.fields.completed_challenges),
+          badgeIds: toStringArray(content.fields.badges),
         },
       };
     }
@@ -130,8 +172,48 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
+    if (content.type === challenge04Type && content.fields.challenge_id === "4") {
+      return {
+        ...state,
+        challenge04Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          capClaimed: content.fields.cap_claimed === true,
+          adminFlag: content.fields.admin_flag === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge04AdminCapType) {
+      return {
+        ...state,
+        challenge04AdminCap: {
+          objectId: data.objectId,
+          instanceId: String(content.fields.instance_id),
+          owner: String(content.fields.owner),
+        },
+      };
+    }
+
+    if (content.type === badgeType) {
+      return {
+        ...state,
+        badges: [
+          ...(state.badges ?? []),
+          {
+            objectId: data.objectId,
+            owner: String(content.fields.owner),
+            badgeType: String(content.fields.badge_type),
+            issuedAtEpoch: String(content.fields.issued_at_epoch),
+          },
+        ],
+      };
+    }
+
     return state;
-  }, {});
+  }, { badges: [] });
 }
 
 export function parseChallenge02VaultObject(object: SuiObjectResponse | undefined, packageId: string): SharedVaultObject | undefined {

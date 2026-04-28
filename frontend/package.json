@@ -9,7 +9,10 @@
   },
   "scripts": {
     "dev": "vite",
+    "predev": "npm run sync:content",
+    "sync:content": "cd .. && scripts/sync-content.sh",
     "build": "tsc --noEmit && vite build",
+    "prebuild": "npm run sync:content",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit --pretty false",
     "test": "vitest",
@@ -23,6 +26,8 @@
     "lucide-react": "^0.468.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "typescript": "^5.9.3",
     "vite": "^7.1.12"
   },

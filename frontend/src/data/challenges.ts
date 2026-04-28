@@ -34,4 +34,15 @@ export const challenges: ChallengeMetadata[] = [
     moduleName: "challenge_03_fake_owner",
     sourceUrl: "content/challenges/03-fake-owner/statement.md",
   },
+  {
+    id: "4",
+    title: "Leaky Capability",
+    slug: "leaky-capability",
+    difficulty: "easy",
+    category: "Capability Pattern",
+    tags: ["AdminCap", "capability", "authorization"],
+    description: "Claim a leaked admin capability and use it to flip protected state before solving.",
+    moduleName: "challenge_04_leaky_capability",
+    sourceUrl: "content/challenges/04-leaky-capability/statement.md",
+  },
 ];

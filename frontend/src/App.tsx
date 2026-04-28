@@ -2,14 +2,16 @@ import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
 import { BookOpen, Shield, Wallet } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ChallengeDetailPanel } from "./components/ChallengeDetailPanel";
+import { ProfilePanel } from "./components/ProfilePanel";
 import { ProgressPanel } from "./components/ProgressPanel";
 import { challenges } from "./data/challenges";
 import { useChallenge01Actions } from "./hooks/useChallenge01Actions";
 import { useDojoObjects } from "./hooks/useDojoObjects";
 import { getChallenge01ActionState } from "./lib/challengeRuntime";
-import { CONTRACTS } from "./lib/constants";
+import { CONTRACTS, SUI_NETWORK } from "./lib/constants";
 import { filterChallenges } from "./lib/challengeFilters";
 import { summarizeProgress } from "./lib/progress";
+import { summarizeProfile } from "./lib/profile";
 import type { ChallengeDifficulty } from "./types";
 
 const challenge01Id = "1";
@@ -20,7 +22,7 @@ export function App() {
   const packageId = CONTRACTS.PACKAGE_ID;
   const [difficulty, setDifficulty] = useState<ChallengeDifficulty | "all">("all");
   const [selectedSlug, setSelectedSlug] = useState(challenges[0]?.slug ?? "");
-  const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, refetchObjects } = useDojoObjects(
+  const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, suiBalanceMist, refetchObjects } = useDojoObjects(
     account?.address,
     packageId,
   );
@@ -30,6 +32,14 @@ export function App() {
   const selectedChallenge = challenges.find((challenge) => challenge.slug === selectedSlug) ?? challenge01;
   const isChallenge02Selected = selectedChallenge.id === "2";
   const isChallenge03Selected = selectedChallenge.id === "3";
+  const isChallenge04Selected = selectedChallenge.id === "4";
+  const profile = summarizeProfile({
+    accountAddress: account?.address,
+    network: SUI_NETWORK,
+    challenges,
+    chainState,
+    badges: chainState.badges ?? [],
+  });
   const actionState = getChallenge01ActionState({
     accountAddress: account?.address,
     packageId,
@@ -37,6 +47,10 @@ export function App() {
     chainState,
     actionBusy: challengeActions.isPending || ownedObjectsQuery.isFetching || challenge02VaultQuery.isFetching,
   });
+  const warnings = [
+    SUI_NETWORK !== "testnet" ? `Current network is ${SUI_NETWORK}; SuiSec Dojo challenges are configured for testnet.` : undefined,
+    account?.address && suiBalanceMist === "0" ? "Wallet has no SUI available for gas. Fund it from the Sui testnet faucet." : undefined,
+  ].filter((message): message is string => Boolean(message));
 
   return (
     <main className="app-shell">
@@ -104,9 +118,17 @@ export function App() {
           challenge={selectedChallenge}
           lastDigest={challengeActions.lastDigest}
           objectError={ownedObjectsQuery.error ?? challenge02VaultQuery.error}
-          onExploitChallenge={isChallenge03Selected ? challengeActions.exploitChallenge03 : challengeActions.withdrawChallenge02}
+          onExploitChallenge={
+            isChallenge04Selected
+              ? challengeActions.exploitChallenge04
+              : isChallenge03Selected
+                ? challengeActions.exploitChallenge03
+                : challengeActions.withdrawChallenge02
+          }
           onClaimInstance={
-            isChallenge03Selected
+            isChallenge04Selected
+              ? challengeActions.claimChallenge04
+              : isChallenge03Selected
               ? challengeActions.claimChallenge03
               : isChallenge02Selected
                 ? challengeActions.claimChallenge02
@@ -114,16 +136,21 @@ export function App() {
           }
           onCreateProgress={challengeActions.createProgress}
           onSolveChallenge={
-            isChallenge03Selected
+            isChallenge04Selected
+              ? challengeActions.solveChallenge04
+              : isChallenge03Selected
               ? challengeActions.solveChallenge03
               : isChallenge02Selected
                 ? challengeActions.solveChallenge02
                 : challengeActions.solveChallenge
           }
+          onUseCapability={challengeActions.setChallenge04AdminFlag}
           packageId={packageId}
           statusMessage={isSolved && selectedChallenge.id === "1" ? "Challenge 01 completed on-chain." : challengeActions.statusMessage}
+          warnings={warnings}
         />
       </section>
+      <ProfilePanel summary={profile} />
     </main>
   );
 }

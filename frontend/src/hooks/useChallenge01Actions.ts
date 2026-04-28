@@ -6,13 +6,19 @@ import {
   claimChallenge01Transaction,
   claimChallenge02Transaction,
   claimChallenge03Transaction,
+  claimChallenge04Transaction,
   createProgressTransaction,
   exploitChallenge03Transaction,
+  exploitChallenge04Transaction,
+  setChallenge04AdminFlagTransaction,
   solveChallenge01Transaction,
   solveChallenge02Transaction,
   solveChallenge03Transaction,
+  solveChallenge04Transaction,
   withdrawChallenge02Transaction,
 } from "../lib/transactions";
+import { txStatusDigest, txStatusMessage, readableTxError } from "../lib/txStatus";
+import type { TxStatus } from "../lib/txStatus";
 
 type RefetchObjects = () => Promise<unknown>;
 
@@ -20,34 +26,33 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
   const account = useCurrentAccount();
   const client = useSuiClient();
   const signAndExecute = useSignAndExecuteTransaction();
-  const [statusMessage, setStatusMessage] = useState("Connect a wallet to start the on-chain dojo flow.");
-  const [lastDigest, setLastDigest] = useState<string>();
+  const [txStatus, setTxStatus] = useState<TxStatus>({ kind: "idle" });
 
   async function executeAndRefresh(label: string, transactionFactory: () => Transaction) {
     if (!account) {
-      setStatusMessage("Connect a wallet before sending a transaction.");
+      setTxStatus({ kind: "failed", label, message: "Connect a wallet before sending a transaction." });
       return;
     }
 
     try {
-      setStatusMessage(`${label} transaction is waiting for wallet approval...`);
+      setTxStatus({ kind: "awaiting-signature", label });
       const result = await signAndExecute.mutateAsync({
         transaction: transactionFactory(),
       });
-      setLastDigest(result.digest);
-      setStatusMessage(`${label} transaction submitted. Waiting for finality...`);
+      setTxStatus({ kind: "submitted", label, digest: result.digest });
       await client.waitForTransaction({ digest: result.digest });
       await refetchObjects();
-      setStatusMessage(`${label} completed on testnet.`);
+      setTxStatus({ kind: "confirmed", label, digest: result.digest });
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : `${label} failed.`);
+      setTxStatus({ kind: "failed", label, message: readableTxError(error) });
     }
   }
 
   return {
     isPending: signAndExecute.isPending,
-    lastDigest,
-    statusMessage,
+    lastDigest: txStatusDigest(txStatus),
+    statusMessage: txStatusMessage(txStatus),
+    txStatus,
     createProgress: () => executeAndRefresh("Create progress", () => createProgressTransaction(packageId)),
     claimInstance: () =>
       executeAndRefresh("Claim instance", () => claimChallenge01Transaction(packageId, chainState.progress!.objectId)),
@@ -79,6 +84,24 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
     solveChallenge03: () =>
       executeAndRefresh("Solve Fake Owner", () =>
         solveChallenge03Transaction(packageId, chainState.progress!.objectId, chainState.challenge03Instance!.objectId),
+      ),
+    claimChallenge04: () =>
+      executeAndRefresh("Claim Leaky Capability", () => claimChallenge04Transaction(packageId, chainState.progress!.objectId)),
+    exploitChallenge04: () =>
+      executeAndRefresh("Claim leaked capability", () =>
+        exploitChallenge04Transaction(packageId, chainState.challenge04Instance!.objectId),
+      ),
+    setChallenge04AdminFlag: () =>
+      executeAndRefresh("Use admin capability", () =>
+        setChallenge04AdminFlagTransaction(
+          packageId,
+          chainState.challenge04Instance!.objectId,
+          chainState.challenge04AdminCap!.objectId,
+        ),
+      ),
+    solveChallenge04: () =>
+      executeAndRefresh("Solve Leaky Capability", () =>
+        solveChallenge04Transaction(packageId, chainState.progress!.objectId, chainState.challenge04Instance!.objectId),
       ),
   };
 }
