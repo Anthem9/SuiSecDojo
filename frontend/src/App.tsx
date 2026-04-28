@@ -20,17 +20,21 @@ export function App() {
   const packageId = CONTRACTS.PACKAGE_ID;
   const [difficulty, setDifficulty] = useState<ChallengeDifficulty | "all">("all");
   const [selectedSlug, setSelectedSlug] = useState(challenges[0]?.slug ?? "");
-  const { chainState, chainProgress, isSolved, ownedObjectsQuery } = useDojoObjects(account?.address, packageId);
-  const challengeActions = useChallenge01Actions(packageId, chainState, ownedObjectsQuery.refetch);
+  const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, refetchObjects } = useDojoObjects(
+    account?.address,
+    packageId,
+  );
+  const challengeActions = useChallenge01Actions(packageId, chainState, refetchObjects);
   const progress = summarizeProgress(challenges, chainProgress);
   const visibleChallenges = useMemo(() => filterChallenges(challenges, { difficulty }), [difficulty]);
   const selectedChallenge = challenges.find((challenge) => challenge.slug === selectedSlug) ?? challenge01;
+  const isChallenge02Selected = selectedChallenge.id === "2";
   const actionState = getChallenge01ActionState({
     accountAddress: account?.address,
     packageId,
     selectedChallengeId: selectedChallenge.id,
     chainState,
-    actionBusy: challengeActions.isPending || ownedObjectsQuery.isFetching,
+    actionBusy: challengeActions.isPending || ownedObjectsQuery.isFetching || challenge02VaultQuery.isFetching,
   });
 
   return (
@@ -98,12 +102,13 @@ export function App() {
           chainState={chainState}
           challenge={selectedChallenge}
           lastDigest={challengeActions.lastDigest}
-          objectError={ownedObjectsQuery.error}
-          onClaimInstance={challengeActions.claimInstance}
+          objectError={ownedObjectsQuery.error ?? challenge02VaultQuery.error}
+          onExploitChallenge={challengeActions.withdrawChallenge02}
+          onClaimInstance={isChallenge02Selected ? challengeActions.claimChallenge02 : challengeActions.claimInstance}
           onCreateProgress={challengeActions.createProgress}
-          onSolveChallenge={challengeActions.solveChallenge}
+          onSolveChallenge={isChallenge02Selected ? challengeActions.solveChallenge02 : challengeActions.solveChallenge}
           packageId={packageId}
-          statusMessage={isSolved ? "Challenge 01 completed on-chain." : challengeActions.statusMessage}
+          statusMessage={isSolved && !isChallenge02Selected ? "Challenge 01 completed on-chain." : challengeActions.statusMessage}
         />
       </section>
     </main>
@@ -118,4 +123,3 @@ function WalletLabel() {
     </>
   );
 }
-

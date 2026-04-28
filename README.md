@@ -35,13 +35,13 @@ sui move test
 当前 testnet package：
 
 ```text
-0x8b8e55e8435bbef227df39072507a7f6d5c76ee0f855094108e87181cfdfea52
+0x9cd5419078e8cca1c981aa3a21cb13352d9fbb290df17dcf5740793df6b505cd
 ```
 
 当前 Challenge Registry：
 
 ```text
-0x49519029cfeaa2fdf29057378f5252abe68a1a294dc1bf0b70456f54a3c6b2ee
+0xc47fc62b34dda190d20649068fbcf25eef28a23be9a24a45f01ff835d82ebfc8
 ```
 
 开发地址：

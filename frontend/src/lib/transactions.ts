@@ -34,3 +34,29 @@ export function solveChallenge01Transaction(packageId: string, progressId: strin
   return tx;
 }
 
+export function claimChallenge02Transaction(packageId: string, progressId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_02_shared_vault::claim`,
+    arguments: [tx.object(progressId)],
+  });
+  return tx;
+}
+
+export function withdrawChallenge02Transaction(packageId: string, vaultId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_02_shared_vault::vulnerable_withdraw`,
+    arguments: [tx.object(vaultId), tx.pure.u64(100)],
+  });
+  return tx;
+}
+
+export function solveChallenge02Transaction(packageId: string, progressId: string, instanceId: string, vaultId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_02_shared_vault::solve`,
+    arguments: [tx.object(instanceId), tx.object(vaultId), tx.object(progressId)],
+  });
+  return tx;
+}

@@ -1,14 +1,15 @@
 import { ExternalLink } from "lucide-react";
 import type { ChainChallengeState } from "../lib/chainState";
-import type { Challenge01ActionState } from "../lib/challengeRuntime";
+import type { ChallengeActionState } from "../lib/challengeRuntime";
 import type { ChallengeMetadata } from "../types";
 
 type ChallengeDetailPanelProps = {
-  actionState: Challenge01ActionState;
+  actionState: ChallengeActionState;
   chainState: ChainChallengeState;
   challenge: ChallengeMetadata;
   lastDigest?: string;
   objectError?: Error | null;
+  onExploitChallenge: () => void;
   onClaimInstance: () => void;
   onCreateProgress: () => void;
   onSolveChallenge: () => void;
@@ -22,6 +23,7 @@ export function ChallengeDetailPanel({
   challenge,
   lastDigest,
   objectError,
+  onExploitChallenge,
   onClaimInstance,
   onCreateProgress,
   onSolveChallenge,
@@ -29,8 +31,10 @@ export function ChallengeDetailPanel({
   statusMessage,
 }: ChallengeDetailPanelProps) {
   const isChallenge01 = challenge.id === "1";
+  const isChallenge02 = challenge.id === "2";
+  const selectedInstance = isChallenge02 ? chainState.challenge02Instance : chainState.challenge01Instance;
   const isSolved =
-    chainState.challenge01Instance?.solved === true || chainState.progress?.completedChallengeIds.includes("1") === true;
+    selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
 
   return (
     <article className="detail-panel">
@@ -49,8 +53,20 @@ export function ChallengeDetailPanel({
         </div>
         <div>
           <dt>Challenge Instance</dt>
-          <dd>{isChallenge01 ? chainState.challenge01Instance?.objectId ?? "not claimed" : "not enabled yet"}</dd>
+          <dd>{isChallenge01 || isChallenge02 ? selectedInstance?.objectId ?? "not claimed" : "not enabled yet"}</dd>
         </div>
+        {isChallenge02 ? (
+          <>
+            <div>
+              <dt>Shared Vault</dt>
+              <dd>{chainState.challenge02Vault?.objectId ?? chainState.challenge02Instance?.vaultId ?? "not claimed"}</dd>
+            </div>
+            <div>
+              <dt>Vault Balance</dt>
+              <dd>{chainState.challenge02Vault?.balance ?? "not loaded"}</dd>
+            </div>
+          </>
+        ) : null}
         <div>
           <dt>Completion</dt>
           <dd>{isSolved ? "solved" : "not solved"}</dd>
@@ -75,6 +91,11 @@ export function ChallengeDetailPanel({
         <button type="button" disabled={!actionState.canClaim} title={actionState.claimReason} onClick={onClaimInstance}>
           Claim Instance
         </button>
+        {isChallenge02 ? (
+          <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
+            Exploit Withdraw
+          </button>
+        ) : null}
         <button type="button" disabled={!actionState.canSolve} title={actionState.solveReason} onClick={onSolveChallenge}>
           Solve Challenge
         </button>
@@ -94,12 +115,15 @@ export function ChallengeDetailPanel({
   );
 }
 
-function visibleReason(actionState: Challenge01ActionState): string {
+function visibleReason(actionState: ChallengeActionState): string {
   if (actionState.canCreateProgress) return actionState.createProgressReason;
   if (actionState.canClaim) return actionState.claimReason;
+  if (actionState.canExploit) return actionState.exploitReason;
   if (actionState.canSolve) return actionState.solveReason;
   if (actionState.runtimeState === "solved") return actionState.solveReason;
+  if (actionState.runtimeState === "ready-to-solve") return actionState.solveReason;
   if (actionState.runtimeState === "not-claimed") return actionState.claimReason;
+  if (actionState.runtimeState === "claimed") return actionState.exploitReason;
   return actionState.createProgressReason;
 }
 

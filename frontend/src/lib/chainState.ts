@@ -13,9 +13,24 @@ export type ChallengeInstanceObject = {
   solved: boolean;
 };
 
+export type Challenge02InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  vaultId: string;
+  solved: boolean;
+};
+
+export type SharedVaultObject = {
+  objectId: string;
+  owner: string;
+  balance: string;
+};
+
 export type ChainChallengeState = {
   progress?: UserProgressObject;
   challenge01Instance?: ChallengeInstanceObject;
+  challenge02Instance?: Challenge02InstanceObject;
+  challenge02Vault?: SharedVaultObject;
 };
 
 type MoveObjectContent = {
@@ -32,9 +47,18 @@ export function getChallenge01InstanceType(packageId: string): string {
   return `${packageId}::challenge_01_anyone_can_mint::ChallengeInstance`;
 }
 
+export function getChallenge02InstanceType(packageId: string): string {
+  return `${packageId}::challenge_02_shared_vault::ChallengeInstance`;
+}
+
+export function getChallenge02VaultType(packageId: string): string {
+  return `${packageId}::challenge_02_shared_vault::SharedVault`;
+}
+
 export function parseChainChallengeState(objects: SuiObjectResponse[], packageId: string): ChainChallengeState {
   const progressType = getUserProgressType(packageId);
   const challenge01Type = getChallenge01InstanceType(packageId);
+  const challenge02Type = getChallenge02InstanceType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
     const data = object.data;
@@ -67,8 +91,35 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
+    if (content.type === challenge02Type && content.fields.challenge_id === "2") {
+      return {
+        ...state,
+        challenge02Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          vaultId: String(content.fields.vault_id),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
     return state;
   }, {});
+}
+
+export function parseChallenge02VaultObject(object: SuiObjectResponse | undefined, packageId: string): SharedVaultObject | undefined {
+  const data = object?.data;
+  const content = data?.content as MoveObjectContent | undefined;
+
+  if (!data?.objectId || !content || content.dataType !== "moveObject" || content.type !== getChallenge02VaultType(packageId)) {
+    return undefined;
+  }
+
+  return {
+    objectId: data.objectId,
+    owner: String(content.fields.owner),
+    balance: String(content.fields.balance),
+  };
 }
 
 export function hasPhase0Deployment(packageId: string): boolean {
@@ -78,4 +129,3 @@ export function hasPhase0Deployment(packageId: string): boolean {
 function toStringArray(value: unknown): string[] {
   return Array.isArray(value) ? value.map(String) : [];
 }
-

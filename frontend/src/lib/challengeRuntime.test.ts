@@ -13,6 +13,7 @@ describe("challenge runtime state", () => {
     expect(state.canCreateProgress).toBe(false);
     expect(state.createProgressReason).toBe("Connect a wallet first.");
     expect(state.canClaim).toBe(false);
+    expect(state.canExploit).toBe(false);
     expect(state.canSolve).toBe(false);
   });
 
@@ -74,5 +75,66 @@ describe("challenge runtime state", () => {
     expect(state.runtimeState).toBe("solved");
     expect(state.canSolve).toBe(false);
     expect(state.solveReason).toBe("Challenge 01 already completed.");
+  });
+
+  it("should enable Challenge 02 exploit after claim and before drain", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "2",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["2"],
+          completedChallengeIds: [],
+        },
+        challenge02Instance: {
+          objectId: "0xinstance2",
+          challengeId: "2",
+          vaultId: "0xvault",
+          solved: false,
+        },
+        challenge02Vault: {
+          objectId: "0xvault",
+          owner: "0xalice",
+          balance: "100",
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canExploit).toBe(true);
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Drain the shared vault before solving.");
+  });
+
+  it("should enable Challenge 02 solve after vault is drained", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "2",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["2"],
+          completedChallengeIds: [],
+        },
+        challenge02Instance: {
+          objectId: "0xinstance2",
+          challengeId: "2",
+          vaultId: "0xvault",
+          solved: false,
+        },
+        challenge02Vault: {
+          objectId: "0xvault",
+          owner: "0xalice",
+          balance: "0",
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canExploit).toBe(false);
+    expect(state.canSolve).toBe(true);
   });
 });

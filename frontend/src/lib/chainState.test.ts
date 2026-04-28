@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import type { SuiObjectResponse } from "@mysten/sui/jsonRpc";
 import {
   getChallenge01InstanceType,
+  getChallenge02InstanceType,
+  getChallenge02VaultType,
   getUserProgressType,
   hasPhase0Deployment,
+  parseChallenge02VaultObject,
   parseChainChallengeState,
 } from "./chainState";
 
@@ -27,6 +30,11 @@ describe("chain state adapter", () => {
         minted_amount: "1000",
         solved: true,
       }),
+      moveObject("0xinstance2", getChallenge02InstanceType(packageId), {
+        challenge_id: "2",
+        vault_id: "0xvault",
+        solved: false,
+      }),
     ];
 
     expect(parseChainChallengeState(objects, packageId)).toEqual({
@@ -41,6 +49,28 @@ describe("chain state adapter", () => {
         mintedAmount: "1000",
         solved: true,
       },
+      challenge02Instance: {
+        objectId: "0xinstance2",
+        challengeId: "2",
+        vaultId: "0xvault",
+        solved: false,
+      },
+    });
+  });
+
+  it("should parse a shared vault object", () => {
+    expect(
+      parseChallenge02VaultObject(
+        moveObject("0xvault", getChallenge02VaultType(packageId), {
+          owner: "0xalice",
+          balance: "0",
+        }),
+        packageId,
+      ),
+    ).toEqual({
+      objectId: "0xvault",
+      owner: "0xalice",
+      balance: "0",
     });
   });
 

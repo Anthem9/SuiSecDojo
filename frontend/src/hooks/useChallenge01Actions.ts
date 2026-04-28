@@ -4,8 +4,11 @@ import { useState } from "react";
 import type { ChainChallengeState } from "../lib/chainState";
 import {
   claimChallenge01Transaction,
+  claimChallenge02Transaction,
   createProgressTransaction,
   solveChallenge01Transaction,
+  solveChallenge02Transaction,
+  withdrawChallenge02Transaction,
 } from "../lib/transactions";
 
 type RefetchObjects = () => Promise<unknown>;
@@ -48,6 +51,21 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
     solveChallenge: () =>
       executeAndRefresh("Solve challenge", () =>
         solveChallenge01Transaction(packageId, chainState.progress!.objectId, chainState.challenge01Instance!.objectId),
+      ),
+    claimChallenge02: () =>
+      executeAndRefresh("Claim Shared Vault", () => claimChallenge02Transaction(packageId, chainState.progress!.objectId)),
+    withdrawChallenge02: () =>
+      executeAndRefresh("Exploit withdraw", () =>
+        withdrawChallenge02Transaction(packageId, chainState.challenge02Vault!.objectId),
+      ),
+    solveChallenge02: () =>
+      executeAndRefresh("Solve Shared Vault", () =>
+        solveChallenge02Transaction(
+          packageId,
+          chainState.progress!.objectId,
+          chainState.challenge02Instance!.objectId,
+          chainState.challenge02Vault!.objectId,
+        ),
       ),
   };
 }
