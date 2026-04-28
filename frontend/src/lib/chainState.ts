@@ -74,6 +74,41 @@ export type Challenge06InstanceObject = {
   solved: boolean;
 };
 
+export type Challenge07InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  guardedValue: string;
+  solved: boolean;
+};
+
+export type Challenge08InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  legacyFlag: boolean;
+  solved: boolean;
+};
+
+export type Challenge09InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  comboReady: boolean;
+  solved: boolean;
+};
+
+export type Challenge10InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  reserveX: string;
+  reserveY: string;
+  attackerProfit: string;
+  invariantBroken: boolean;
+  solved: boolean;
+};
+
 export type BadgeObject = {
   objectId: string;
   owner: string;
@@ -92,6 +127,10 @@ export type ChainChallengeState = {
   challenge05Instance?: Challenge05InstanceObject;
   challenge05AdminCap?: Challenge05AdminCapObject;
   challenge06Instance?: Challenge06InstanceObject;
+  challenge07Instance?: Challenge07InstanceObject;
+  challenge08Instance?: Challenge08InstanceObject;
+  challenge09Instance?: Challenge09InstanceObject;
+  challenge10Instance?: Challenge10InstanceObject;
   badges?: BadgeObject[];
 };
 
@@ -141,6 +180,22 @@ export function getChallenge06InstanceType(packageId: string): string {
   return `${packageId}::challenge_06_price_rounding::ChallengeInstance`;
 }
 
+export function getChallenge07InstanceType(packageId: string): string {
+  return `${packageId}::challenge_07_overflow_guard::ChallengeInstance`;
+}
+
+export function getChallenge08InstanceType(packageId: string): string {
+  return `${packageId}::challenge_08_old_package_trap::ChallengeInstance`;
+}
+
+export function getChallenge09InstanceType(packageId: string): string {
+  return `${packageId}::challenge_09_ptb_combo::ChallengeInstance`;
+}
+
+export function getChallenge10InstanceType(packageId: string): string {
+  return `${packageId}::challenge_10_mini_amm_incident::ChallengeInstance`;
+}
+
 export function getBadgeType(packageId: string): string {
   return `${packageId}::badge::Badge`;
 }
@@ -155,6 +210,10 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
   const challenge05Type = getChallenge05InstanceType(packageId);
   const challenge05AdminCapType = getChallenge05AdminCapType(packageId);
   const challenge06Type = getChallenge06InstanceType(packageId);
+  const challenge07Type = getChallenge07InstanceType(packageId);
+  const challenge08Type = getChallenge08InstanceType(packageId);
+  const challenge09Type = getChallenge09InstanceType(packageId);
+  const challenge10Type = getChallenge10InstanceType(packageId);
   const badgeType = getBadgeType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
@@ -273,6 +332,61 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
           owner: String(content.fields.owner),
           paidAmount: String(content.fields.paid_amount),
           credits: String(content.fields.credits),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge07Type && content.fields.challenge_id === "7") {
+      return {
+        ...state,
+        challenge07Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          guardedValue: String(content.fields.guarded_value),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge08Type && content.fields.challenge_id === "8") {
+      return {
+        ...state,
+        challenge08Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          legacyFlag: content.fields.legacy_flag === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge09Type && content.fields.challenge_id === "9") {
+      return {
+        ...state,
+        challenge09Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          comboReady: content.fields.combo_ready === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge10Type && content.fields.challenge_id === "10") {
+      return {
+        ...state,
+        challenge10Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          reserveX: String(content.fields.reserve_x),
+          reserveY: String(content.fields.reserve_y),
+          attackerProfit: String(content.fields.attacker_profit),
+          invariantBroken: content.fields.invariant_broken === true,
           solved: content.fields.solved === true,
         },
       };

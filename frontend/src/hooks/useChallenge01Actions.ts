@@ -14,6 +14,11 @@ import {
   exploitChallenge04Transaction,
   exploitChallenge05Transaction,
   exploitChallenge06Transaction,
+  exploitChallenge07Transaction,
+  exploitChallenge08Transaction,
+  exploitChallenge09Transaction,
+  exploitChallenge10Transaction,
+  claimSimpleChallengeTransaction,
   setChallenge04AdminFlagTransaction,
   setChallenge05InitializedTransaction,
   solveChallenge01Transaction,
@@ -22,6 +27,7 @@ import {
   solveChallenge04Transaction,
   solveChallenge05Transaction,
   solveChallenge06Transaction,
+  solveSimpleChallengeTransaction,
   withdrawChallenge02Transaction,
 } from "../lib/transactions";
 import { txStatusDigest, txStatusMessage, readableTxError } from "../lib/txStatus";
@@ -137,6 +143,74 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
     solveChallenge06: () =>
       executeAndRefresh("Solve Price Rounding", () =>
         solveChallenge06Transaction(packageId, chainState.progress!.objectId, chainState.challenge06Instance!.objectId),
+      ),
+    claimChallenge07: () =>
+      executeAndRefresh("Claim Overflow Guard", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_07_overflow_guard", chainState.progress!.objectId),
+      ),
+    exploitChallenge07: () =>
+      executeAndRefresh("Exploit wrong guard", () =>
+        exploitChallenge07Transaction(packageId, chainState.challenge07Instance!.objectId),
+      ),
+    solveChallenge07: () =>
+      executeAndRefresh("Solve Overflow Guard", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_07_overflow_guard",
+          chainState.progress!.objectId,
+          chainState.challenge07Instance!.objectId,
+        ),
+      ),
+    claimChallenge08: () =>
+      executeAndRefresh("Claim Old Package Trap", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_08_old_package_trap", chainState.progress!.objectId),
+      ),
+    exploitChallenge08: () =>
+      executeAndRefresh("Use old package path", () =>
+        exploitChallenge08Transaction(packageId, chainState.challenge08Instance!.objectId),
+      ),
+    solveChallenge08: () =>
+      executeAndRefresh("Solve Old Package Trap", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_08_old_package_trap",
+          chainState.progress!.objectId,
+          chainState.challenge08Instance!.objectId,
+        ),
+      ),
+    claimChallenge09: () =>
+      executeAndRefresh("Claim PTB Combo", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_09_ptb_combo", chainState.progress!.objectId),
+      ),
+    exploitChallenge09: () =>
+      executeAndRefresh("Run PTB combo", () =>
+        exploitChallenge09Transaction(packageId, chainState.challenge09Instance!.objectId),
+      ),
+    solveChallenge09: () =>
+      executeAndRefresh("Solve PTB Combo", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_09_ptb_combo",
+          chainState.progress!.objectId,
+          chainState.challenge09Instance!.objectId,
+        ),
+      ),
+    claimChallenge10: () =>
+      executeAndRefresh("Claim Mini AMM Incident", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_10_mini_amm_incident", chainState.progress!.objectId),
+      ),
+    exploitChallenge10: () =>
+      executeAndRefresh("Break AMM invariant", () =>
+        exploitChallenge10Transaction(packageId, chainState.challenge10Instance!.objectId),
+      ),
+    solveChallenge10: () =>
+      executeAndRefresh("Solve Mini AMM Incident", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_10_mini_amm_incident",
+          chainState.progress!.objectId,
+          chainState.challenge10Instance!.objectId,
+        ),
       ),
   };
 }

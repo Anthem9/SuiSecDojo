@@ -35,6 +35,10 @@ export function App() {
   const isChallenge04Selected = selectedChallenge.id === "4";
   const isChallenge05Selected = selectedChallenge.id === "5";
   const isChallenge06Selected = selectedChallenge.id === "6";
+  const isChallenge07Selected = selectedChallenge.id === "7";
+  const isChallenge08Selected = selectedChallenge.id === "8";
+  const isChallenge09Selected = selectedChallenge.id === "9";
+  const isChallenge10Selected = selectedChallenge.id === "10";
   const profile = summarizeProfile({
     accountAddress: account?.address,
     network: SUI_NETWORK,
@@ -121,7 +125,15 @@ export function App() {
           lastDigest={challengeActions.lastDigest}
           objectError={ownedObjectsQuery.error ?? challenge02VaultQuery.error}
           onExploitChallenge={
-            isChallenge06Selected
+            isChallenge10Selected
+              ? challengeActions.exploitChallenge10
+              : isChallenge09Selected
+                ? challengeActions.exploitChallenge09
+                : isChallenge08Selected
+                  ? challengeActions.exploitChallenge08
+                  : isChallenge07Selected
+                    ? challengeActions.exploitChallenge07
+                    : isChallenge06Selected
               ? challengeActions.exploitChallenge06
               : isChallenge05Selected
               ? challengeActions.exploitChallenge05
@@ -132,7 +144,15 @@ export function App() {
                 : challengeActions.withdrawChallenge02
           }
           onClaimInstance={
-            isChallenge06Selected
+            isChallenge10Selected
+              ? challengeActions.claimChallenge10
+              : isChallenge09Selected
+                ? challengeActions.claimChallenge09
+                : isChallenge08Selected
+                  ? challengeActions.claimChallenge08
+                  : isChallenge07Selected
+                    ? challengeActions.claimChallenge07
+                    : isChallenge06Selected
               ? challengeActions.claimChallenge06
               : isChallenge05Selected
               ? challengeActions.claimChallenge05
@@ -146,7 +166,15 @@ export function App() {
           }
           onCreateProgress={challengeActions.createProgress}
           onSolveChallenge={
-            isChallenge06Selected
+            isChallenge10Selected
+              ? challengeActions.solveChallenge10
+              : isChallenge09Selected
+                ? challengeActions.solveChallenge09
+                : isChallenge08Selected
+                  ? challengeActions.solveChallenge08
+                  : isChallenge07Selected
+                    ? challengeActions.solveChallenge07
+                    : isChallenge06Selected
               ? challengeActions.solveChallenge06
               : isChallenge05Selected
               ? challengeActions.solveChallenge05

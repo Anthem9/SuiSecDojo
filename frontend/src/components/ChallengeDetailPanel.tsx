@@ -41,6 +41,10 @@ export function ChallengeDetailPanel({
   const isChallenge04 = challenge.id === "4";
   const isChallenge05 = challenge.id === "5";
   const isChallenge06 = challenge.id === "6";
+  const isChallenge07 = challenge.id === "7";
+  const isChallenge08 = challenge.id === "8";
+  const isChallenge09 = challenge.id === "9";
+  const isChallenge10 = challenge.id === "10";
   const selectedInstance = isChallenge02
     ? chainState.challenge02Instance
     : isChallenge03
@@ -51,6 +55,14 @@ export function ChallengeDetailPanel({
           ? chainState.challenge05Instance
           : isChallenge06
             ? chainState.challenge06Instance
+            : isChallenge07
+              ? chainState.challenge07Instance
+              : isChallenge08
+                ? chainState.challenge08Instance
+                : isChallenge09
+                  ? chainState.challenge09Instance
+                  : isChallenge10
+                    ? chainState.challenge10Instance
           : chainState.challenge01Instance;
   const isSolved =
     selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
@@ -73,7 +85,16 @@ export function ChallengeDetailPanel({
         <div>
           <dt>Challenge Instance</dt>
           <dd>
-            {isChallenge01 || isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05 || isChallenge06
+            {isChallenge01 ||
+            isChallenge02 ||
+            isChallenge03 ||
+            isChallenge04 ||
+            isChallenge05 ||
+            isChallenge06 ||
+            isChallenge07 ||
+            isChallenge08 ||
+            isChallenge09 ||
+            isChallenge10
               ? selectedInstance?.objectId ?? "not claimed"
               : "not enabled yet"}
           </dd>
@@ -129,6 +150,46 @@ export function ChallengeDetailPanel({
             </div>
           </>
         ) : null}
+        {isChallenge07 ? (
+          <div>
+            <dt>Guarded Value</dt>
+            <dd>{chainState.challenge07Instance?.guardedValue ?? "0"}</dd>
+          </div>
+        ) : null}
+        {isChallenge08 ? (
+          <div>
+            <dt>Legacy Flag</dt>
+            <dd>{chainState.challenge08Instance?.legacyFlag === true ? "true" : "false"}</dd>
+          </div>
+        ) : null}
+        {isChallenge09 ? (
+          <div>
+            <dt>Combo Ready</dt>
+            <dd>{chainState.challenge09Instance?.comboReady === true ? "true" : "false"}</dd>
+          </div>
+        ) : null}
+        {isChallenge10 ? (
+          <>
+            <div>
+              <dt>Reserves</dt>
+              <dd>
+                {chainState.challenge10Instance
+                  ? `${chainState.challenge10Instance.reserveX} / ${chainState.challenge10Instance.reserveY}`
+                  : "not claimed"}
+              </dd>
+            </div>
+            <div>
+              <dt>Profit / Invariant</dt>
+              <dd>
+                {chainState.challenge10Instance
+                  ? `${chainState.challenge10Instance.attackerProfit} / ${
+                      chainState.challenge10Instance.invariantBroken ? "broken" : "intact"
+                    }`
+                  : "not claimed"}
+              </dd>
+            </div>
+          </>
+        ) : null}
         {isChallenge03 ? (
           <>
             <div>
@@ -165,9 +226,25 @@ export function ChallengeDetailPanel({
         <button type="button" disabled={!actionState.canClaim} title={actionState.claimReason} onClick={onClaimInstance}>
           Claim Instance
         </button>
-        {isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05 || isChallenge06 ? (
+        {isChallenge02 ||
+        isChallenge03 ||
+        isChallenge04 ||
+        isChallenge05 ||
+        isChallenge06 ||
+        isChallenge07 ||
+        isChallenge08 ||
+        isChallenge09 ||
+        isChallenge10 ? (
           <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
-            {isChallenge06
+            {isChallenge10
+              ? "Break AMM"
+              : isChallenge09
+                ? "Run PTB Combo"
+                : isChallenge08
+                  ? "Use Old Path"
+                  : isChallenge07
+                    ? "Bypass Guard"
+                    : isChallenge06
               ? "Exploit Rounding"
               : isChallenge05
                 ? "Create Bad Init Cap"

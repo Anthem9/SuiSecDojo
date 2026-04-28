@@ -41,6 +41,10 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const isChallenge04Selected = input.selectedChallengeId === "4";
   const isChallenge05Selected = input.selectedChallengeId === "5";
   const isChallenge06Selected = input.selectedChallengeId === "6";
+  const isChallenge07Selected = input.selectedChallengeId === "7";
+  const isChallenge08Selected = input.selectedChallengeId === "8";
+  const isChallenge09Selected = input.selectedChallengeId === "9";
+  const isChallenge10Selected = input.selectedChallengeId === "10";
   const selectedInstance = isChallenge02Selected
     ? input.chainState.challenge02Instance
     : isChallenge03Selected
@@ -51,7 +55,15 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           ? input.chainState.challenge05Instance
           : isChallenge06Selected
             ? input.chainState.challenge06Instance
-          : input.chainState.challenge01Instance;
+            : isChallenge07Selected
+              ? input.chainState.challenge07Instance
+              : isChallenge08Selected
+                ? input.chainState.challenge08Instance
+                : isChallenge09Selected
+                  ? input.chainState.challenge09Instance
+                  : isChallenge10Selected
+                    ? input.chainState.challenge10Instance
+                    : input.chainState.challenge01Instance;
   const hasInstance = Boolean(selectedInstance);
   const hasVault = Boolean(input.chainState.challenge02Vault);
   const isChallenge02Drained = input.chainState.challenge02Vault?.balance === "0";
@@ -62,6 +74,10 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const hasChallenge05Cap = Boolean(input.chainState.challenge05AdminCap);
   const challenge06Credits = Number(input.chainState.challenge06Instance?.credits ?? "0");
   const isChallenge06Ready = challenge06Credits >= 10;
+  const isChallenge07Ready = Number(input.chainState.challenge07Instance?.guardedValue ?? "0") >= 1_000;
+  const isChallenge08Ready = input.chainState.challenge08Instance?.legacyFlag === true;
+  const isChallenge09Ready = input.chainState.challenge09Instance?.comboReady === true;
+  const isChallenge10Ready = input.chainState.challenge10Instance?.invariantBroken === true;
   const isSolved =
     selectedInstance?.solved === true || input.chainState.progress?.completedChallengeIds.includes(input.selectedChallengeId) === true;
   const actionBusy = input.actionBusy === true;
@@ -77,7 +93,11 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       (isChallenge03Selected && isChallenge03FlagSet) ||
       (isChallenge04Selected && isChallenge04AdminFlagSet) ||
       (isChallenge05Selected && isChallenge05Initialized) ||
-      (isChallenge06Selected && isChallenge06Ready),
+      (isChallenge06Selected && isChallenge06Ready) ||
+      (isChallenge07Selected && isChallenge07Ready) ||
+      (isChallenge08Selected && isChallenge08Ready) ||
+      (isChallenge09Selected && isChallenge09Ready) ||
+      (isChallenge10Selected && isChallenge10Ready),
   });
   const supportsOnChain =
     isChallenge01Selected ||
@@ -85,7 +105,11 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
     isChallenge03Selected ||
     isChallenge04Selected ||
     isChallenge05Selected ||
-    isChallenge06Selected;
+    isChallenge06Selected ||
+    isChallenge07Selected ||
+    isChallenge08Selected ||
+    isChallenge09Selected ||
+    isChallenge10Selected;
 
   return {
     runtimeState,
@@ -106,7 +130,11 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
         (isChallenge03Selected && !isChallenge03FlagSet) ||
         (isChallenge04Selected && !hasChallenge04Cap) ||
         (isChallenge05Selected && !hasChallenge05Cap) ||
-        (isChallenge06Selected && !isChallenge06Ready)) &&
+        (isChallenge06Selected && !isChallenge06Ready) ||
+        (isChallenge07Selected && !isChallenge07Ready) ||
+        (isChallenge08Selected && !isChallenge08Ready) ||
+        (isChallenge09Selected && !isChallenge09Ready) ||
+        (isChallenge10Selected && !isChallenge10Ready)) &&
       !isSolved &&
       !actionBusy,
     exploitReason: actionBusy
@@ -128,6 +156,14 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           hasChallenge05Cap,
           isChallenge06Selected,
           isChallenge06Ready,
+          isChallenge07Selected,
+          isChallenge07Ready,
+          isChallenge08Selected,
+          isChallenge08Ready,
+          isChallenge09Selected,
+          isChallenge09Ready,
+          isChallenge10Selected,
+          isChallenge10Ready,
           isSolved,
         ),
     canUseCapability:
@@ -166,7 +202,11 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
         isChallenge03FlagSet ||
         isChallenge04AdminFlagSet ||
         isChallenge05Initialized ||
-        isChallenge06Ready) &&
+        isChallenge06Ready ||
+        isChallenge07Ready ||
+        isChallenge08Ready ||
+        isChallenge09Ready ||
+        isChallenge10Ready) &&
       !actionBusy,
     solveReason: actionBusy
       ? "Transaction or chain refresh pending."
@@ -191,6 +231,14 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge05Initialized,
           isChallenge06Selected,
           isChallenge06Ready,
+          isChallenge07Selected,
+          isChallenge07Ready,
+          isChallenge08Selected,
+          isChallenge08Ready,
+          isChallenge09Selected,
+          isChallenge09Ready,
+          isChallenge10Selected,
+          isChallenge10Ready,
         ),
   };
 }
@@ -279,11 +327,29 @@ function reasonForExploit(
   hasChallenge05Cap: boolean,
   isChallenge06Selected: boolean,
   isChallenge06Ready: boolean,
+  isChallenge07Selected: boolean,
+  isChallenge07Ready: boolean,
+  isChallenge08Selected: boolean,
+  isChallenge08Ready: boolean,
+  isChallenge09Selected: boolean,
+  isChallenge09Ready: boolean,
+  isChallenge10Selected: boolean,
+  isChallenge10Ready: boolean,
   isSolved: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before exploiting.";
-  if (!isChallenge02Selected && !isChallenge03Selected && !isChallenge04Selected && !isChallenge05Selected && !isChallenge06Selected) {
+  if (
+    !isChallenge02Selected &&
+    !isChallenge03Selected &&
+    !isChallenge04Selected &&
+    !isChallenge05Selected &&
+    !isChallenge06Selected &&
+    !isChallenge07Selected &&
+    !isChallenge08Selected &&
+    !isChallenge09Selected &&
+    !isChallenge10Selected
+  ) {
     return `Exploit action is not enabled for Challenge ${formatChallengeId(selectedChallengeId)}.`;
   }
   if (!hasProgress) return "Create a progress object first.";
@@ -299,6 +365,14 @@ function reasonForExploit(
   if (isChallenge05Selected) return "Ready to create the bad init admin capability.";
   if (isChallenge06Selected && isChallenge06Ready) return "Rounding credits reached; solve the challenge.";
   if (isChallenge06Selected) return "Ready to exploit repeated tiny rounded buys.";
+  if (isChallenge07Selected && isChallenge07Ready) return "Guarded value is high enough; solve the challenge.";
+  if (isChallenge07Selected) return "Ready to bypass the wrong guard.";
+  if (isChallenge08Selected && isChallenge08Ready) return "Legacy flag set; solve the challenge.";
+  if (isChallenge08Selected) return "Ready to use the old vulnerable path.";
+  if (isChallenge09Selected && isChallenge09Ready) return "PTB combo completed; solve the challenge.";
+  if (isChallenge09Selected) return "Ready to run the PTB combo.";
+  if (isChallenge10Selected && isChallenge10Ready) return "AMM invariant is broken; solve the challenge.";
+  if (isChallenge10Selected) return "Ready to break the AMM invariant.";
   return "Ready to exploit the missing withdraw authorization.";
 }
 
@@ -323,6 +397,14 @@ function reasonForSolve(
   isChallenge05Initialized: boolean,
   isChallenge06Selected: boolean,
   isChallenge06Ready: boolean,
+  isChallenge07Selected: boolean,
+  isChallenge07Ready: boolean,
+  isChallenge08Selected: boolean,
+  isChallenge08Ready: boolean,
+  isChallenge09Selected: boolean,
+  isChallenge09Ready: boolean,
+  isChallenge10Selected: boolean,
+  isChallenge10Ready: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before solving.";
@@ -343,6 +425,14 @@ function reasonForSolve(
   if (isChallenge05Selected) return "Ready to solve Bad Init.";
   if (isChallenge06Selected && !isChallenge06Ready) return "Exploit rounding until credits reach 10.";
   if (isChallenge06Selected) return "Ready to solve Price Rounding.";
+  if (isChallenge07Selected && !isChallenge07Ready) return "Set guarded value to the exploit threshold first.";
+  if (isChallenge07Selected) return "Ready to solve Overflow Guard.";
+  if (isChallenge08Selected && !isChallenge08Ready) return "Use the old vulnerable path first.";
+  if (isChallenge08Selected) return "Ready to solve Old Package Trap.";
+  if (isChallenge09Selected && !isChallenge09Ready) return "Run the PTB combo first.";
+  if (isChallenge09Selected) return "Ready to solve PTB Combo.";
+  if (isChallenge10Selected && !isChallenge10Ready) return "Break the AMM invariant first.";
+  if (isChallenge10Selected) return "Ready to solve Mini AMM Incident.";
   return "Ready to run vulnerable mint and solve.";
 }
 

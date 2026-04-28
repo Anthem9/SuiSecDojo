@@ -191,3 +191,62 @@ export function solveChallenge06Transaction(packageId: string, progressId: strin
   });
   return tx;
 }
+
+export function claimSimpleChallengeTransaction(packageId: string, moduleName: string, progressId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::${moduleName}::claim`,
+    arguments: [tx.object(progressId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge07Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_07_overflow_guard::vulnerable_set_value`,
+    arguments: [tx.object(instanceId), tx.pure.u64(1_000)],
+  });
+  return tx;
+}
+
+export function exploitChallenge08Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_08_old_package_trap::old_vulnerable_path`,
+    arguments: [tx.object(instanceId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge09Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  const instance = tx.object(instanceId);
+  tx.moveCall({
+    target: `${packageId}::challenge_09_ptb_combo::prepare_combo`,
+    arguments: [instance],
+  });
+  tx.moveCall({
+    target: `${packageId}::challenge_09_ptb_combo::finish_combo`,
+    arguments: [instance],
+  });
+  return tx;
+}
+
+export function exploitChallenge10Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_10_mini_amm_incident::vulnerable_swap`,
+    arguments: [tx.object(instanceId), tx.pure.u64(100)],
+  });
+  return tx;
+}
+
+export function solveSimpleChallengeTransaction(packageId: string, moduleName: string, progressId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::${moduleName}::solve`,
+    arguments: [tx.object(instanceId), tx.object(progressId)],
+  });
+  return tx;
+}

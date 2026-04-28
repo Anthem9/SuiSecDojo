@@ -1,27 +1,60 @@
 {
   "network": "testnet",
   "deployer": "0xda68b5b7583cf1515ad207e1ce1b5d5a630a9c5832023cf2381936743b3dd0a7",
-  "packageId": "0x1787b2cde6ded65f6810132c3fdfe6e334de617c7eb788dbee1bd94c2112c306",
-  "upgradeCapId": "0xf9bd8d422581ab289efa51476728d7cbf32c29fe3158fb3e04b2b8530ac6ba0c",
-  "publishDigest": "5uYJD3hW9ram77ksmJRyzao9faQVb94UTbUgMcFFhkNp",
-  "challengeRegistryId": "0x6afb42dc4da1931194536245f2fa5d80991e9635e48b51fd6f6c01e779101451",
-  "registryInitDigest": "BdYEbqgE9pGkvfBrBjYeCcxaabHk3VMmW6BZfhXR5M4u",
+  "packageId": "0x9b2478a6cac5d960d11a3f38a829f6312d784712314bd3107b5fc20794111eee",
+  "upgradeCapId": "0x41a67930fa41d482939abfe301f7f4a16d404a15ebeddd54191945b0363e0660",
+  "publishDigest": "DTN8D7ihjF64pSPwoKmTMY4Lby6z2nRqzwYiQ4CUqYXB",
+  "challengeRegistryId": "0x515d1e3d0fd76c7d0499f45e2d382fac7148423e529bc8d388d902cf03bd6e2b",
+  "registryInitDigest": "Wh5kYqoAtRBC89Pt6BzrCqxQP1dp9kEcZeCwLTYcmqX",
   "registryChallengeDigests": {
-    "1": "BENEt738m8JiE5kxtPZjQeuZm9L5NwEirFCL4bYdHjDw",
-    "2": "FL8KpnqXMYNZ6maKnGqCMtiVJKb8kVLHPgL1h1b89r4K",
-    "3": "2BWARJE7rdPexFpwLmYmbKNC2PCENmTY2s6gcJupzAtf",
-    "4": "53mKHjbkxpf4ZKroXo91u4w9gZxtPM1FE939DPRocCJT",
-    "5": "EnPTsDHi1EuoTeRu4GsFoWuGd8HtNSjLtUpeLJQmvM6Y",
-    "6": "ZGLAqXifdh8oZwyVmShgDxTRZ51dGfyhUq5B2gYcvwH"
+    "1": "YyiRV5rWU9uNM7YmEHZwbw7hB5irgWHixAmrg6GUeQK",
+    "2": "7SaLkBVyB97RaYrq7VL2Wyq56rCFLikRGJsEFUEz8nKD",
+    "3": "4TZpKSw88HM8d8r117sQ3DxMnmSZTrb6e7QjAtFM96XE",
+    "4": "2juR9jR3r3eH9jBcfDzTwsi9pboKybr7ZR93MSAvjzyu",
+    "5": "EWR62JG1ey5CPGwLu1H1qupHcm7faQKDFZcJvJSLHMjX",
+    "6": "FQswXFSmNi17vwjPdfL8LeAUzvHKAQKGm3CXz81TxKVf",
+    "7": "7f3KPG8NrjFJJfVhwcFYoT1K5j8jSEzvFCfnBS95YJtK",
+    "8": "953oifC4UVevvd4iL7nswKTqaJ7UCcBUSG9teu1YX2nT",
+    "9": "EkGQqZNvux1pYy6bEVHYDsdvkgpQ7faTPjU3kGERhvoM",
+    "10": "AM2VUauSTy8TKQa5pGkpo4QGVP1b7fBJ4hnnKygJTQRm"
   },
   "cliSmoke": {
-    "challenge06ProgressObjectId": "0x979665a62e415ee25d689753ab0933cd3daba5bea87e917f2f94d8137aa7550f",
-    "challenge06InstanceId": "0xcd04b8a36f790a064ae1475bb64011674e2b49ee438ed58857f0c41aa734c586",
-    "createProgressDigest": "724D4SwUV1WY3PPDGWQkKRzWxPpyGgXuzQbbGVtWfFwc",
-    "claimChallenge06Digest": "J4o4SeWL11pT45wwvoYDHEZGSVX9DmqDNvS1F3G7X6co",
-    "solveChallenge06Digest": "8MQAWTaL6QRtjXY4aWAG6neW6eLidpD4TBySDWftSjwP"
+    "challenge07ProgressObjectId": "0xea33ebef2cd34b38f12f034731b50143da0e3df7ea3fecfe8e6084275a17eb04",
+    "challenge07InstanceId": "0x49a985c7ef8b5a2c87fdbb64aad3ee3ebcb54562a0b90303e17d74f9aeecec2b",
+    "solveChallenge07Digest": "E3WBS7e3mMTDzy8Z7JzjqDrmfGFzhyy1GX5wVBiPJHSn",
+    "challenge08ProgressObjectId": "0xfd4003f965b340cba4d23c95658757dd9b0f42a53735c060d2f45f504574d0df",
+    "challenge08InstanceId": "0x8d2bd041d745699e78156cf5caff368fff1d8404b358704491c3af5cc8551be0",
+    "solveChallenge08Digest": "3i6bdQ7CiBqT7mATGTsA3et98iuDBxf7qVrXg2jmP192",
+    "challenge09ProgressObjectId": "0x479925f68de605a95d53c6e99e34d46bfc5c00bc2d82d48c17386bc2c596416c",
+    "challenge09InstanceId": "0x7fa38003d4721b6bc8d2b6a26c30b084558ce8a510d03378b3c8dc5c81d41693",
+    "solveChallenge09Digest": "G8dQbe5LnS1KX6bUBwVGLStTmMh23ghxQqWw7JcjgZMM",
+    "challenge10ProgressObjectId": "0x898bc1e7efbf556664da4408f07fa33f6370ccfb349facb15ab8b9cda6b57c47",
+    "challenge10InstanceId": "0xbdbf928fe314f6821c4e589da3fc91479157076b87f5db3baf808cd24c831209",
+    "solveChallenge10Digest": "9Qi79Vm57PVdN8TtwR7MJZNceB3C6Nt5zr9i3TECfnqA"
   },
   "previousPackages": [
+    {
+      "packageId": "0x1787b2cde6ded65f6810132c3fdfe6e334de617c7eb788dbee1bd94c2112c306",
+      "upgradeCapId": "0xf9bd8d422581ab289efa51476728d7cbf32c29fe3158fb3e04b2b8530ac6ba0c",
+      "publishDigest": "5uYJD3hW9ram77ksmJRyzao9faQVb94UTbUgMcFFhkNp",
+      "challengeRegistryId": "0x6afb42dc4da1931194536245f2fa5d80991e9635e48b51fd6f6c01e779101451",
+      "registryInitDigest": "BdYEbqgE9pGkvfBrBjYeCcxaabHk3VMmW6BZfhXR5M4u",
+      "registryChallengeDigests": {
+        "1": "BENEt738m8JiE5kxtPZjQeuZm9L5NwEirFCL4bYdHjDw",
+        "2": "FL8KpnqXMYNZ6maKnGqCMtiVJKb8kVLHPgL1h1b89r4K",
+        "3": "2BWARJE7rdPexFpwLmYmbKNC2PCENmTY2s6gcJupzAtf",
+        "4": "53mKHjbkxpf4ZKroXo91u4w9gZxtPM1FE939DPRocCJT",
+        "5": "EnPTsDHi1EuoTeRu4GsFoWuGd8HtNSjLtUpeLJQmvM6Y",
+        "6": "ZGLAqXifdh8oZwyVmShgDxTRZ51dGfyhUq5B2gYcvwH"
+      },
+      "cliSmoke": {
+        "challenge06ProgressObjectId": "0x979665a62e415ee25d689753ab0933cd3daba5bea87e917f2f94d8137aa7550f",
+        "challenge06InstanceId": "0xcd04b8a36f790a064ae1475bb64011674e2b49ee438ed58857f0c41aa734c586",
+        "createProgressDigest": "724D4SwUV1WY3PPDGWQkKRzWxPpyGgXuzQbbGVtWfFwc",
+        "claimChallenge06Digest": "J4o4SeWL11pT45wwvoYDHEZGSVX9DmqDNvS1F3G7X6co",
+        "solveChallenge06Digest": "8MQAWTaL6QRtjXY4aWAG6neW6eLidpD4TBySDWftSjwP"
+      }
+    },
     {
       "packageId": "0x6f582b14ffa3c69e6c478311b4f89865392c001af7ceeadc70d81bf1b3988b0b",
       "upgradeCapId": "0xa35d75c01c41167711a148f85d5ada484a2afbd59b14377202b2919d41802c4b",
