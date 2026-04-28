@@ -18,6 +18,7 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
           { StructType: `${packageId}::challenge_04_leaky_capability::AdminCap` },
           { StructType: `${packageId}::challenge_05_bad_init::ChallengeInstance` },
           { StructType: `${packageId}::challenge_05_bad_init::AdminCap` },
+          { StructType: `${packageId}::challenge_06_price_rounding::ChallengeInstance` },
           { StructType: `${packageId}::badge::Badge` },
         ],
       },

@@ -40,6 +40,7 @@ export function ChallengeDetailPanel({
   const isChallenge03 = challenge.id === "3";
   const isChallenge04 = challenge.id === "4";
   const isChallenge05 = challenge.id === "5";
+  const isChallenge06 = challenge.id === "6";
   const selectedInstance = isChallenge02
     ? chainState.challenge02Instance
     : isChallenge03
@@ -48,6 +49,8 @@ export function ChallengeDetailPanel({
         ? chainState.challenge04Instance
         : isChallenge05
           ? chainState.challenge05Instance
+          : isChallenge06
+            ? chainState.challenge06Instance
           : chainState.challenge01Instance;
   const isSolved =
     selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
@@ -70,7 +73,7 @@ export function ChallengeDetailPanel({
         <div>
           <dt>Challenge Instance</dt>
           <dd>
-            {isChallenge01 || isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05
+            {isChallenge01 || isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05 || isChallenge06
               ? selectedInstance?.objectId ?? "not claimed"
               : "not enabled yet"}
           </dd>
@@ -114,6 +117,18 @@ export function ChallengeDetailPanel({
             </div>
           </>
         ) : null}
+        {isChallenge06 ? (
+          <>
+            <div>
+              <dt>Paid Amount</dt>
+              <dd>{chainState.challenge06Instance?.paidAmount ?? "0"}</dd>
+            </div>
+            <div>
+              <dt>Credits</dt>
+              <dd>{chainState.challenge06Instance?.credits ?? "0"}</dd>
+            </div>
+          </>
+        ) : null}
         {isChallenge03 ? (
           <>
             <div>
@@ -150,9 +165,17 @@ export function ChallengeDetailPanel({
         <button type="button" disabled={!actionState.canClaim} title={actionState.claimReason} onClick={onClaimInstance}>
           Claim Instance
         </button>
-        {isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05 ? (
+        {isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05 || isChallenge06 ? (
           <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
-            {isChallenge05 ? "Create Bad Init Cap" : isChallenge04 ? "Claim Leaked Cap" : isChallenge03 ? "Exploit Fake Owner" : "Exploit Withdraw"}
+            {isChallenge06
+              ? "Exploit Rounding"
+              : isChallenge05
+                ? "Create Bad Init Cap"
+                : isChallenge04
+                  ? "Claim Leaked Cap"
+                  : isChallenge03
+                    ? "Exploit Fake Owner"
+                    : "Exploit Withdraw"}
           </button>
         ) : null}
         {isChallenge04 || isChallenge05 ? (

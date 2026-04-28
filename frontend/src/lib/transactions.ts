@@ -159,3 +159,35 @@ export function solveChallenge05Transaction(packageId: string, progressId: strin
   });
   return tx;
 }
+
+export function claimChallenge06Transaction(packageId: string, progressId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_06_price_rounding::claim`,
+    arguments: [tx.object(progressId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge06Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  const instance = tx.object(instanceId);
+
+  for (let i = 0; i < 10; i += 1) {
+    tx.moveCall({
+      target: `${packageId}::challenge_06_price_rounding::vulnerable_buy`,
+      arguments: [instance, tx.pure.u64(1)],
+    });
+  }
+
+  return tx;
+}
+
+export function solveChallenge06Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_06_price_rounding::solve`,
+    arguments: [tx.object(instanceId), tx.object(progressId)],
+  });
+  return tx;
+}

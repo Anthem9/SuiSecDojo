@@ -40,6 +40,7 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const isChallenge03Selected = input.selectedChallengeId === "3";
   const isChallenge04Selected = input.selectedChallengeId === "4";
   const isChallenge05Selected = input.selectedChallengeId === "5";
+  const isChallenge06Selected = input.selectedChallengeId === "6";
   const selectedInstance = isChallenge02Selected
     ? input.chainState.challenge02Instance
     : isChallenge03Selected
@@ -48,6 +49,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
         ? input.chainState.challenge04Instance
         : isChallenge05Selected
           ? input.chainState.challenge05Instance
+          : isChallenge06Selected
+            ? input.chainState.challenge06Instance
           : input.chainState.challenge01Instance;
   const hasInstance = Boolean(selectedInstance);
   const hasVault = Boolean(input.chainState.challenge02Vault);
@@ -57,6 +60,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const hasChallenge04Cap = Boolean(input.chainState.challenge04AdminCap);
   const isChallenge05Initialized = input.chainState.challenge05Instance?.initialized === true;
   const hasChallenge05Cap = Boolean(input.chainState.challenge05AdminCap);
+  const challenge06Credits = Number(input.chainState.challenge06Instance?.credits ?? "0");
+  const isChallenge06Ready = challenge06Credits >= 10;
   const isSolved =
     selectedInstance?.solved === true || input.chainState.progress?.completedChallengeIds.includes(input.selectedChallengeId) === true;
   const actionBusy = input.actionBusy === true;
@@ -71,10 +76,16 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       (isChallenge02Selected && hasVault && isChallenge02Drained) ||
       (isChallenge03Selected && isChallenge03FlagSet) ||
       (isChallenge04Selected && isChallenge04AdminFlagSet) ||
-      (isChallenge05Selected && isChallenge05Initialized),
+      (isChallenge05Selected && isChallenge05Initialized) ||
+      (isChallenge06Selected && isChallenge06Ready),
   });
   const supportsOnChain =
-    isChallenge01Selected || isChallenge02Selected || isChallenge03Selected || isChallenge04Selected || isChallenge05Selected;
+    isChallenge01Selected ||
+    isChallenge02Selected ||
+    isChallenge03Selected ||
+    isChallenge04Selected ||
+    isChallenge05Selected ||
+    isChallenge06Selected;
 
   return {
     runtimeState,
@@ -94,7 +105,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       ((isChallenge02Selected && hasVault && !isChallenge02Drained) ||
         (isChallenge03Selected && !isChallenge03FlagSet) ||
         (isChallenge04Selected && !hasChallenge04Cap) ||
-        (isChallenge05Selected && !hasChallenge05Cap)) &&
+        (isChallenge05Selected && !hasChallenge05Cap) ||
+        (isChallenge06Selected && !isChallenge06Ready)) &&
       !isSolved &&
       !actionBusy,
     exploitReason: actionBusy
@@ -114,6 +126,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           hasChallenge04Cap,
           isChallenge05Selected,
           hasChallenge05Cap,
+          isChallenge06Selected,
+          isChallenge06Ready,
           isSolved,
         ),
     canUseCapability:
@@ -147,7 +161,12 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       hasInstance &&
       !isSolved &&
       supportsOnChain &&
-      (isChallenge01Selected || isChallenge02Drained || isChallenge03FlagSet || isChallenge04AdminFlagSet || isChallenge05Initialized) &&
+      (isChallenge01Selected ||
+        isChallenge02Drained ||
+        isChallenge03FlagSet ||
+        isChallenge04AdminFlagSet ||
+        isChallenge05Initialized ||
+        isChallenge06Ready) &&
       !actionBusy,
     solveReason: actionBusy
       ? "Transaction or chain refresh pending."
@@ -170,6 +189,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge05Selected,
           hasChallenge05Cap,
           isChallenge05Initialized,
+          isChallenge06Selected,
+          isChallenge06Ready,
         ),
   };
 }
@@ -256,11 +277,13 @@ function reasonForExploit(
   hasChallenge04Cap: boolean,
   isChallenge05Selected: boolean,
   hasChallenge05Cap: boolean,
+  isChallenge06Selected: boolean,
+  isChallenge06Ready: boolean,
   isSolved: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before exploiting.";
-  if (!isChallenge02Selected && !isChallenge03Selected && !isChallenge04Selected && !isChallenge05Selected) {
+  if (!isChallenge02Selected && !isChallenge03Selected && !isChallenge04Selected && !isChallenge05Selected && !isChallenge06Selected) {
     return `Exploit action is not enabled for Challenge ${formatChallengeId(selectedChallengeId)}.`;
   }
   if (!hasProgress) return "Create a progress object first.";
@@ -274,6 +297,8 @@ function reasonForExploit(
   if (isChallenge04Selected) return "Ready to claim the leaked admin capability.";
   if (isChallenge05Selected && hasChallenge05Cap) return "Bad init admin capability already created; initialize state.";
   if (isChallenge05Selected) return "Ready to create the bad init admin capability.";
+  if (isChallenge06Selected && isChallenge06Ready) return "Rounding credits reached; solve the challenge.";
+  if (isChallenge06Selected) return "Ready to exploit repeated tiny rounded buys.";
   return "Ready to exploit the missing withdraw authorization.";
 }
 
@@ -296,6 +321,8 @@ function reasonForSolve(
   isChallenge05Selected: boolean,
   hasChallenge05Cap: boolean,
   isChallenge05Initialized: boolean,
+  isChallenge06Selected: boolean,
+  isChallenge06Ready: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before solving.";
@@ -314,6 +341,8 @@ function reasonForSolve(
   if (isChallenge05Selected && !hasChallenge05Cap) return "Create the bad init admin capability first.";
   if (isChallenge05Selected && !isChallenge05Initialized) return "Initialize protected state before solving.";
   if (isChallenge05Selected) return "Ready to solve Bad Init.";
+  if (isChallenge06Selected && !isChallenge06Ready) return "Exploit rounding until credits reach 10.";
+  if (isChallenge06Selected) return "Ready to solve Price Rounding.";
   return "Ready to run vulnerable mint and solve.";
 }
 

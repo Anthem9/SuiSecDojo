@@ -34,6 +34,7 @@ export function App() {
   const isChallenge03Selected = selectedChallenge.id === "3";
   const isChallenge04Selected = selectedChallenge.id === "4";
   const isChallenge05Selected = selectedChallenge.id === "5";
+  const isChallenge06Selected = selectedChallenge.id === "6";
   const profile = summarizeProfile({
     accountAddress: account?.address,
     network: SUI_NETWORK,
@@ -120,7 +121,9 @@ export function App() {
           lastDigest={challengeActions.lastDigest}
           objectError={ownedObjectsQuery.error ?? challenge02VaultQuery.error}
           onExploitChallenge={
-            isChallenge05Selected
+            isChallenge06Selected
+              ? challengeActions.exploitChallenge06
+              : isChallenge05Selected
               ? challengeActions.exploitChallenge05
               : isChallenge04Selected
               ? challengeActions.exploitChallenge04
@@ -129,7 +132,9 @@ export function App() {
                 : challengeActions.withdrawChallenge02
           }
           onClaimInstance={
-            isChallenge05Selected
+            isChallenge06Selected
+              ? challengeActions.claimChallenge06
+              : isChallenge05Selected
               ? challengeActions.claimChallenge05
               : isChallenge04Selected
               ? challengeActions.claimChallenge04
@@ -141,7 +146,9 @@ export function App() {
           }
           onCreateProgress={challengeActions.createProgress}
           onSolveChallenge={
-            isChallenge05Selected
+            isChallenge06Selected
+              ? challengeActions.solveChallenge06
+              : isChallenge05Selected
               ? challengeActions.solveChallenge05
               : isChallenge04Selected
               ? challengeActions.solveChallenge04

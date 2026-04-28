@@ -8,10 +8,12 @@ import {
   claimChallenge03Transaction,
   claimChallenge04Transaction,
   claimChallenge05Transaction,
+  claimChallenge06Transaction,
   createProgressTransaction,
   exploitChallenge03Transaction,
   exploitChallenge04Transaction,
   exploitChallenge05Transaction,
+  exploitChallenge06Transaction,
   setChallenge04AdminFlagTransaction,
   setChallenge05InitializedTransaction,
   solveChallenge01Transaction,
@@ -19,6 +21,7 @@ import {
   solveChallenge03Transaction,
   solveChallenge04Transaction,
   solveChallenge05Transaction,
+  solveChallenge06Transaction,
   withdrawChallenge02Transaction,
 } from "../lib/transactions";
 import { txStatusDigest, txStatusMessage, readableTxError } from "../lib/txStatus";
@@ -124,6 +127,16 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
     solveChallenge05: () =>
       executeAndRefresh("Solve Bad Init", () =>
         solveChallenge05Transaction(packageId, chainState.progress!.objectId, chainState.challenge05Instance!.objectId),
+      ),
+    claimChallenge06: () =>
+      executeAndRefresh("Claim Price Rounding", () => claimChallenge06Transaction(packageId, chainState.progress!.objectId)),
+    exploitChallenge06: () =>
+      executeAndRefresh("Exploit rounding", () =>
+        exploitChallenge06Transaction(packageId, chainState.challenge06Instance!.objectId),
+      ),
+    solveChallenge06: () =>
+      executeAndRefresh("Solve Price Rounding", () =>
+        solveChallenge06Transaction(packageId, chainState.progress!.objectId, chainState.challenge06Instance!.objectId),
       ),
   };
 }

@@ -10,8 +10,8 @@ describe("progress summary", () => {
     });
 
     expect(summary.completed).toBe(1);
-    expect(summary.total).toBe(5);
-    expect(summary.percent).toBe(20);
+    expect(summary.total).toBe(6);
+    expect(summary.percent).toBe(17);
     expect(summary.nextChallenge?.slug).toBe("shared-vault");
   });
 

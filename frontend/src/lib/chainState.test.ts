@@ -9,6 +9,7 @@ import {
   getChallenge04InstanceType,
   getChallenge05AdminCapType,
   getChallenge05InstanceType,
+  getChallenge06InstanceType,
   getBadgeType,
   getUserProgressType,
   hasPhase0Deployment,
@@ -70,6 +71,13 @@ describe("chain state adapter", () => {
         instance_id: "0xinstance5",
         owner: "0xalice",
       }),
+      moveObject("0xinstance6", getChallenge06InstanceType(packageId), {
+        challenge_id: "6",
+        owner: "0xalice",
+        paid_amount: "10",
+        credits: "10",
+        solved: false,
+      }),
       moveObject("0xbadge", getBadgeType(packageId), {
         owner: "0xalice",
         badge_type: "1",
@@ -128,6 +136,14 @@ describe("chain state adapter", () => {
         objectId: "0xcap5",
         instanceId: "0xinstance5",
         owner: "0xalice",
+      },
+      challenge06Instance: {
+        objectId: "0xinstance6",
+        challengeId: "6",
+        owner: "0xalice",
+        paidAmount: "10",
+        credits: "10",
+        solved: false,
       },
       badges: [{ objectId: "0xbadge", owner: "0xalice", badgeType: "1", issuedAtEpoch: "12" }],
     });

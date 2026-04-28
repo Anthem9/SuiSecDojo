@@ -394,4 +394,65 @@ describe("challenge runtime state", () => {
     expect(state.canSolve).toBe(true);
     expect(state.solveReason).toBe("Ready to solve Bad Init.");
   });
+
+  it("should enable Challenge 06 exploit before enough credits are accumulated", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "6",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["6"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge06Instance: {
+          objectId: "0xinstance6",
+          challengeId: "6",
+          owner: "0xalice",
+          paidAmount: "0",
+          credits: "0",
+          solved: false,
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canExploit).toBe(true);
+    expect(state.exploitReason).toBe("Ready to exploit repeated tiny rounded buys.");
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Exploit rounding until credits reach 10.");
+  });
+
+  it("should enable Challenge 06 solve once credits reach the threshold", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "6",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["6"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge06Instance: {
+          objectId: "0xinstance6",
+          challengeId: "6",
+          owner: "0xalice",
+          paidAmount: "10",
+          credits: "10",
+          solved: false,
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canExploit).toBe(false);
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to solve Price Rounding.");
+  });
 });

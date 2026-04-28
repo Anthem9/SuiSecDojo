@@ -65,6 +65,15 @@ export type Challenge05AdminCapObject = {
   owner: string;
 };
 
+export type Challenge06InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  paidAmount: string;
+  credits: string;
+  solved: boolean;
+};
+
 export type BadgeObject = {
   objectId: string;
   owner: string;
@@ -82,6 +91,7 @@ export type ChainChallengeState = {
   challenge04AdminCap?: Challenge04AdminCapObject;
   challenge05Instance?: Challenge05InstanceObject;
   challenge05AdminCap?: Challenge05AdminCapObject;
+  challenge06Instance?: Challenge06InstanceObject;
   badges?: BadgeObject[];
 };
 
@@ -127,6 +137,10 @@ export function getChallenge05AdminCapType(packageId: string): string {
   return `${packageId}::challenge_05_bad_init::AdminCap`;
 }
 
+export function getChallenge06InstanceType(packageId: string): string {
+  return `${packageId}::challenge_06_price_rounding::ChallengeInstance`;
+}
+
 export function getBadgeType(packageId: string): string {
   return `${packageId}::badge::Badge`;
 }
@@ -140,6 +154,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
   const challenge04AdminCapType = getChallenge04AdminCapType(packageId);
   const challenge05Type = getChallenge05InstanceType(packageId);
   const challenge05AdminCapType = getChallenge05AdminCapType(packageId);
+  const challenge06Type = getChallenge06InstanceType(packageId);
   const badgeType = getBadgeType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
@@ -245,6 +260,20 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
           objectId: data.objectId,
           instanceId: String(content.fields.instance_id),
           owner: String(content.fields.owner),
+        },
+      };
+    }
+
+    if (content.type === challenge06Type && content.fields.challenge_id === "6") {
+      return {
+        ...state,
+        challenge06Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          paidAmount: String(content.fields.paid_amount),
+          credits: String(content.fields.credits),
+          solved: content.fields.solved === true,
         },
       };
     }

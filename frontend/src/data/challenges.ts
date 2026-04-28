@@ -56,4 +56,15 @@ export const challenges: ChallengeMetadata[] = [
     moduleName: "challenge_05_bad_init",
     sourceUrl: "content/challenges/05-bad-init/statement.md",
   },
+  {
+    id: "6",
+    title: "Price Rounding",
+    slug: "price-rounding",
+    difficulty: "medium",
+    category: "DeFi Math",
+    tags: ["rounding", "precision", "DeFi"],
+    description: "Exploit upward rounding on many tiny buys to accumulate more credits than the payment should allow.",
+    moduleName: "challenge_06_price_rounding",
+    sourceUrl: "content/challenges/06-price-rounding/statement.md",
+  },
 ];
