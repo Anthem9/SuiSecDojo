@@ -21,6 +21,7 @@ public struct ChallengeInstance has key, store {
 }
 
 const CHALLENGE_ID: u64 = 2;
+const BADGE_TYPE_SHARED_OBJECT: u64 = 2;
 const INITIAL_VAULT_BALANCE: u64 = 100;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
@@ -76,6 +77,9 @@ public(package) entry fun solve(
 
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
+    if (!user_progress::has_badge(progress, BADGE_TYPE_SHARED_OBJECT)) {
+        user_progress::record_badge(progress, BADGE_TYPE_SHARED_OBJECT, sender);
+    };
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 {

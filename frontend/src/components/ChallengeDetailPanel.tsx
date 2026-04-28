@@ -39,13 +39,16 @@ export function ChallengeDetailPanel({
   const isChallenge02 = challenge.id === "2";
   const isChallenge03 = challenge.id === "3";
   const isChallenge04 = challenge.id === "4";
+  const isChallenge05 = challenge.id === "5";
   const selectedInstance = isChallenge02
     ? chainState.challenge02Instance
     : isChallenge03
       ? chainState.challenge03Instance
       : isChallenge04
         ? chainState.challenge04Instance
-      : chainState.challenge01Instance;
+        : isChallenge05
+          ? chainState.challenge05Instance
+          : chainState.challenge01Instance;
   const isSolved =
     selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
 
@@ -67,7 +70,7 @@ export function ChallengeDetailPanel({
         <div>
           <dt>Challenge Instance</dt>
           <dd>
-            {isChallenge01 || isChallenge02 || isChallenge03 || isChallenge04
+            {isChallenge01 || isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05
               ? selectedInstance?.objectId ?? "not claimed"
               : "not enabled yet"}
           </dd>
@@ -93,6 +96,21 @@ export function ChallengeDetailPanel({
             <div>
               <dt>Admin Flag</dt>
               <dd>{chainState.challenge04Instance?.adminFlag === true ? "true" : "false"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge05 ? (
+          <>
+            <div>
+              <dt>Admin Cap</dt>
+              <dd>
+                {chainState.challenge05AdminCap?.objectId ??
+                  (chainState.challenge05Instance?.adminCapCreated ? "created by wallet" : "not created")}
+              </dd>
+            </div>
+            <div>
+              <dt>Initialized</dt>
+              <dd>{chainState.challenge05Instance?.initialized === true ? "true" : "false"}</dd>
             </div>
           </>
         ) : null}
@@ -132,14 +150,14 @@ export function ChallengeDetailPanel({
         <button type="button" disabled={!actionState.canClaim} title={actionState.claimReason} onClick={onClaimInstance}>
           Claim Instance
         </button>
-        {isChallenge02 || isChallenge03 || isChallenge04 ? (
+        {isChallenge02 || isChallenge03 || isChallenge04 || isChallenge05 ? (
           <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
-            {isChallenge04 ? "Claim Leaked Cap" : isChallenge03 ? "Exploit Fake Owner" : "Exploit Withdraw"}
+            {isChallenge05 ? "Create Bad Init Cap" : isChallenge04 ? "Claim Leaked Cap" : isChallenge03 ? "Exploit Fake Owner" : "Exploit Withdraw"}
           </button>
         ) : null}
-        {isChallenge04 ? (
+        {isChallenge04 || isChallenge05 ? (
           <button type="button" disabled={!actionState.canUseCapability} title={actionState.useCapabilityReason} onClick={onUseCapability}>
-            Use Admin Cap
+            {isChallenge05 ? "Initialize State" : "Use Admin Cap"}
           </button>
         ) : null}
         <button type="button" disabled={!actionState.canSolve} title={actionState.solveReason} onClick={onSolveChallenge}>

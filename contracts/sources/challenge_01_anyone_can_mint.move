@@ -15,6 +15,7 @@ public struct ChallengeInstance has key, store {
 }
 
 const CHALLENGE_ID: u64 = 1;
+const BADGE_TYPE_OBJECT_SECURITY: u64 = 1;
 const SOLVE_THRESHOLD: u64 = 1_000;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
@@ -66,6 +67,9 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
 
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
+    if (!user_progress::has_badge(progress, BADGE_TYPE_OBJECT_SECURITY)) {
+        user_progress::record_badge(progress, BADGE_TYPE_OBJECT_SECURITY, sender);
+    };
 }
 
 #[test_only]

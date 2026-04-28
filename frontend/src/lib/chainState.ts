@@ -50,6 +50,21 @@ export type Challenge04AdminCapObject = {
   owner: string;
 };
 
+export type Challenge05InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  adminCapCreated: boolean;
+  initialized: boolean;
+  solved: boolean;
+};
+
+export type Challenge05AdminCapObject = {
+  objectId: string;
+  instanceId: string;
+  owner: string;
+};
+
 export type BadgeObject = {
   objectId: string;
   owner: string;
@@ -65,6 +80,8 @@ export type ChainChallengeState = {
   challenge03Instance?: Challenge03InstanceObject;
   challenge04Instance?: Challenge04InstanceObject;
   challenge04AdminCap?: Challenge04AdminCapObject;
+  challenge05Instance?: Challenge05InstanceObject;
+  challenge05AdminCap?: Challenge05AdminCapObject;
   badges?: BadgeObject[];
 };
 
@@ -102,6 +119,14 @@ export function getChallenge04AdminCapType(packageId: string): string {
   return `${packageId}::challenge_04_leaky_capability::AdminCap`;
 }
 
+export function getChallenge05InstanceType(packageId: string): string {
+  return `${packageId}::challenge_05_bad_init::ChallengeInstance`;
+}
+
+export function getChallenge05AdminCapType(packageId: string): string {
+  return `${packageId}::challenge_05_bad_init::AdminCap`;
+}
+
 export function getBadgeType(packageId: string): string {
   return `${packageId}::badge::Badge`;
 }
@@ -113,6 +138,8 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
   const challenge03Type = getChallenge03InstanceType(packageId);
   const challenge04Type = getChallenge04InstanceType(packageId);
   const challenge04AdminCapType = getChallenge04AdminCapType(packageId);
+  const challenge05Type = getChallenge05InstanceType(packageId);
+  const challenge05AdminCapType = getChallenge05AdminCapType(packageId);
   const badgeType = getBadgeType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
@@ -190,6 +217,31 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       return {
         ...state,
         challenge04AdminCap: {
+          objectId: data.objectId,
+          instanceId: String(content.fields.instance_id),
+          owner: String(content.fields.owner),
+        },
+      };
+    }
+
+    if (content.type === challenge05Type && content.fields.challenge_id === "5") {
+      return {
+        ...state,
+        challenge05Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          adminCapCreated: content.fields.admin_cap_created === true,
+          initialized: content.fields.initialized === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge05AdminCapType) {
+      return {
+        ...state,
+        challenge05AdminCap: {
           objectId: data.objectId,
           instanceId: String(content.fields.instance_id),
           owner: String(content.fields.owner),

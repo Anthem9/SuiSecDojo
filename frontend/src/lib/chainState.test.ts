@@ -7,6 +7,8 @@ import {
   getChallenge03InstanceType,
   getChallenge04AdminCapType,
   getChallenge04InstanceType,
+  getChallenge05AdminCapType,
+  getChallenge05InstanceType,
   getBadgeType,
   getUserProgressType,
   hasPhase0Deployment,
@@ -57,6 +59,17 @@ describe("chain state adapter", () => {
         instance_id: "0xinstance4",
         owner: "0xalice",
       }),
+      moveObject("0xinstance5", getChallenge05InstanceType(packageId), {
+        challenge_id: "5",
+        owner: "0xalice",
+        admin_cap_created: true,
+        initialized: true,
+        solved: false,
+      }),
+      moveObject("0xcap5", getChallenge05AdminCapType(packageId), {
+        instance_id: "0xinstance5",
+        owner: "0xalice",
+      }),
       moveObject("0xbadge", getBadgeType(packageId), {
         owner: "0xalice",
         badge_type: "1",
@@ -101,6 +114,19 @@ describe("chain state adapter", () => {
       challenge04AdminCap: {
         objectId: "0xcap4",
         instanceId: "0xinstance4",
+        owner: "0xalice",
+      },
+      challenge05Instance: {
+        objectId: "0xinstance5",
+        challengeId: "5",
+        owner: "0xalice",
+        adminCapCreated: true,
+        initialized: true,
+        solved: false,
+      },
+      challenge05AdminCap: {
+        objectId: "0xcap5",
+        instanceId: "0xinstance5",
         owner: "0xalice",
       },
       badges: [{ objectId: "0xbadge", owner: "0xalice", badgeType: "1", issuedAtEpoch: "12" }],

@@ -123,3 +123,39 @@ export function solveChallenge04Transaction(packageId: string, progressId: strin
   });
   return tx;
 }
+
+export function claimChallenge05Transaction(packageId: string, progressId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_05_bad_init::claim`,
+    arguments: [tx.object(progressId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge05Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_05_bad_init::vulnerable_create_admin_cap`,
+    arguments: [tx.object(instanceId)],
+  });
+  return tx;
+}
+
+export function setChallenge05InitializedTransaction(packageId: string, instanceId: string, capId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_05_bad_init::admin_set_initialized`,
+    arguments: [tx.object(instanceId), tx.object(capId)],
+  });
+  return tx;
+}
+
+export function solveChallenge05Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_05_bad_init::solve`,
+    arguments: [tx.object(instanceId), tx.object(progressId)],
+  });
+  return tx;
+}

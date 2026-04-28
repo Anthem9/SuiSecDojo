@@ -7,14 +7,18 @@ import {
   claimChallenge02Transaction,
   claimChallenge03Transaction,
   claimChallenge04Transaction,
+  claimChallenge05Transaction,
   createProgressTransaction,
   exploitChallenge03Transaction,
   exploitChallenge04Transaction,
+  exploitChallenge05Transaction,
   setChallenge04AdminFlagTransaction,
+  setChallenge05InitializedTransaction,
   solveChallenge01Transaction,
   solveChallenge02Transaction,
   solveChallenge03Transaction,
   solveChallenge04Transaction,
+  solveChallenge05Transaction,
   withdrawChallenge02Transaction,
 } from "../lib/transactions";
 import { txStatusDigest, txStatusMessage, readableTxError } from "../lib/txStatus";
@@ -102,6 +106,24 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
     solveChallenge04: () =>
       executeAndRefresh("Solve Leaky Capability", () =>
         solveChallenge04Transaction(packageId, chainState.progress!.objectId, chainState.challenge04Instance!.objectId),
+      ),
+    claimChallenge05: () =>
+      executeAndRefresh("Claim Bad Init", () => claimChallenge05Transaction(packageId, chainState.progress!.objectId)),
+    exploitChallenge05: () =>
+      executeAndRefresh("Create bad init cap", () =>
+        exploitChallenge05Transaction(packageId, chainState.challenge05Instance!.objectId),
+      ),
+    setChallenge05Initialized: () =>
+      executeAndRefresh("Initialize protected state", () =>
+        setChallenge05InitializedTransaction(
+          packageId,
+          chainState.challenge05Instance!.objectId,
+          chainState.challenge05AdminCap!.objectId,
+        ),
+      ),
+    solveChallenge05: () =>
+      executeAndRefresh("Solve Bad Init", () =>
+        solveChallenge05Transaction(packageId, chainState.progress!.objectId, chainState.challenge05Instance!.objectId),
       ),
   };
 }

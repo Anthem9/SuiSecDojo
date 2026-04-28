@@ -33,6 +33,7 @@ export function App() {
   const isChallenge02Selected = selectedChallenge.id === "2";
   const isChallenge03Selected = selectedChallenge.id === "3";
   const isChallenge04Selected = selectedChallenge.id === "4";
+  const isChallenge05Selected = selectedChallenge.id === "5";
   const profile = summarizeProfile({
     accountAddress: account?.address,
     network: SUI_NETWORK,
@@ -119,14 +120,18 @@ export function App() {
           lastDigest={challengeActions.lastDigest}
           objectError={ownedObjectsQuery.error ?? challenge02VaultQuery.error}
           onExploitChallenge={
-            isChallenge04Selected
+            isChallenge05Selected
+              ? challengeActions.exploitChallenge05
+              : isChallenge04Selected
               ? challengeActions.exploitChallenge04
               : isChallenge03Selected
                 ? challengeActions.exploitChallenge03
                 : challengeActions.withdrawChallenge02
           }
           onClaimInstance={
-            isChallenge04Selected
+            isChallenge05Selected
+              ? challengeActions.claimChallenge05
+              : isChallenge04Selected
               ? challengeActions.claimChallenge04
               : isChallenge03Selected
               ? challengeActions.claimChallenge03
@@ -136,7 +141,9 @@ export function App() {
           }
           onCreateProgress={challengeActions.createProgress}
           onSolveChallenge={
-            isChallenge04Selected
+            isChallenge05Selected
+              ? challengeActions.solveChallenge05
+              : isChallenge04Selected
               ? challengeActions.solveChallenge04
               : isChallenge03Selected
               ? challengeActions.solveChallenge03
@@ -144,7 +151,7 @@ export function App() {
                 ? challengeActions.solveChallenge02
                 : challengeActions.solveChallenge
           }
-          onUseCapability={challengeActions.setChallenge04AdminFlag}
+          onUseCapability={isChallenge05Selected ? challengeActions.setChallenge05Initialized : challengeActions.setChallenge04AdminFlag}
           packageId={packageId}
           statusMessage={isSolved && selectedChallenge.id === "1" ? "Challenge 01 completed on-chain." : challengeActions.statusMessage}
           warnings={warnings}

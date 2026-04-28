@@ -45,4 +45,15 @@ export const challenges: ChallengeMetadata[] = [
     moduleName: "challenge_04_leaky_capability",
     sourceUrl: "content/challenges/04-leaky-capability/statement.md",
   },
+  {
+    id: "5",
+    title: "Bad Init",
+    slug: "bad-init",
+    difficulty: "easy",
+    category: "Initialization",
+    tags: ["init", "AdminCap", "capability"],
+    description: "Abuse a public initialization path to create an admin capability and initialize protected state.",
+    moduleName: "challenge_05_bad_init",
+    sourceUrl: "content/challenges/05-bad-init/statement.md",
+  },
 ];

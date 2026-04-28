@@ -293,4 +293,105 @@ describe("challenge runtime state", () => {
     expect(state.canSolve).toBe(true);
     expect(state.solveReason).toBe("Ready to solve Leaky Capability.");
   });
+
+  it("should enable Challenge 05 exploit before the bad init cap is created", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "5",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["5"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge05Instance: {
+          objectId: "0xinstance5",
+          challengeId: "5",
+          owner: "0xalice",
+          adminCapCreated: false,
+          initialized: false,
+          solved: false,
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canExploit).toBe(true);
+    expect(state.exploitReason).toBe("Ready to create the bad init admin capability.");
+    expect(state.canUseCapability).toBe(false);
+    expect(state.canSolve).toBe(false);
+  });
+
+  it("should require using the Challenge 05 admin cap before solve", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "5",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["5"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge05Instance: {
+          objectId: "0xinstance5",
+          challengeId: "5",
+          owner: "0xalice",
+          adminCapCreated: true,
+          initialized: false,
+          solved: false,
+        },
+        challenge05AdminCap: {
+          objectId: "0xcap5",
+          instanceId: "0xinstance5",
+          owner: "0xalice",
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.canExploit).toBe(false);
+    expect(state.canUseCapability).toBe(true);
+    expect(state.useCapabilityReason).toBe("Ready to use the bad init admin capability.");
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Initialize protected state before solving.");
+  });
+
+  it("should enable Challenge 05 solve after initialized is set", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "5",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["5"],
+          completedChallengeIds: [],
+          badgeIds: [],
+        },
+        challenge05Instance: {
+          objectId: "0xinstance5",
+          challengeId: "5",
+          owner: "0xalice",
+          adminCapCreated: true,
+          initialized: true,
+          solved: false,
+        },
+        challenge05AdminCap: {
+          objectId: "0xcap5",
+          instanceId: "0xinstance5",
+          owner: "0xalice",
+        },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to solve Bad Init.");
+  });
 });
