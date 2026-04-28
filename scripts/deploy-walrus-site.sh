@@ -29,9 +29,19 @@ mkdir -p "$(dirname "$DEPLOYMENT_FILE")"
 WALRUS_VERSION="$(walrus --version)"
 SITE_BUILDER_VERSION="$(site-builder --version)"
 PACKAGE_ID="$(grep -E '^VITE_PACKAGE_ID=' "$ROOT_DIR/frontend/.env.local" 2>/dev/null | cut -d= -f2- || true)"
+CHALLENGE_REGISTRY_ID="$(grep -E '^VITE_CHALLENGE_REGISTRY_ID=' "$ROOT_DIR/frontend/.env.local" 2>/dev/null | cut -d= -f2- || true)"
 TMP_OUTPUT="$(mktemp)"
+EXISTING_SITE_OBJECT_ID=""
+if [[ -f "$DEPLOYMENT_FILE" ]]; then
+  EXISTING_SITE_OBJECT_ID="$(grep -E '"siteObjectId":' "$DEPLOYMENT_FILE" | sed -E 's/.*"siteObjectId": "([^"]*)".*/\1/')"
+fi
 
-site-builder --context "$CONTEXT" deploy "$DIST_DIR" --epochs "$EPOCHS" --site-name "$SITE_NAME" | tee "$TMP_OUTPUT"
+DEPLOY_ARGS=(--context "$CONTEXT" deploy "$DIST_DIR" --epochs "$EPOCHS" --site-name "$SITE_NAME")
+if [[ -n "$EXISTING_SITE_OBJECT_ID" ]]; then
+  DEPLOY_ARGS+=(--object-id "$EXISTING_SITE_OBJECT_ID")
+fi
+
+site-builder "${DEPLOY_ARGS[@]}" | tee "$TMP_OUTPUT"
 
 SITE_OBJECT_ID="$(sed -n 's/.*"object_id": "\(0x[a-fA-F0-9]*\)".*/\1/p' "$DIST_DIR/ws-resources.json" 2>/dev/null || true)"
 if [[ -z "$SITE_OBJECT_ID" ]]; then
@@ -54,6 +64,7 @@ cat > "$DEPLOYMENT_FILE" <<JSON
   "walrusVersion": "$WALRUS_VERSION",
   "siteBuilderVersion": "$SITE_BUILDER_VERSION",
   "packageId": "$PACKAGE_ID",
+  "challengeRegistryId": "$CHALLENGE_REGISTRY_ID",
   "deployedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 JSON

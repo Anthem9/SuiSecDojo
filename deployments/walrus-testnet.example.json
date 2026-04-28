@@ -6,6 +6,7 @@
   "epochs": 5,
   "walrusVersion": "walrus 1.47.0",
   "siteBuilderVersion": "site-builder 2.9.0",
-  "packageId": "0x31fe94a5f0d522557d627d4c4e14376c16cfcfaa99db37a49929992971943c5b",
+  "packageId": "0x8b8e55e8435bbef227df39072507a7f6d5c76ee0f855094108e87181cfdfea52",
+  "challengeRegistryId": "0x49519029cfeaa2fdf29057378f5252abe68a1a294dc1bf0b70456f54a3c6b2ee",
   "deployedAt": ""
 }

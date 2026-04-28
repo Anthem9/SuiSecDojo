@@ -35,7 +35,13 @@ sui move test
 当前 testnet package：
 
 ```text
-0x31fe94a5f0d522557d627d4c4e14376c16cfcfaa99db37a49929992971943c5b
+0x8b8e55e8435bbef227df39072507a7f6d5c76ee0f855094108e87181cfdfea52
+```
+
+当前 Challenge Registry：
+
+```text
+0x49519029cfeaa2fdf29057378f5252abe68a1a294dc1bf0b70456f54a3c6b2ee
 ```
 
 开发地址：
@@ -111,7 +117,7 @@ sui client ptb \
 - `challenge_count`
 - `is_enabled`
 
-当前 testnet package 仍是 Phase 0 已发布版本；Registry 会在下一次合约发布时进入新的 package 记录。
+当前 testnet package 已包含 registry 模块，registry object 已注册 Challenge 01/02/03 的占位 metadata。
 
 统一命令：
 
