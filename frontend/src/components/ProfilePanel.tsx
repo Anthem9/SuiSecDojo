@@ -48,8 +48,15 @@ export function ProfilePanel({ summary }: ProfilePanelProps) {
         </div>
         {summary.badgeLabels.length > 0 ? (
           <div className="badge-list">
-            {summary.badgeLabels.map((label) => (
-              <BadgeCard key={label} label={label} />
+            {summary.badgeDetails.map((badge) => (
+              <BadgeCard
+                key={badge.badgeType}
+                badgeType={badge.badgeType}
+                issuedAtEpoch={badge.issuedAtEpoch}
+                label={badge.label}
+                objectId={badge.objectId}
+                requirement={badge.requirement}
+              />
             ))}
           </div>
         ) : (
@@ -59,4 +66,3 @@ export function ProfilePanel({ summary }: ProfilePanelProps) {
     </section>
   );
 }
-

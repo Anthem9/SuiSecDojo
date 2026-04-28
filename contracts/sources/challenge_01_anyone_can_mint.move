@@ -4,6 +4,7 @@ module suisec_dojo::challenge_01_anyone_can_mint;
 use sui::object::{Self, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
+use suisec_dojo::badge;
 use suisec_dojo::user_progress::{Self, UserProgress};
 
 public struct ChallengeInstance has key, store {
@@ -59,7 +60,7 @@ public(package) entry fun vulnerable_mint(instance: &mut ChallengeInstance, amou
     instance.minted_amount = instance.minted_amount + amount;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &TxContext) {
+public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
@@ -69,6 +70,7 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
     if (!user_progress::has_badge(progress, BADGE_TYPE_OBJECT_SECURITY)) {
         user_progress::record_badge(progress, BADGE_TYPE_OBJECT_SECURITY, sender);
+        transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_OBJECT_SECURITY, ctx), sender);
     };
 }
 

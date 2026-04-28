@@ -4,6 +4,7 @@ module suisec_dojo::challenge_02_shared_vault;
 use sui::object::{Self, ID, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
+use suisec_dojo::badge;
 use suisec_dojo::user_progress::{Self, UserProgress};
 
 public struct SharedVault has key {
@@ -67,7 +68,7 @@ public(package) entry fun solve(
     instance: &mut ChallengeInstance,
     vault: &SharedVault,
     progress: &mut UserProgress,
-    ctx: &TxContext,
+    ctx: &mut TxContext,
 ) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
@@ -79,6 +80,7 @@ public(package) entry fun solve(
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
     if (!user_progress::has_badge(progress, BADGE_TYPE_SHARED_OBJECT)) {
         user_progress::record_badge(progress, BADGE_TYPE_SHARED_OBJECT, sender);
+        transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_SHARED_OBJECT, ctx), sender);
     };
 }
 

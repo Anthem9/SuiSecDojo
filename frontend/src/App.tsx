@@ -1,7 +1,8 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
-import { BookOpen, Shield, Wallet } from "lucide-react";
+import { BookOpen, FileText, Shield, Wallet } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ChallengeDetailPanel } from "./components/ChallengeDetailPanel";
+import { MarkdownRenderer } from "./components/MarkdownRenderer";
 import { ProfilePanel } from "./components/ProfilePanel";
 import { ProgressPanel } from "./components/ProgressPanel";
 import { challenges } from "./data/challenges";
@@ -16,12 +17,30 @@ import type { ChallengeDifficulty } from "./types";
 
 const challenge01Id = "1";
 const challenge01 = challenges.find((challenge) => challenge.id === challenge01Id) ?? challenges[0];
+const replayDocs = [
+  {
+    title: "AMM Math Error Replay",
+    sourceUrl: "content/replays/amm-math-error-replay/index.md",
+  },
+  {
+    title: "Capability Leak Replay",
+    sourceUrl: "content/replays/capability-leak-replay/index.md",
+  },
+  {
+    title: "Shared Object Pollution Replay",
+    sourceUrl: "content/replays/shared-object-pollution-replay/index.md",
+  },
+];
+
+const safetyNotice =
+  "本平台仅用于安全教育、审计训练和防御研究。所有漏洞案例均为最小化模拟版本，禁止用于攻击真实协议、真实资产或未授权系统。";
 
 export function App() {
   const account = useCurrentAccount();
   const packageId = CONTRACTS.PACKAGE_ID;
   const [difficulty, setDifficulty] = useState<ChallengeDifficulty | "all">("all");
   const [selectedSlug, setSelectedSlug] = useState(challenges[0]?.slug ?? "");
+  const [selectedDocUrl, setSelectedDocUrl] = useState("content/challenges/01-anyone-can-mint/statement.md");
   const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, suiBalanceMist, refetchObjects } = useDojoObjects(
     account?.address,
     packageId,
@@ -71,10 +90,11 @@ export function App() {
       <section className="hero">
         <div>
           <p className="eyebrow">Sui Move Security Training Ground</p>
-          <h1>由 Walrus 驱动的 Sui Move 安全训练场</h1>
+          <h1>Sui Move 安全训练场</h1>
           <p className="hero-copy">
             浏览挑战、领取链上实例、通过 Sui 交易完成判题，并把学习进度写入链上对象。
           </p>
+          <p className="safety-notice">{safetyNotice}</p>
           <div className="hero-actions">
             <a href="#challenges">Start Learning</a>
             <a className="secondary" href="#profile">View Progress</a>
@@ -193,6 +213,32 @@ export function App() {
         />
       </section>
       <ProfilePanel summary={profile} />
+      <section className="docs-hub" id="docs">
+        <div className="section-heading">
+          <FileText aria-hidden="true" />
+          <h2>Docs</h2>
+        </div>
+        <p className="safety-notice">{safetyNotice}</p>
+        <div className="docs-layout">
+          <div className="docs-nav">
+            <h3>Challenge Statements</h3>
+            {challenges.map((challenge) => (
+              <button key={challenge.id} type="button" onClick={() => setSelectedDocUrl(challenge.sourceUrl ?? selectedDocUrl)}>
+                {challenge.id}. {challenge.title}
+              </button>
+            ))}
+            <h3>Incident Replays</h3>
+            {replayDocs.map((doc) => (
+              <button key={doc.sourceUrl} type="button" onClick={() => setSelectedDocUrl(doc.sourceUrl)}>
+                {doc.title}
+              </button>
+            ))}
+          </div>
+          <div className="docs-reader">
+            <MarkdownRenderer sourceUrl={selectedDocUrl} />
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

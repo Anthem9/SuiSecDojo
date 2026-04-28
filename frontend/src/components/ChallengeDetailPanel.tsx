@@ -72,6 +72,9 @@ export function ChallengeDetailPanel({
       <span className="difficulty">{challenge.difficulty}</span>
       <h2>{challenge.title}</h2>
       <p>{challenge.description}</p>
+      <p className="safety-notice">
+        本平台仅用于安全教育、审计训练和防御研究。所有漏洞案例均为最小化模拟版本，禁止用于攻击真实协议、真实资产或未授权系统。
+      </p>
 
       <dl>
         <div>

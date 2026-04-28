@@ -39,6 +39,10 @@ describe("profile summary", () => {
     expect(summary.completed).toBe(1);
     expect(summary.percent).toBe(Math.round((1 / challenges.length) * 100));
     expect(summary.badgeLabels).toEqual(["Object Security Beginner"]);
+    expect(summary.badgeDetails[0]).toMatchObject({
+      badgeType: "1",
+      requirement: "Complete Challenge 01.",
+    });
   });
 
   it("should merge badge ids from progress and owned badge objects", () => {
@@ -58,6 +62,28 @@ describe("profile summary", () => {
 
     expect(summary.badgeCount).toBe(2);
     expect(summary.badgeLabels).toEqual(["Object Security Beginner", "Capability Pattern Beginner"]);
+    expect(summary.badgeDetails[1]).toMatchObject({
+      objectId: "0xbadge",
+      issuedAtEpoch: "42",
+      requirement: "Complete Challenge 04 or Challenge 05.",
+    });
+  });
+
+  it("should label DeFi and incident replay badge types", () => {
+    const summary = summarizeProfile({
+      network: "testnet",
+      challenges,
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: [],
+          completedChallengeIds: [],
+          badgeIds: ["4", "5"],
+        },
+      },
+      badges: [],
+    });
+
+    expect(summary.badgeLabels).toEqual(["DeFi Logic Beginner", "Incident Replay Beginner"]);
   });
 });
-

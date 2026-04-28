@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Typecheck frontend
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Test frontend
+        working-directory: frontend
+        run: npm run test:run
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Install Sui CLI
+        run: |
+          curl -L https://github.com/MystenLabs/sui/releases/download/testnet-v1.70.2/sui-testnet-v1.70.2-ubuntu-x86_64.tgz -o /tmp/sui.tgz
+          mkdir -p "$HOME/.local/bin" /tmp/sui
+          tar -xzf /tmp/sui.tgz -C /tmp/sui
+          find /tmp/sui -type f -name sui -exec cp {} "$HOME/.local/bin/sui" \;
+          chmod +x "$HOME/.local/bin/sui"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Check Sui CLI
+        run: sui --version
+
+      - name: Test Move contracts
+        working-directory: contracts
+        run: sui move test

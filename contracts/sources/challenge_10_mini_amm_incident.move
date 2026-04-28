@@ -4,6 +4,7 @@ module suisec_dojo::challenge_10_mini_amm_incident;
 use sui::object::{Self, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
+use suisec_dojo::badge;
 use suisec_dojo::user_progress::{Self, UserProgress};
 
 public struct ChallengeInstance has key, store {
@@ -18,6 +19,8 @@ public struct ChallengeInstance has key, store {
 }
 
 const CHALLENGE_ID: u64 = 10;
+const CHALLENGE_ID_PRICE_ROUNDING: u64 = 6;
+const BADGE_TYPE_DEFI_LOGIC: u64 = 4;
 const INITIAL_RESERVE: u64 = 100;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
@@ -57,13 +60,20 @@ public(package) entry fun vulnerable_swap(instance: &mut ChallengeInstance, inpu
     instance.invariant_broken = instance.reserve_x * instance.reserve_y < INITIAL_RESERVE * INITIAL_RESERVE;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &TxContext) {
+public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
     assert!(instance.invariant_broken && instance.attacker_profit >= INITIAL_RESERVE, EInvalidSolution);
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
+    if (
+        user_progress::has_completed(progress, CHALLENGE_ID_PRICE_ROUNDING)
+            && !user_progress::has_badge(progress, BADGE_TYPE_DEFI_LOGIC)
+    ) {
+        user_progress::record_badge(progress, BADGE_TYPE_DEFI_LOGIC, sender);
+        transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_DEFI_LOGIC, ctx), sender);
+    };
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 { instance.challenge_id }

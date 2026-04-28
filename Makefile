@@ -1,4 +1,4 @@
-.PHONY: audit build check check-env ci deploy-walrus-testnet dev smoke test test-contracts test-frontend
+.PHONY: audit build check check-env ci deploy-walrus-testnet dev smoke smoke-chain test test-contracts test-frontend
 
 check:
 	cd frontend && npm run typecheck
@@ -38,3 +38,6 @@ audit:
 smoke:
 	cd frontend && npm run build
 	cd contracts && sui move build
+
+smoke-chain:
+	./scripts/smoke-chain.sh

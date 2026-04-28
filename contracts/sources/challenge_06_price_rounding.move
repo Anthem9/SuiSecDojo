@@ -4,6 +4,7 @@ module suisec_dojo::challenge_06_price_rounding;
 use sui::object::{Self, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
+use suisec_dojo::badge;
 use suisec_dojo::user_progress::{Self, UserProgress};
 
 public struct ChallengeInstance has key, store {
@@ -16,6 +17,8 @@ public struct ChallengeInstance has key, store {
 }
 
 const CHALLENGE_ID: u64 = 6;
+const CHALLENGE_ID_MINI_AMM: u64 = 10;
+const BADGE_TYPE_DEFI_LOGIC: u64 = 4;
 const PRICE_PER_CREDIT: u64 = 10;
 const SOLVE_CREDITS: u64 = 10;
 const MAX_EXPLOIT_PAYMENT: u64 = 10;
@@ -49,7 +52,7 @@ public(package) entry fun vulnerable_buy(instance: &mut ChallengeInstance, payme
     instance.credits = instance.credits + rounded_credits;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &TxContext) {
+public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
@@ -58,6 +61,13 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
 
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
+    if (
+        user_progress::has_completed(progress, CHALLENGE_ID_MINI_AMM)
+            && !user_progress::has_badge(progress, BADGE_TYPE_DEFI_LOGIC)
+    ) {
+        user_progress::record_badge(progress, BADGE_TYPE_DEFI_LOGIC, sender);
+        transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_DEFI_LOGIC, ctx), sender);
+    };
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 {

@@ -2,9 +2,12 @@
 module suisec_dojo::badge_trigger_tests;
 
 use sui::test_scenario;
+use suisec_dojo::badge::{Self, Badge};
 use suisec_dojo::challenge_01_anyone_can_mint as challenge_01;
 use suisec_dojo::challenge_02_shared_vault as challenge_02;
 use suisec_dojo::challenge_04_leaky_capability as challenge_04;
+use suisec_dojo::challenge_06_price_rounding as challenge_06;
+use suisec_dojo::challenge_10_mini_amm_incident as challenge_10;
 use suisec_dojo::user_progress;
 
 const ALICE: address = @0xA11CE;
@@ -24,6 +27,13 @@ fun should_record_object_security_badge_after_challenge_01() {
 
         challenge_01::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);
+    };
+    test_scenario::next_tx(&mut scenario, ALICE);
+    {
+        let badge: Badge = test_scenario::take_from_sender(&scenario);
+        assert!(badge::owner(&badge) == ALICE);
+        assert!(badge::badge_type(&badge) == 1);
+        badge::destroy_for_testing(badge);
     };
     test_scenario::end(scenario);
 }
@@ -46,6 +56,13 @@ fun should_record_shared_object_badge_after_challenge_02() {
         challenge_02::destroy_instance_for_testing(instance);
         user_progress::destroy_for_testing(progress);
     };
+    test_scenario::next_tx(&mut scenario, ALICE);
+    {
+        let badge: Badge = test_scenario::take_from_sender(&scenario);
+        assert!(badge::owner(&badge) == ALICE);
+        assert!(badge::badge_type(&badge) == 2);
+        badge::destroy_for_testing(badge);
+    };
     test_scenario::end(scenario);
 }
 
@@ -66,6 +83,48 @@ fun should_record_capability_badge_after_challenge_04() {
         challenge_04::destroy_cap_for_testing(cap);
         challenge_04::destroy_instance_for_testing(instance);
         user_progress::destroy_for_testing(progress);
+    };
+    test_scenario::next_tx(&mut scenario, ALICE);
+    {
+        let badge: Badge = test_scenario::take_from_sender(&scenario);
+        assert!(badge::owner(&badge) == ALICE);
+        assert!(badge::badge_type(&badge) == 3);
+        badge::destroy_for_testing(badge);
+    };
+    test_scenario::end(scenario);
+}
+
+#[test]
+fun should_record_defi_badge_after_challenges_06_and_10() {
+    let mut scenario = test_scenario::begin(ALICE);
+    {
+        let ctx = test_scenario::ctx(&mut scenario);
+        let mut challenge_06_instance = challenge_06::new_instance_for_testing(ALICE, ctx);
+        let mut challenge_10_instance = challenge_10::new_instance_for_testing(ALICE, ctx);
+        let mut progress = user_progress::new_for_owner(ALICE, ctx);
+
+        let mut i = 0u64;
+        while (i < challenge_06::solve_credits_for_testing()) {
+            challenge_06::vulnerable_buy(&mut challenge_06_instance, 1);
+            i = i + 1;
+        };
+        challenge_06::solve(&mut challenge_06_instance, &mut progress, ctx);
+        assert!(!user_progress::has_badge(&progress, 4));
+
+        challenge_10::vulnerable_swap(&mut challenge_10_instance, 100);
+        challenge_10::solve(&mut challenge_10_instance, &mut progress, ctx);
+        assert!(user_progress::has_badge(&progress, 4));
+
+        challenge_06::destroy_for_testing(challenge_06_instance);
+        challenge_10::destroy_for_testing(challenge_10_instance);
+        user_progress::destroy_for_testing(progress);
+    };
+    test_scenario::next_tx(&mut scenario, ALICE);
+    {
+        let badge: Badge = test_scenario::take_from_sender(&scenario);
+        assert!(badge::owner(&badge) == ALICE);
+        assert!(badge::badge_type(&badge) == 4);
+        badge::destroy_for_testing(badge);
     };
     test_scenario::end(scenario);
 }
