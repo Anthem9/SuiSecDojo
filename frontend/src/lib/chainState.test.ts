@@ -4,6 +4,7 @@ import {
   getChallenge01InstanceType,
   getChallenge02InstanceType,
   getChallenge02VaultType,
+  getChallenge03InstanceType,
   getUserProgressType,
   hasPhase0Deployment,
   parseChallenge02VaultObject,
@@ -35,6 +36,12 @@ describe("chain state adapter", () => {
         vault_id: "0xvault",
         solved: false,
       }),
+      moveObject("0xinstance3", getChallenge03InstanceType(packageId), {
+        challenge_id: "3",
+        owner: "0xalice",
+        restricted_flag: true,
+        solved: false,
+      }),
     ];
 
     expect(parseChainChallengeState(objects, packageId)).toEqual({
@@ -53,6 +60,13 @@ describe("chain state adapter", () => {
         objectId: "0xinstance2",
         challengeId: "2",
         vaultId: "0xvault",
+        solved: false,
+      },
+      challenge03Instance: {
+        objectId: "0xinstance3",
+        challengeId: "3",
+        owner: "0xalice",
+        restrictedFlag: true,
         solved: false,
       },
     });

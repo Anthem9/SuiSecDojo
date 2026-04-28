@@ -60,3 +60,30 @@ export function solveChallenge02Transaction(packageId: string, progressId: strin
   });
   return tx;
 }
+
+export function claimChallenge03Transaction(packageId: string, progressId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_03_fake_owner::claim`,
+    arguments: [tx.object(progressId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge03Transaction(packageId: string, instanceId: string, claimedOwner: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_03_fake_owner::vulnerable_set_flag`,
+    arguments: [tx.object(instanceId), tx.pure.address(claimedOwner), tx.pure.bool(true)],
+  });
+  return tx;
+}
+
+export function solveChallenge03Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_03_fake_owner::solve`,
+    arguments: [tx.object(instanceId), tx.object(progressId)],
+  });
+  return tx;
+}

@@ -137,4 +137,59 @@ describe("challenge runtime state", () => {
     expect(state.canExploit).toBe(false);
     expect(state.canSolve).toBe(true);
   });
+
+  it("should enable Challenge 03 exploit after claim and before flag is set", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "3",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["3"],
+          completedChallengeIds: [],
+        },
+        challenge03Instance: {
+          objectId: "0xinstance3",
+          challengeId: "3",
+          owner: "0xalice",
+          restrictedFlag: false,
+          solved: false,
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canExploit).toBe(true);
+    expect(state.exploitReason).toBe("Ready to exploit the trusted owner parameter.");
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Set the restricted flag before solving.");
+  });
+
+  it("should enable Challenge 03 solve after the restricted flag is set", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "3",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["3"],
+          completedChallengeIds: [],
+        },
+        challenge03Instance: {
+          objectId: "0xinstance3",
+          challengeId: "3",
+          owner: "0xalice",
+          restrictedFlag: true,
+          solved: false,
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canExploit).toBe(false);
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to solve Fake Owner.");
+  });
 });

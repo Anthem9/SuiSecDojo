@@ -29,6 +29,7 @@ export function App() {
   const visibleChallenges = useMemo(() => filterChallenges(challenges, { difficulty }), [difficulty]);
   const selectedChallenge = challenges.find((challenge) => challenge.slug === selectedSlug) ?? challenge01;
   const isChallenge02Selected = selectedChallenge.id === "2";
+  const isChallenge03Selected = selectedChallenge.id === "3";
   const actionState = getChallenge01ActionState({
     accountAddress: account?.address,
     packageId,
@@ -103,12 +104,24 @@ export function App() {
           challenge={selectedChallenge}
           lastDigest={challengeActions.lastDigest}
           objectError={ownedObjectsQuery.error ?? challenge02VaultQuery.error}
-          onExploitChallenge={challengeActions.withdrawChallenge02}
-          onClaimInstance={isChallenge02Selected ? challengeActions.claimChallenge02 : challengeActions.claimInstance}
+          onExploitChallenge={isChallenge03Selected ? challengeActions.exploitChallenge03 : challengeActions.withdrawChallenge02}
+          onClaimInstance={
+            isChallenge03Selected
+              ? challengeActions.claimChallenge03
+              : isChallenge02Selected
+                ? challengeActions.claimChallenge02
+                : challengeActions.claimInstance
+          }
           onCreateProgress={challengeActions.createProgress}
-          onSolveChallenge={isChallenge02Selected ? challengeActions.solveChallenge02 : challengeActions.solveChallenge}
+          onSolveChallenge={
+            isChallenge03Selected
+              ? challengeActions.solveChallenge03
+              : isChallenge02Selected
+                ? challengeActions.solveChallenge02
+                : challengeActions.solveChallenge
+          }
           packageId={packageId}
-          statusMessage={isSolved && !isChallenge02Selected ? "Challenge 01 completed on-chain." : challengeActions.statusMessage}
+          statusMessage={isSolved && selectedChallenge.id === "1" ? "Challenge 01 completed on-chain." : challengeActions.statusMessage}
         />
       </section>
     </main>

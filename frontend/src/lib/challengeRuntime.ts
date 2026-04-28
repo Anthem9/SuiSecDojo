@@ -35,10 +35,16 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const hasProgress = Boolean(input.chainState.progress);
   const isChallenge01Selected = input.selectedChallengeId === "1";
   const isChallenge02Selected = input.selectedChallengeId === "2";
-  const selectedInstance = isChallenge02Selected ? input.chainState.challenge02Instance : input.chainState.challenge01Instance;
+  const isChallenge03Selected = input.selectedChallengeId === "3";
+  const selectedInstance = isChallenge02Selected
+    ? input.chainState.challenge02Instance
+    : isChallenge03Selected
+      ? input.chainState.challenge03Instance
+      : input.chainState.challenge01Instance;
   const hasInstance = Boolean(selectedInstance);
   const hasVault = Boolean(input.chainState.challenge02Vault);
   const isChallenge02Drained = input.chainState.challenge02Vault?.balance === "0";
+  const isChallenge03FlagSet = input.chainState.challenge03Instance?.restrictedFlag === true;
   const isSolved =
     selectedInstance?.solved === true || input.chainState.progress?.completedChallengeIds.includes(input.selectedChallengeId) === true;
   const actionBusy = input.actionBusy === true;
@@ -49,9 +55,9 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
     hasProgress,
     hasInstance,
     isSolved,
-    readyToSolve: isChallenge02Selected && hasVault && isChallenge02Drained,
+    readyToSolve: (isChallenge02Selected && hasVault && isChallenge02Drained) || (isChallenge03Selected && isChallenge03FlagSet),
   });
-  const supportsOnChain = isChallenge01Selected || isChallenge02Selected;
+  const supportsOnChain = isChallenge01Selected || isChallenge02Selected || isChallenge03Selected;
 
   return {
     runtimeState,
@@ -68,14 +74,24 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       hasPackage &&
       hasProgress &&
       hasInstance &&
-      isChallenge02Selected &&
-      hasVault &&
-      !isChallenge02Drained &&
+      ((isChallenge02Selected && hasVault && !isChallenge02Drained) || (isChallenge03Selected && !isChallenge03FlagSet)) &&
       !isSolved &&
       !actionBusy,
     exploitReason: actionBusy
       ? "Transaction or chain refresh pending."
-      : reasonForExploit(isConnected, hasPackage, hasProgress, hasInstance, isChallenge02Selected, hasVault, isChallenge02Drained, isSolved),
+      : reasonForExploit(
+          isConnected,
+          hasPackage,
+          hasProgress,
+          hasInstance,
+          input.selectedChallengeId,
+          isChallenge02Selected,
+          hasVault,
+          isChallenge02Drained,
+          isChallenge03Selected,
+          isChallenge03FlagSet,
+          isSolved,
+        ),
     canSolve:
       isConnected &&
       hasPackage &&
@@ -83,7 +99,7 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       hasInstance &&
       !isSolved &&
       supportsOnChain &&
-      (isChallenge01Selected || isChallenge02Drained) &&
+      (isChallenge01Selected || isChallenge02Drained || isChallenge03FlagSet) &&
       !actionBusy,
     solveReason: actionBusy
       ? "Transaction or chain refresh pending."
@@ -98,6 +114,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge02Selected,
           hasVault,
           isChallenge02Drained,
+          isChallenge03Selected,
+          isChallenge03FlagSet,
         ),
   };
 }
@@ -147,19 +165,26 @@ function reasonForExploit(
   hasPackage: boolean,
   hasProgress: boolean,
   hasInstance: boolean,
+  selectedChallengeId: string,
   isChallenge02Selected: boolean,
   hasVault: boolean,
   isChallenge02Drained: boolean,
+  isChallenge03Selected: boolean,
+  isChallenge03FlagSet: boolean,
   isSolved: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before exploiting.";
-  if (!isChallenge02Selected) return "Exploit withdraw is enabled for Challenge 02 only.";
+  if (!isChallenge02Selected && !isChallenge03Selected) {
+    return `Exploit action is not enabled for Challenge ${formatChallengeId(selectedChallengeId)}.`;
+  }
   if (!hasProgress) return "Create a progress object first.";
   if (!hasInstance) return "Claim an instance first.";
-  if (!hasVault) return "Shared vault is still loading.";
-  if (isSolved) return "Challenge 02 already completed.";
-  if (isChallenge02Drained) return "Vault already drained; solve the challenge.";
+  if (isSolved) return `Challenge ${formatChallengeId(selectedChallengeId)} already completed.`;
+  if (isChallenge02Selected && !hasVault) return "Shared vault is still loading.";
+  if (isChallenge02Selected && isChallenge02Drained) return "Vault already drained; solve the challenge.";
+  if (isChallenge03Selected && isChallenge03FlagSet) return "Restricted flag already set; solve the challenge.";
+  if (isChallenge03Selected) return "Ready to exploit the trusted owner parameter.";
   return "Ready to exploit the missing withdraw authorization.";
 }
 
@@ -174,6 +199,8 @@ function reasonForSolve(
   isChallenge02Selected: boolean,
   hasVault: boolean,
   isChallenge02Drained: boolean,
+  isChallenge03Selected: boolean,
+  isChallenge03FlagSet: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before solving.";
@@ -184,6 +211,8 @@ function reasonForSolve(
   if (isChallenge02Selected && !hasVault) return "Shared vault is still loading.";
   if (isChallenge02Selected && !isChallenge02Drained) return "Drain the shared vault before solving.";
   if (isChallenge02Selected) return "Ready to solve Shared Vault.";
+  if (isChallenge03Selected && !isChallenge03FlagSet) return "Set the restricted flag before solving.";
+  if (isChallenge03Selected) return "Ready to solve Fake Owner.";
   return "Ready to run vulnerable mint and solve.";
 }
 

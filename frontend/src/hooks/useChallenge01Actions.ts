@@ -5,9 +5,12 @@ import type { ChainChallengeState } from "../lib/chainState";
 import {
   claimChallenge01Transaction,
   claimChallenge02Transaction,
+  claimChallenge03Transaction,
   createProgressTransaction,
+  exploitChallenge03Transaction,
   solveChallenge01Transaction,
   solveChallenge02Transaction,
+  solveChallenge03Transaction,
   withdrawChallenge02Transaction,
 } from "../lib/transactions";
 
@@ -66,6 +69,16 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
           chainState.challenge02Instance!.objectId,
           chainState.challenge02Vault!.objectId,
         ),
+      ),
+    claimChallenge03: () =>
+      executeAndRefresh("Claim Fake Owner", () => claimChallenge03Transaction(packageId, chainState.progress!.objectId)),
+    exploitChallenge03: () =>
+      executeAndRefresh("Exploit fake owner", () =>
+        exploitChallenge03Transaction(packageId, chainState.challenge03Instance!.objectId, chainState.challenge03Instance!.owner),
+      ),
+    solveChallenge03: () =>
+      executeAndRefresh("Solve Fake Owner", () =>
+        solveChallenge03Transaction(packageId, chainState.progress!.objectId, chainState.challenge03Instance!.objectId),
       ),
   };
 }

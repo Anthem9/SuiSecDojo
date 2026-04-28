@@ -26,11 +26,20 @@ export type SharedVaultObject = {
   balance: string;
 };
 
+export type Challenge03InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  restrictedFlag: boolean;
+  solved: boolean;
+};
+
 export type ChainChallengeState = {
   progress?: UserProgressObject;
   challenge01Instance?: ChallengeInstanceObject;
   challenge02Instance?: Challenge02InstanceObject;
   challenge02Vault?: SharedVaultObject;
+  challenge03Instance?: Challenge03InstanceObject;
 };
 
 type MoveObjectContent = {
@@ -55,10 +64,15 @@ export function getChallenge02VaultType(packageId: string): string {
   return `${packageId}::challenge_02_shared_vault::SharedVault`;
 }
 
+export function getChallenge03InstanceType(packageId: string): string {
+  return `${packageId}::challenge_03_fake_owner::ChallengeInstance`;
+}
+
 export function parseChainChallengeState(objects: SuiObjectResponse[], packageId: string): ChainChallengeState {
   const progressType = getUserProgressType(packageId);
   const challenge01Type = getChallenge01InstanceType(packageId);
   const challenge02Type = getChallenge02InstanceType(packageId);
+  const challenge03Type = getChallenge03InstanceType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
     const data = object.data;
@@ -98,6 +112,19 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
           objectId: data.objectId,
           challengeId: String(content.fields.challenge_id),
           vaultId: String(content.fields.vault_id),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge03Type && content.fields.challenge_id === "3") {
+      return {
+        ...state,
+        challenge03Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          restrictedFlag: content.fields.restricted_flag === true,
           solved: content.fields.solved === true,
         },
       };

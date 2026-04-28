@@ -32,7 +32,12 @@ export function ChallengeDetailPanel({
 }: ChallengeDetailPanelProps) {
   const isChallenge01 = challenge.id === "1";
   const isChallenge02 = challenge.id === "2";
-  const selectedInstance = isChallenge02 ? chainState.challenge02Instance : chainState.challenge01Instance;
+  const isChallenge03 = challenge.id === "3";
+  const selectedInstance = isChallenge02
+    ? chainState.challenge02Instance
+    : isChallenge03
+      ? chainState.challenge03Instance
+      : chainState.challenge01Instance;
   const isSolved =
     selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
 
@@ -53,7 +58,7 @@ export function ChallengeDetailPanel({
         </div>
         <div>
           <dt>Challenge Instance</dt>
-          <dd>{isChallenge01 || isChallenge02 ? selectedInstance?.objectId ?? "not claimed" : "not enabled yet"}</dd>
+          <dd>{isChallenge01 || isChallenge02 || isChallenge03 ? selectedInstance?.objectId ?? "not claimed" : "not enabled yet"}</dd>
         </div>
         {isChallenge02 ? (
           <>
@@ -64,6 +69,18 @@ export function ChallengeDetailPanel({
             <div>
               <dt>Vault Balance</dt>
               <dd>{chainState.challenge02Vault?.balance ?? "not loaded"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge03 ? (
+          <>
+            <div>
+              <dt>Instance Owner</dt>
+              <dd>{chainState.challenge03Instance?.owner ?? "not claimed"}</dd>
+            </div>
+            <div>
+              <dt>Restricted Flag</dt>
+              <dd>{chainState.challenge03Instance?.restrictedFlag === true ? "true" : "false"}</dd>
             </div>
           </>
         ) : null}
@@ -91,9 +108,9 @@ export function ChallengeDetailPanel({
         <button type="button" disabled={!actionState.canClaim} title={actionState.claimReason} onClick={onClaimInstance}>
           Claim Instance
         </button>
-        {isChallenge02 ? (
+        {isChallenge02 || isChallenge03 ? (
           <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
-            Exploit Withdraw
+            {isChallenge03 ? "Exploit Fake Owner" : "Exploit Withdraw"}
           </button>
         ) : null}
         <button type="button" disabled={!actionState.canSolve} title={actionState.solveReason} onClick={onSolveChallenge}>

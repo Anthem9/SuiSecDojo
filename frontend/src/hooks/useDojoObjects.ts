@@ -13,6 +13,7 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
           { StructType: `${packageId}::user_progress::UserProgress` },
           { StructType: `${packageId}::challenge_01_anyone_can_mint::ChallengeInstance` },
           { StructType: `${packageId}::challenge_02_shared_vault::ChallengeInstance` },
+          { StructType: `${packageId}::challenge_03_fake_owner::ChallengeInstance` },
         ],
       },
       options: {

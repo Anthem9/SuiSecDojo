@@ -32,6 +32,6 @@ export const challenges: ChallengeMetadata[] = [
     tags: ["tx_context::sender", "owner", "address"],
     description: "Bypass authorization by passing a forged owner address into a vulnerable entry function.",
     moduleName: "challenge_03_fake_owner",
+    sourceUrl: "content/challenges/03-fake-owner/statement.md",
   },
 ];
-
