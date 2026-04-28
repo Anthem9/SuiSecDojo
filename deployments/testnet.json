@@ -1,0 +1,15 @@
+{
+  "network": "testnet",
+  "deployer": "0xda68b5b7583cf1515ad207e1ce1b5d5a630a9c5832023cf2381936743b3dd0a7",
+  "packageId": "0x31fe94a5f0d522557d627d4c4e14376c16cfcfaa99db37a49929992971943c5b",
+  "upgradeCapId": "0x15fb0c18bcf17279560c558c56d6ec7804fc1a615f29d536de0282f0104a6645",
+  "publishDigest": "8SCR33QFq28tVUUJVLbHzXUyjAm4qne5LxmeQq1oC88f",
+  "cliSmoke": {
+    "progressObjectId": "0x3283ff099ebf31c1dbdd3233b79fbff9a2fac63df3920276ee1368b36e14f7c8",
+    "challenge01InstanceId": "0xe23e43d2cc7307fe0fe0b4dde850c0c6078afc8a892a8f07a05bbfdf0003dbd9",
+    "createProgressDigest": "7SnXtAyB9GYvjT6hXzjy6iz9BfRNRuW6HmtqNiRNkAsC",
+    "claimDigest": "5UXkFmU2HqNwt3e5LgDizuQts5k99ShfB9XjiEPQyvTG",
+    "solveDigest": "H42gRcXavqhPbnjL41xymQ6zSwFvNJg8y2X8GXPoY5XN"
+  }
+}
+

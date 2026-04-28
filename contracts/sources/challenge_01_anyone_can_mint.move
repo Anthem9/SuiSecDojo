@@ -2,6 +2,7 @@
 module suisec_dojo::challenge_01_anyone_can_mint;
 
 use sui::object::{Self, UID};
+use sui::transfer;
 use sui::tx_context::{Self, TxContext};
 use suisec_dojo::user_progress::{Self, UserProgress};
 
@@ -43,6 +44,12 @@ public fun minted_amount(instance: &ChallengeInstance): u64 {
 
 public fun is_solved(instance: &ChallengeInstance): bool {
     instance.solved
+}
+
+public(package) entry fun claim(progress: &mut UserProgress, ctx: &mut TxContext) {
+    let sender = tx_context::sender(ctx);
+    user_progress::mark_claimed(progress, CHALLENGE_ID, sender);
+    transfer::transfer(new_instance(sender, ctx), sender);
 }
 
 public(package) entry fun vulnerable_mint(instance: &mut ChallengeInstance, amount: u64) {
