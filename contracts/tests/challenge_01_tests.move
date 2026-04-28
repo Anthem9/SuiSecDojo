@@ -117,6 +117,24 @@ fun should_solve_after_user_exploits_unrestricted_mint() {
     test_scenario::end(scenario);
 }
 
+#[test, expected_failure(abort_code = ::suisec_dojo::challenge_01_anyone_can_mint::EAlreadySolved)]
+fun should_reject_duplicate_solve() {
+    let mut scenario = test_scenario::begin(ALICE);
+    {
+        let ctx = test_scenario::ctx(&mut scenario);
+        let mut instance = challenge_01::new_instance(ALICE, ctx);
+        let mut progress = user_progress::new_for_owner(ALICE, ctx);
+
+        challenge_01::vulnerable_mint(&mut instance, challenge_01::solve_threshold_for_testing());
+        challenge_01::solve(&mut instance, &mut progress, ctx);
+        challenge_01::solve(&mut instance, &mut progress, ctx);
+
+        challenge_01::destroy_for_testing(instance);
+        user_progress::destroy_for_testing(progress);
+    };
+    test_scenario::end(scenario);
+}
+
 #[test, expected_failure(abort_code = ::suisec_dojo::challenge_01_anyone_can_mint::EInvalidSolution)]
 fun should_reject_solve_before_threshold_is_reached() {
     let mut scenario = test_scenario::begin(ALICE);

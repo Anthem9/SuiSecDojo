@@ -1,0 +1,11 @@
+{
+  "network": "testnet",
+  "siteObjectId": "0xd4beb8861856bb3a7654de6e8aea7c2ebe474659fd796af86dae9a708688d92a",
+  "siteBase36": "5avymwokdz3z0hou081zmndklj1flmku3mi83x30ohgt8r8bvu",
+  "localPortalUrl": "http://5avymwokdz3z0hou081zmndklj1flmku3mi83x30ohgt8r8bvu.localhost:3000",
+  "epochs": 5,
+  "walrusVersion": "walrus 1.47.0-15e070d60189",
+  "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
+  "packageId": "0x31fe94a5f0d522557d627d4c4e14376c16cfcfaa99db37a49929992971943c5b",
+  "deployedAt": "2026-04-28T09:13:22Z"
+}

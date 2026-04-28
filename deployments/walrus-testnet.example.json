@@ -1,0 +1,11 @@
+{
+  "network": "testnet",
+  "siteObjectId": "",
+  "siteBase36": "",
+  "localPortalUrl": "",
+  "epochs": 5,
+  "walrusVersion": "walrus 1.47.0",
+  "siteBuilderVersion": "site-builder 2.9.0",
+  "packageId": "0x31fe94a5f0d522557d627d4c4e14376c16cfcfaa99db37a49929992971943c5b",
+  "deployedAt": ""
+}

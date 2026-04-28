@@ -48,11 +48,13 @@ public fun is_solved(instance: &ChallengeInstance): bool {
 
 public(package) entry fun claim(progress: &mut UserProgress, ctx: &mut TxContext) {
     let sender = tx_context::sender(ctx);
+    // Phase 0 instance factory: each learner claims one owned challenge object.
     user_progress::mark_claimed(progress, CHALLENGE_ID, sender);
     transfer::transfer(new_instance(sender, ctx), sender);
 }
 
 public(package) entry fun vulnerable_mint(instance: &mut ChallengeInstance, amount: u64) {
+    // Intentionally vulnerable: no capability or owner check protects this mint path.
     instance.minted_amount = instance.minted_amount + amount;
 }
 
