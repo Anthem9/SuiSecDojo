@@ -23,6 +23,17 @@ Wallet B:
 - Claim a separate challenge instance.
 - Confirm Wallet B cannot solve Wallet A's instance.
 
+Latest CLI result on 2026-04-28:
+
+- Wallet A: `0xda68b5b7583cf1515ad207e1ce1b5d5a630a9c5832023cf2381936743b3dd0a7`
+- Wallet B: `0x0152c2b850303ce4f1e1527ecc40d6220d8cf73c1aabf01714c1098d983a7c3e`
+- Fund Wallet B digest: `2oKCsy8K6HHVLAjDcp6L2ntHHR8ob8ZWAPXjyygq2iez`
+- Wallet B progress: `0x3f0f523feec7ec1efed2d8bd612eba5f43ee1150b2047799acb557134d7ef3a6`
+- Wallet B Challenge 01 instance: `0xb7a8fad76565d2708ac45d26404d8d89acebbac61b0d5429a9f02d0b08ca9aee`
+- Wallet B own solve digest: `gTedHzB2VJ1PvwmD4f9ZVbVUyhKC2kpke8zLf88Pei9`
+- Wallet B badge object: `0x480e9f4f6c5fa9d7de1a8317216e4edc5b7ff93bd814cad0531f8e6b92738664`
+- Wallet B solving Wallet A instance failed because the instance is owned by Wallet A, not Wallet B.
+
 ## Browser QA
 
 - Desktop 1440px: challenge list, detail, docs, and profile fit without overlap.
