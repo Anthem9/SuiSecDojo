@@ -6,8 +6,10 @@
   "epochs": 5,
   "walrusVersion": "walrus 1.47.0-15e070d60189",
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
-  "packageId": "0xeb9229cefe033adf3ef3ac79768d24525f9413c443337360b2a444a13b6d4081",
-  "challengeRegistryId": "0xe5f959d224ef239ee522abe19c059e8f93230f1b984a9cc8ba5588b8b51834ca",
-  "deployedAt": "2026-04-29T00:04:46Z",
-  "note": "Previous site update failed during Walrus blob extension; this deployment created a fresh testnet site object."
+  "packageId": "0xac18fc022854b016c5492fb65209f70bdf7b56986fd9d9ed0a1acc4edf82b580",
+  "challengeRegistryId": "0x21a7db45e9f1e58af4c3c3f6221fa94566928117b48a452d70b57d5d756499a5",
+  "deployedAt": "2026-04-29T01:13:10Z",
+  "note": "Existing testnet site object updated with Challenge Mode, scoring UI, and new package configuration.",
+  "challengeModeScoring": true,
+  "lastUpdatedDigest": "r6Q4QH2sCnESJCSuFv2nqHgtCDW9b3DbXUOH_bCdt7EBXAJdAg"
 }

@@ -77,7 +77,7 @@ fun should_solve_after_flag_is_set() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_03::vulnerable_set_flag(&mut instance, ALICE, true);
-        challenge_03::solve(&mut instance, &mut progress, ctx);
+        challenge_03::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         assert!(challenge_03::is_solved(&instance));
         assert!(user_progress::has_completed(&progress, 3));
@@ -96,7 +96,7 @@ fun should_reject_solve_before_flag_is_set() {
         let mut instance = challenge_03::new_instance_for_testing(ALICE, ctx);
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
-        challenge_03::solve(&mut instance, &mut progress, ctx);
+        challenge_03::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_03::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);
@@ -113,7 +113,7 @@ fun should_reject_non_owner_solve_attempt() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_03::vulnerable_set_flag(&mut instance, ALICE, true);
-        challenge_03::solve(&mut instance, &mut progress, ctx);
+        challenge_03::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_03::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);
@@ -130,8 +130,8 @@ fun should_reject_duplicate_solve() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_03::vulnerable_set_flag(&mut instance, ALICE, true);
-        challenge_03::solve(&mut instance, &mut progress, ctx);
-        challenge_03::solve(&mut instance, &mut progress, ctx);
+        challenge_03::solve(&mut instance, &mut progress, 1, 0, ctx);
+        challenge_03::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_03::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);

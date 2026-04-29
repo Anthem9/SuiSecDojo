@@ -16,6 +16,7 @@ public struct ChallengeInstance has key, store {
 }
 
 const CHALLENGE_ID: u64 = 7;
+const BASE_SCORE: u64 = 250;
 const SAFE_LIMIT: u64 = 100;
 const SOLVE_VALUE: u64 = 1_000;
 const ENotOwner: u64 = 1;
@@ -38,14 +39,20 @@ public(package) entry fun vulnerable_set_value(instance: &mut ChallengeInstance,
     instance.guarded_value = value;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &TxContext) {
+public(package) entry fun solve(
+    instance: &mut ChallengeInstance,
+    progress: &mut UserProgress,
+    mode: u8,
+    assistance_level: u8,
+    ctx: &TxContext,
+) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
     assert!(instance.guarded_value >= SOLVE_VALUE, EInvalidSolution);
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
-    challenge_events::emit_completion(CHALLENGE_ID, sender, 0, ctx);
+    challenge_events::emit_completion(CHALLENGE_ID, sender, 0, BASE_SCORE, mode, assistance_level, ctx);
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 { instance.challenge_id }

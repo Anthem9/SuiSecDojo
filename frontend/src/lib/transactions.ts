@@ -1,4 +1,14 @@
 import { Transaction } from "@mysten/sui/transactions";
+import { MODE_CODE, type AssistanceLevel, type TrainingMode } from "./scoring";
+
+export type SolveOptions = {
+  mode: TrainingMode;
+  assistanceLevel: AssistanceLevel;
+};
+
+function solveArgs(tx: Transaction, options: SolveOptions) {
+  return [tx.pure.u8(MODE_CODE[options.mode]), tx.pure.u8(options.assistanceLevel)];
+}
 
 export function createProgressTransaction(packageId: string): Transaction {
   const tx = new Transaction();
@@ -17,7 +27,16 @@ export function claimChallenge01Transaction(packageId: string, progressId: strin
   return tx;
 }
 
-export function solveChallenge01Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+export function mintChallenge01Transaction(packageId: string, instanceId: string, amount = 1_000): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_01_anyone_can_mint::vulnerable_mint`,
+    arguments: [tx.object(instanceId), tx.pure.u64(amount)],
+  });
+  return tx;
+}
+
+export function guidedSolveChallenge01Transaction(packageId: string, progressId: string, instanceId: string, options: SolveOptions): Transaction {
   const tx = new Transaction();
   const progress = tx.object(progressId);
   const instance = tx.object(instanceId);
@@ -28,9 +47,18 @@ export function solveChallenge01Transaction(packageId: string, progressId: strin
   });
   tx.moveCall({
     target: `${packageId}::challenge_01_anyone_can_mint::solve`,
-    arguments: [instance, progress],
+    arguments: [instance, progress, ...solveArgs(tx, options)],
   });
 
+  return tx;
+}
+
+export function solveChallenge01Transaction(packageId: string, progressId: string, instanceId: string, options: SolveOptions): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_01_anyone_can_mint::solve`,
+    arguments: [tx.object(instanceId), tx.object(progressId), ...solveArgs(tx, options)],
+  });
   return tx;
 }
 
@@ -43,20 +71,20 @@ export function claimChallenge02Transaction(packageId: string, progressId: strin
   return tx;
 }
 
-export function withdrawChallenge02Transaction(packageId: string, vaultId: string): Transaction {
+export function withdrawChallenge02Transaction(packageId: string, vaultId: string, amount = 100): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_02_shared_vault::vulnerable_withdraw`,
-    arguments: [tx.object(vaultId), tx.pure.u64(100)],
+    arguments: [tx.object(vaultId), tx.pure.u64(amount)],
   });
   return tx;
 }
 
-export function solveChallenge02Transaction(packageId: string, progressId: string, instanceId: string, vaultId: string): Transaction {
+export function solveChallenge02Transaction(packageId: string, progressId: string, instanceId: string, vaultId: string, options: SolveOptions): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_02_shared_vault::solve`,
-    arguments: [tx.object(instanceId), tx.object(vaultId), tx.object(progressId)],
+    arguments: [tx.object(instanceId), tx.object(vaultId), tx.object(progressId), ...solveArgs(tx, options)],
   });
   return tx;
 }
@@ -79,11 +107,11 @@ export function exploitChallenge03Transaction(packageId: string, instanceId: str
   return tx;
 }
 
-export function solveChallenge03Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+export function solveChallenge03Transaction(packageId: string, progressId: string, instanceId: string, options: SolveOptions): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_03_fake_owner::solve`,
-    arguments: [tx.object(instanceId), tx.object(progressId)],
+    arguments: [tx.object(instanceId), tx.object(progressId), ...solveArgs(tx, options)],
   });
   return tx;
 }
@@ -115,11 +143,11 @@ export function setChallenge04AdminFlagTransaction(packageId: string, instanceId
   return tx;
 }
 
-export function solveChallenge04Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+export function solveChallenge04Transaction(packageId: string, progressId: string, instanceId: string, options: SolveOptions): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_04_leaky_capability::solve`,
-    arguments: [tx.object(instanceId), tx.object(progressId)],
+    arguments: [tx.object(instanceId), tx.object(progressId), ...solveArgs(tx, options)],
   });
   return tx;
 }
@@ -151,11 +179,11 @@ export function setChallenge05InitializedTransaction(packageId: string, instance
   return tx;
 }
 
-export function solveChallenge05Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+export function solveChallenge05Transaction(packageId: string, progressId: string, instanceId: string, options: SolveOptions): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_05_bad_init::solve`,
-    arguments: [tx.object(instanceId), tx.object(progressId)],
+    arguments: [tx.object(instanceId), tx.object(progressId), ...solveArgs(tx, options)],
   });
   return tx;
 }
@@ -169,25 +197,25 @@ export function claimChallenge06Transaction(packageId: string, progressId: strin
   return tx;
 }
 
-export function exploitChallenge06Transaction(packageId: string, instanceId: string): Transaction {
+export function exploitChallenge06Transaction(packageId: string, instanceId: string, repeats = 10, payment = 1): Transaction {
   const tx = new Transaction();
   const instance = tx.object(instanceId);
 
-  for (let i = 0; i < 10; i += 1) {
+  for (let i = 0; i < repeats; i += 1) {
     tx.moveCall({
       target: `${packageId}::challenge_06_price_rounding::vulnerable_buy`,
-      arguments: [instance, tx.pure.u64(1)],
+      arguments: [instance, tx.pure.u64(payment)],
     });
   }
 
   return tx;
 }
 
-export function solveChallenge06Transaction(packageId: string, progressId: string, instanceId: string): Transaction {
+export function solveChallenge06Transaction(packageId: string, progressId: string, instanceId: string, options: SolveOptions): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_06_price_rounding::solve`,
-    arguments: [tx.object(instanceId), tx.object(progressId)],
+    arguments: [tx.object(instanceId), tx.object(progressId), ...solveArgs(tx, options)],
   });
   return tx;
 }
@@ -201,19 +229,19 @@ export function claimSimpleChallengeTransaction(packageId: string, moduleName: s
   return tx;
 }
 
-export function exploitChallenge07Transaction(packageId: string, instanceId: string): Transaction {
+export function exploitChallenge07Transaction(packageId: string, instanceId: string, value = 1_000): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_07_overflow_guard::vulnerable_set_value`,
-    arguments: [tx.object(instanceId), tx.pure.u64(1_000)],
+    arguments: [tx.object(instanceId), tx.pure.u64(value)],
   });
   return tx;
 }
 
-export function exploitChallenge08Transaction(packageId: string, instanceId: string): Transaction {
+export function exploitChallenge08Transaction(packageId: string, instanceId: string, path: "old" | "new" = "old"): Transaction {
   const tx = new Transaction();
   tx.moveCall({
-    target: `${packageId}::challenge_08_old_package_trap::old_vulnerable_path`,
+    target: `${packageId}::challenge_08_old_package_trap::${path === "new" ? "new_checked_path" : "old_vulnerable_path"}`,
     arguments: [tx.object(instanceId)],
   });
   return tx;
@@ -233,20 +261,26 @@ export function exploitChallenge09Transaction(packageId: string, instanceId: str
   return tx;
 }
 
-export function exploitChallenge10Transaction(packageId: string, instanceId: string): Transaction {
+export function exploitChallenge10Transaction(packageId: string, instanceId: string, amount = 100): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::challenge_10_mini_amm_incident::vulnerable_swap`,
-    arguments: [tx.object(instanceId), tx.pure.u64(100)],
+    arguments: [tx.object(instanceId), tx.pure.u64(amount)],
   });
   return tx;
 }
 
-export function solveSimpleChallengeTransaction(packageId: string, moduleName: string, progressId: string, instanceId: string): Transaction {
+export function solveSimpleChallengeTransaction(
+  packageId: string,
+  moduleName: string,
+  progressId: string,
+  instanceId: string,
+  options: SolveOptions,
+): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${packageId}::${moduleName}::solve`,
-    arguments: [tx.object(instanceId), tx.object(progressId)],
+    arguments: [tx.object(instanceId), tx.object(progressId), ...solveArgs(tx, options)],
   });
   return tx;
 }

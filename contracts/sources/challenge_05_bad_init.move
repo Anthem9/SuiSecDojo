@@ -25,6 +25,7 @@ public struct AdminCap has key, store {
 
 const CHALLENGE_ID: u64 = 5;
 const BADGE_TYPE_CAPABILITY_PATTERN: u64 = 3;
+const BASE_SCORE: u64 = 150;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
 const EInvalidSolution: u64 = 3;
@@ -66,7 +67,13 @@ public(package) entry fun admin_set_initialized(instance: &mut ChallengeInstance
     instance.initialized = true;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
+public(package) entry fun solve(
+    instance: &mut ChallengeInstance,
+    progress: &mut UserProgress,
+    mode: u8,
+    assistance_level: u8,
+    ctx: &mut TxContext,
+) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
@@ -78,7 +85,7 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
         user_progress::record_badge(progress, BADGE_TYPE_CAPABILITY_PATTERN, sender);
         transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_CAPABILITY_PATTERN, ctx), sender);
     };
-    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_CAPABILITY_PATTERN, ctx);
+    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_CAPABILITY_PATTERN, BASE_SCORE, mode, assistance_level, ctx);
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 {

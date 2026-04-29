@@ -2,6 +2,8 @@ import { ExternalLink } from "lucide-react";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import type { ChainChallengeState } from "../lib/chainState";
 import type { ChallengeActionState } from "../lib/challengeRuntime";
+import { cliPracticeTemplate, type PracticeDefaults } from "../lib/practice";
+import { assistanceLabels, formatTrainingMode, type AssistanceLevel, type TrainingMode } from "../lib/scoring";
 import type { ChallengeMetadata } from "../types";
 
 type ChallengeDetailPanelProps = {
@@ -10,13 +12,21 @@ type ChallengeDetailPanelProps = {
   challenge: ChallengeMetadata;
   lastDigest?: string;
   objectError?: Error | null;
+  assistanceLevel: AssistanceLevel;
+  onAssistanceLevelChange: (level: AssistanceLevel) => void;
   onExploitChallenge: () => void;
   onClaimInstance: () => void;
   onCreateProgress: () => void;
+  onPracticeInputChange: <Key extends keyof PracticeDefaults>(key: Key, value: PracticeDefaults[Key]) => void;
+  onRunPracticeAction: () => void;
   onSolveChallenge: () => void;
+  onTrainingModeChange: (mode: TrainingMode) => void;
   onUseCapability: () => void;
   packageId: string;
+  practiceInputs: PracticeDefaults;
+  scorePreview: number;
   statusMessage: string;
+  trainingMode: TrainingMode;
   warnings: string[];
 };
 
@@ -26,13 +36,21 @@ export function ChallengeDetailPanel({
   challenge,
   lastDigest,
   objectError,
+  assistanceLevel,
+  onAssistanceLevelChange,
   onExploitChallenge,
   onClaimInstance,
   onCreateProgress,
+  onPracticeInputChange,
+  onRunPracticeAction,
   onSolveChallenge,
+  onTrainingModeChange,
   onUseCapability,
   packageId,
+  practiceInputs,
+  scorePreview,
   statusMessage,
+  trainingMode,
   warnings,
 }: ChallengeDetailPanelProps) {
   const isChallenge01 = challenge.id === "1";
@@ -66,6 +84,7 @@ export function ChallengeDetailPanel({
           : chainState.challenge01Instance;
   const isSolved =
     selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
+  const cliTemplate = cliPracticeTemplate({ challenge, packageId, chainState, values: practiceInputs });
 
   return (
     <article className="detail-panel">
@@ -75,6 +94,32 @@ export function ChallengeDetailPanel({
       <p className="safety-notice">
         本平台仅用于安全教育、审计训练和防御研究。所有漏洞案例均为最小化模拟版本，禁止用于攻击真实协议、真实资产或未授权系统。
       </p>
+      <section className="training-panel">
+        <div className="mode-toggle" aria-label="Training mode">
+          {(["challenge", "guided"] as const).map((mode) => (
+            <button key={mode} className={trainingMode === mode ? "active" : ""} type="button" onClick={() => onTrainingModeChange(mode)}>
+              {formatTrainingMode(mode)}
+            </button>
+          ))}
+        </div>
+        <dl className="score-grid">
+          <div>
+            <dt>Mode</dt>
+            <dd>{formatTrainingMode(trainingMode)}</dd>
+          </div>
+          <div>
+            <dt>Assistance</dt>
+            <dd>{assistanceLabels[assistanceLevel]}</dd>
+          </div>
+          <div>
+            <dt>Score Preview</dt>
+            <dd>{scorePreview}</dd>
+          </div>
+        </dl>
+        <p className="section-copy">
+          Challenge Mode expects you to inspect the entry points and construct the call yourself. Guided Mode keeps helper buttons but records a lower score.
+        </p>
+      </section>
 
       <dl>
         <div>
@@ -217,6 +262,23 @@ export function ChallengeDetailPanel({
         ))}
       </div>
 
+      {!isSolved ? (
+        <section className="practice-panel">
+          <h3>CLI / PTB Practice</h3>
+          <PracticeInputs
+            actionState={actionState}
+            challengeId={challenge.id}
+            inputs={practiceInputs}
+            onChange={onPracticeInputChange}
+            onRun={onRunPracticeAction}
+            owner={chainState.challenge03Instance?.owner}
+          />
+          <pre>{cliTemplate}</pre>
+        </section>
+      ) : (
+        <p className="status-line">Challenge solved. Review the statement, fix notes, and your final score instead of resubmitting.</p>
+      )}
+
       <div className="detail-actions">
         <button
           type="button"
@@ -229,7 +291,8 @@ export function ChallengeDetailPanel({
         <button type="button" disabled={!actionState.canClaim} title={actionState.claimReason} onClick={onClaimInstance}>
           Claim Instance
         </button>
-        {isChallenge02 ||
+        {trainingMode === "guided" &&
+        (isChallenge02 ||
         isChallenge03 ||
         isChallenge04 ||
         isChallenge05 ||
@@ -237,25 +300,25 @@ export function ChallengeDetailPanel({
         isChallenge07 ||
         isChallenge08 ||
         isChallenge09 ||
-        isChallenge10 ? (
+        isChallenge10) ? (
           <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
             {isChallenge10
-              ? "Break AMM"
+              ? "Run AMM Swap"
               : isChallenge09
-                ? "Run PTB Combo"
+                ? "Execute PTB"
                 : isChallenge08
                   ? "Use Old Path"
                   : isChallenge07
-                    ? "Bypass Guard"
+                    ? "Run Guarded Value"
                     : isChallenge06
-              ? "Exploit Rounding"
+              ? "Run Rounded Buys"
               : isChallenge05
                 ? "Create Bad Init Cap"
                 : isChallenge04
                   ? "Claim Leaked Cap"
-                  : isChallenge03
-                    ? "Exploit Fake Owner"
-                    : "Exploit Withdraw"}
+                : isChallenge03
+                    ? "Run Owner Claim"
+                    : "Run Withdraw Call"}
           </button>
         ) : null}
         {isChallenge04 || isChallenge05 ? (
@@ -263,9 +326,11 @@ export function ChallengeDetailPanel({
             {isChallenge05 ? "Initialize State" : "Use Admin Cap"}
           </button>
         ) : null}
-        <button type="button" disabled={!actionState.canSolve} title={actionState.solveReason} onClick={onSolveChallenge}>
-          Solve Challenge
-        </button>
+        {!isSolved ? (
+          <button type="button" disabled={!actionState.canSolve} title={actionState.solveReason} onClick={onSolveChallenge}>
+            Submit Solve
+          </button>
+        ) : null}
       </div>
 
       <p className="action-hint">{visibleReason(actionState)}</p>
@@ -289,6 +354,107 @@ export function ChallengeDetailPanel({
       </section>
     </article>
   );
+}
+
+function PracticeInputs({
+  actionState,
+  challengeId,
+  inputs,
+  onChange,
+  onRun,
+  owner,
+}: {
+  actionState: ChallengeActionState;
+  challengeId: string;
+  inputs: PracticeDefaults;
+  onChange: <Key extends keyof PracticeDefaults>(key: Key, value: PracticeDefaults[Key]) => void;
+  onRun: () => void;
+  owner?: string;
+}) {
+  const runLabel = practiceRunLabel(challengeId);
+  const canRunPractice =
+    challengeId === "1"
+      ? actionState.runtimeState === "claimed" || actionState.runtimeState === "ready-to-solve"
+      : actionState.canExploit;
+  return (
+    <div className="practice-grid">
+      {challengeId === "1" ? (
+        <label>
+          mint_amount
+          <input value={inputs.mintAmount} onChange={(event) => onChange("mintAmount", event.target.value)} inputMode="numeric" />
+        </label>
+      ) : null}
+      {challengeId === "2" ? (
+        <label>
+          withdraw_amount
+          <input value={inputs.withdrawAmount} onChange={(event) => onChange("withdrawAmount", event.target.value)} inputMode="numeric" />
+        </label>
+      ) : null}
+      {challengeId === "3" ? (
+        <label>
+          claimed_owner
+          <input
+            value={inputs.claimedOwner || owner || ""}
+            onChange={(event) => onChange("claimedOwner", event.target.value)}
+            placeholder={owner ?? "0x..."}
+          />
+        </label>
+      ) : null}
+      {challengeId === "6" ? (
+        <>
+          <label>
+            buy_repeats
+            <input value={inputs.buyRepeats} onChange={(event) => onChange("buyRepeats", event.target.value)} inputMode="numeric" />
+          </label>
+          <label>
+            payment
+            <input value={inputs.buyPayment} onChange={(event) => onChange("buyPayment", event.target.value)} inputMode="numeric" />
+          </label>
+        </>
+      ) : null}
+      {challengeId === "7" ? (
+        <label>
+          guarded_value
+          <input value={inputs.guardedValue} onChange={(event) => onChange("guardedValue", event.target.value)} inputMode="numeric" />
+        </label>
+      ) : null}
+      {challengeId === "8" ? (
+        <label>
+          path
+          <select value={inputs.oldPath} onChange={(event) => onChange("oldPath", event.target.value as PracticeDefaults["oldPath"])}>
+            <option value="old">old_vulnerable_path</option>
+            <option value="new">new_checked_path</option>
+          </select>
+        </label>
+      ) : null}
+      {challengeId === "10" ? (
+        <label>
+          swap_amount
+          <input value={inputs.swapAmount} onChange={(event) => onChange("swapAmount", event.target.value)} inputMode="numeric" />
+        </label>
+      ) : null}
+      <button type="button" disabled={!canRunPractice} title={challengeId === "1" ? actionState.solveReason : actionState.exploitReason} onClick={onRun}>
+        {runLabel}
+      </button>
+    </div>
+  );
+}
+
+function practiceRunLabel(challengeId: string): string {
+  switch (challengeId) {
+    case "1":
+      return "Run Your Mint";
+    case "2":
+      return "Run Withdraw Call";
+    case "3":
+      return "Run Owner Claim";
+    case "9":
+      return "Execute PTB";
+    case "10":
+      return "Run AMM Swap";
+    default:
+      return "Run Practice Call";
+  }
 }
 
 function visibleReason(actionState: ChallengeActionState): string {

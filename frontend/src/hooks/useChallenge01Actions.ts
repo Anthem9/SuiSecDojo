@@ -18,6 +18,8 @@ import {
   exploitChallenge08Transaction,
   exploitChallenge09Transaction,
   exploitChallenge10Transaction,
+  guidedSolveChallenge01Transaction,
+  mintChallenge01Transaction,
   claimSimpleChallengeTransaction,
   setChallenge04AdminFlagTransaction,
   setChallenge05InitializedTransaction,
@@ -29,11 +31,15 @@ import {
   solveChallenge06Transaction,
   solveSimpleChallengeTransaction,
   withdrawChallenge02Transaction,
+  type SolveOptions,
 } from "../lib/transactions";
+import type { PracticeDefaults } from "../lib/practice";
 import { txStatusDigest, txStatusMessage, readableTxError } from "../lib/txStatus";
 import type { TxStatus } from "../lib/txStatus";
 
 type RefetchObjects = () => Promise<unknown>;
+
+const defaultSolveOptions: SolveOptions = { mode: "challenge", assistanceLevel: 0 };
 
 export function useChallenge01Actions(packageId: string, chainState: ChainChallengeState, refetchObjects: RefetchObjects) {
   const account = useCurrentAccount();
@@ -69,34 +75,43 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
     createProgress: () => executeAndRefresh("Create progress", () => createProgressTransaction(packageId)),
     claimInstance: () =>
       executeAndRefresh("Claim instance", () => claimChallenge01Transaction(packageId, chainState.progress!.objectId)),
-    solveChallenge: () =>
-      executeAndRefresh("Solve challenge", () =>
-        solveChallenge01Transaction(packageId, chainState.progress!.objectId, chainState.challenge01Instance!.objectId),
+    mintChallenge01: (amount = 1_000) =>
+      executeAndRefresh("Run your mint", () => mintChallenge01Transaction(packageId, chainState.challenge01Instance!.objectId, amount)),
+    solveChallenge: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh(options.mode === "guided" ? "Guided solve challenge" : "Submit solve", () =>
+        options.mode === "guided"
+          ? guidedSolveChallenge01Transaction(packageId, chainState.progress!.objectId, chainState.challenge01Instance!.objectId, options)
+          : solveChallenge01Transaction(packageId, chainState.progress!.objectId, chainState.challenge01Instance!.objectId, options),
       ),
     claimChallenge02: () =>
       executeAndRefresh("Claim Shared Vault", () => claimChallenge02Transaction(packageId, chainState.progress!.objectId)),
-    withdrawChallenge02: () =>
-      executeAndRefresh("Exploit withdraw", () =>
-        withdrawChallenge02Transaction(packageId, chainState.challenge02Vault!.objectId),
+    withdrawChallenge02: (amount = 100) =>
+      executeAndRefresh("Run withdraw call", () =>
+        withdrawChallenge02Transaction(packageId, chainState.challenge02Vault!.objectId, amount),
       ),
-    solveChallenge02: () =>
-      executeAndRefresh("Solve Shared Vault", () =>
+    solveChallenge02: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Shared Vault solve", () =>
         solveChallenge02Transaction(
           packageId,
           chainState.progress!.objectId,
           chainState.challenge02Instance!.objectId,
           chainState.challenge02Vault!.objectId,
+          options,
         ),
       ),
     claimChallenge03: () =>
       executeAndRefresh("Claim Fake Owner", () => claimChallenge03Transaction(packageId, chainState.progress!.objectId)),
-    exploitChallenge03: () =>
-      executeAndRefresh("Exploit fake owner", () =>
-        exploitChallenge03Transaction(packageId, chainState.challenge03Instance!.objectId, chainState.challenge03Instance!.owner),
+    exploitChallenge03: (claimedOwner?: string) =>
+      executeAndRefresh("Run owner claim", () =>
+        exploitChallenge03Transaction(
+          packageId,
+          chainState.challenge03Instance!.objectId,
+          claimedOwner || chainState.challenge03Instance!.owner,
+        ),
       ),
-    solveChallenge03: () =>
-      executeAndRefresh("Solve Fake Owner", () =>
-        solveChallenge03Transaction(packageId, chainState.progress!.objectId, chainState.challenge03Instance!.objectId),
+    solveChallenge03: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Fake Owner solve", () =>
+        solveChallenge03Transaction(packageId, chainState.progress!.objectId, chainState.challenge03Instance!.objectId, options),
       ),
     claimChallenge04: () =>
       executeAndRefresh("Claim Leaky Capability", () => claimChallenge04Transaction(packageId, chainState.progress!.objectId)),
@@ -112,9 +127,9 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
           chainState.challenge04AdminCap!.objectId,
         ),
       ),
-    solveChallenge04: () =>
-      executeAndRefresh("Solve Leaky Capability", () =>
-        solveChallenge04Transaction(packageId, chainState.progress!.objectId, chainState.challenge04Instance!.objectId),
+    solveChallenge04: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Leaky Capability solve", () =>
+        solveChallenge04Transaction(packageId, chainState.progress!.objectId, chainState.challenge04Instance!.objectId, options),
       ),
     claimChallenge05: () =>
       executeAndRefresh("Claim Bad Init", () => claimChallenge05Transaction(packageId, chainState.progress!.objectId)),
@@ -130,52 +145,54 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
           chainState.challenge05AdminCap!.objectId,
         ),
       ),
-    solveChallenge05: () =>
-      executeAndRefresh("Solve Bad Init", () =>
-        solveChallenge05Transaction(packageId, chainState.progress!.objectId, chainState.challenge05Instance!.objectId),
+    solveChallenge05: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Bad Init solve", () =>
+        solveChallenge05Transaction(packageId, chainState.progress!.objectId, chainState.challenge05Instance!.objectId, options),
       ),
     claimChallenge06: () =>
       executeAndRefresh("Claim Price Rounding", () => claimChallenge06Transaction(packageId, chainState.progress!.objectId)),
-    exploitChallenge06: () =>
-      executeAndRefresh("Exploit rounding", () =>
-        exploitChallenge06Transaction(packageId, chainState.challenge06Instance!.objectId),
+    exploitChallenge06: (repeats = 10, payment = 1) =>
+      executeAndRefresh("Run rounded buys", () =>
+        exploitChallenge06Transaction(packageId, chainState.challenge06Instance!.objectId, repeats, payment),
       ),
-    solveChallenge06: () =>
-      executeAndRefresh("Solve Price Rounding", () =>
-        solveChallenge06Transaction(packageId, chainState.progress!.objectId, chainState.challenge06Instance!.objectId),
+    solveChallenge06: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Price Rounding solve", () =>
+        solveChallenge06Transaction(packageId, chainState.progress!.objectId, chainState.challenge06Instance!.objectId, options),
       ),
     claimChallenge07: () =>
       executeAndRefresh("Claim Overflow Guard", () =>
         claimSimpleChallengeTransaction(packageId, "challenge_07_overflow_guard", chainState.progress!.objectId),
       ),
-    exploitChallenge07: () =>
-      executeAndRefresh("Exploit wrong guard", () =>
-        exploitChallenge07Transaction(packageId, chainState.challenge07Instance!.objectId),
+    exploitChallenge07: (value = 1_000) =>
+      executeAndRefresh("Run guarded value call", () =>
+        exploitChallenge07Transaction(packageId, chainState.challenge07Instance!.objectId, value),
       ),
-    solveChallenge07: () =>
-      executeAndRefresh("Solve Overflow Guard", () =>
+    solveChallenge07: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Overflow Guard solve", () =>
         solveSimpleChallengeTransaction(
           packageId,
           "challenge_07_overflow_guard",
           chainState.progress!.objectId,
           chainState.challenge07Instance!.objectId,
+          options,
         ),
       ),
     claimChallenge08: () =>
       executeAndRefresh("Claim Old Package Trap", () =>
         claimSimpleChallengeTransaction(packageId, "challenge_08_old_package_trap", chainState.progress!.objectId),
       ),
-    exploitChallenge08: () =>
+    exploitChallenge08: (path: PracticeDefaults["oldPath"] = "old") =>
       executeAndRefresh("Use old package path", () =>
-        exploitChallenge08Transaction(packageId, chainState.challenge08Instance!.objectId),
+        exploitChallenge08Transaction(packageId, chainState.challenge08Instance!.objectId, path),
       ),
-    solveChallenge08: () =>
-      executeAndRefresh("Solve Old Package Trap", () =>
+    solveChallenge08: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Old Package Trap solve", () =>
         solveSimpleChallengeTransaction(
           packageId,
           "challenge_08_old_package_trap",
           chainState.progress!.objectId,
           chainState.challenge08Instance!.objectId,
+          options,
         ),
       ),
     claimChallenge09: () =>
@@ -186,30 +203,32 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
       executeAndRefresh("Run PTB combo", () =>
         exploitChallenge09Transaction(packageId, chainState.challenge09Instance!.objectId),
       ),
-    solveChallenge09: () =>
-      executeAndRefresh("Solve PTB Combo", () =>
+    solveChallenge09: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit PTB Combo solve", () =>
         solveSimpleChallengeTransaction(
           packageId,
           "challenge_09_ptb_combo",
           chainState.progress!.objectId,
           chainState.challenge09Instance!.objectId,
+          options,
         ),
       ),
     claimChallenge10: () =>
       executeAndRefresh("Claim Mini AMM Incident", () =>
         claimSimpleChallengeTransaction(packageId, "challenge_10_mini_amm_incident", chainState.progress!.objectId),
       ),
-    exploitChallenge10: () =>
-      executeAndRefresh("Break AMM invariant", () =>
-        exploitChallenge10Transaction(packageId, chainState.challenge10Instance!.objectId),
+    exploitChallenge10: (amount = 100) =>
+      executeAndRefresh("Run AMM swap", () =>
+        exploitChallenge10Transaction(packageId, chainState.challenge10Instance!.objectId, amount),
       ),
-    solveChallenge10: () =>
-      executeAndRefresh("Solve Mini AMM Incident", () =>
+    solveChallenge10: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Mini AMM solve", () =>
         solveSimpleChallengeTransaction(
           packageId,
           "challenge_10_mini_amm_incident",
           chainState.progress!.objectId,
           chainState.challenge10Instance!.objectId,
+          options,
         ),
       ),
   };

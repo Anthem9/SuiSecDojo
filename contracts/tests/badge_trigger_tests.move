@@ -24,7 +24,7 @@ fun should_record_object_security_badge_after_challenge_01() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_01::vulnerable_mint(&mut instance, challenge_01::solve_threshold_for_testing());
-        challenge_01::solve(&mut instance, &mut progress, ctx);
+        challenge_01::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         assert!(user_progress::has_badge(&progress, 1));
         assert_latest_event(1, ALICE, 1);
@@ -52,7 +52,7 @@ fun should_record_shared_object_badge_after_challenge_02() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_02::vulnerable_withdraw(&mut vault, challenge_02::initial_vault_balance_for_testing());
-        challenge_02::solve(&mut instance, &vault, &mut progress, ctx);
+        challenge_02::solve(&mut instance, &vault, &mut progress, 1, 0, ctx);
 
         assert!(user_progress::has_badge(&progress, 2));
         assert_latest_event(2, ALICE, 2);
@@ -80,7 +80,7 @@ fun should_record_authorization_badge_after_challenge_03() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_03::vulnerable_set_flag(&mut instance, ALICE, true);
-        challenge_03::solve(&mut instance, &mut progress, ctx);
+        challenge_03::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         assert!(user_progress::has_badge(&progress, 3));
         assert_latest_event(3, ALICE, 3);
@@ -108,7 +108,7 @@ fun should_record_capability_badge_after_challenge_04() {
         let cap = challenge_04::new_cap_for_testing(challenge_04::instance_id(&instance), ALICE, ctx);
 
         challenge_04::admin_set_flag(&mut instance, &cap);
-        challenge_04::solve(&mut instance, &mut progress, ctx);
+        challenge_04::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         assert!(user_progress::has_badge(&progress, 3));
         assert_latest_event(4, ALICE, 3);
@@ -141,11 +141,11 @@ fun should_record_defi_badge_after_challenges_06_and_10() {
             challenge_06::vulnerable_buy(&mut challenge_06_instance, 1);
             i = i + 1;
         };
-        challenge_06::solve(&mut challenge_06_instance, &mut progress, ctx);
+        challenge_06::solve(&mut challenge_06_instance, &mut progress, 1, 0, ctx);
         assert!(!user_progress::has_badge(&progress, 4));
 
         challenge_10::vulnerable_swap(&mut challenge_10_instance, 100);
-        challenge_10::solve(&mut challenge_10_instance, &mut progress, ctx);
+        challenge_10::solve(&mut challenge_10_instance, &mut progress, 1, 0, ctx);
         assert!(user_progress::has_badge(&progress, 4));
         assert_latest_event(10, ALICE, 4);
 
@@ -169,4 +169,7 @@ fun assert_latest_event(challenge_id: u64, solver: address, badge_type: u64) {
     assert!(challenge_events::challenge_id(latest) == challenge_id);
     assert!(challenge_events::solver(latest) == solver);
     assert!(challenge_events::badge_type(latest) == badge_type);
+    assert!(challenge_events::mode(latest) == 1);
+    assert!(challenge_events::assistance_level(latest) == 0);
+    assert!(challenge_events::score(latest) > 0);
 }

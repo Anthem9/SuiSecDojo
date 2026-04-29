@@ -107,7 +107,7 @@ fun should_solve_after_admin_flag_is_set() {
         let cap = challenge_04::new_cap_for_testing(challenge_04::instance_id(&instance), ALICE, ctx);
 
         challenge_04::admin_set_flag(&mut instance, &cap);
-        challenge_04::solve(&mut instance, &mut progress, ctx);
+        challenge_04::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         assert!(challenge_04::is_solved(&instance));
         assert!(user_progress::has_completed(&progress, 4));
@@ -127,7 +127,7 @@ fun should_reject_solve_before_admin_flag_is_set() {
         let mut instance = challenge_04::new_instance_for_testing(ALICE, ctx);
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
-        challenge_04::solve(&mut instance, &mut progress, ctx);
+        challenge_04::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_04::destroy_instance_for_testing(instance);
         user_progress::destroy_for_testing(progress);
@@ -145,7 +145,7 @@ fun should_reject_non_owner_solve_attempt() {
         let cap = challenge_04::new_cap_for_testing(challenge_04::instance_id(&instance), BOB, ctx);
 
         challenge_04::admin_set_flag(&mut instance, &cap);
-        challenge_04::solve(&mut instance, &mut progress, ctx);
+        challenge_04::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_04::destroy_cap_for_testing(cap);
         challenge_04::destroy_instance_for_testing(instance);
@@ -164,8 +164,8 @@ fun should_reject_duplicate_solve() {
         let cap = challenge_04::new_cap_for_testing(challenge_04::instance_id(&instance), ALICE, ctx);
 
         challenge_04::admin_set_flag(&mut instance, &cap);
-        challenge_04::solve(&mut instance, &mut progress, ctx);
-        challenge_04::solve(&mut instance, &mut progress, ctx);
+        challenge_04::solve(&mut instance, &mut progress, 1, 0, ctx);
+        challenge_04::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_04::destroy_cap_for_testing(cap);
         challenge_04::destroy_instance_for_testing(instance);

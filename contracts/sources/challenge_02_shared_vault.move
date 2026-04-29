@@ -24,6 +24,7 @@ public struct ChallengeInstance has key, store {
 
 const CHALLENGE_ID: u64 = 2;
 const BADGE_TYPE_SHARED_OBJECT: u64 = 2;
+const BASE_SCORE: u64 = 150;
 const INITIAL_VAULT_BALANCE: u64 = 100;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
@@ -69,6 +70,8 @@ public(package) entry fun solve(
     instance: &mut ChallengeInstance,
     vault: &SharedVault,
     progress: &mut UserProgress,
+    mode: u8,
+    assistance_level: u8,
     ctx: &mut TxContext,
 ) {
     let sender = tx_context::sender(ctx);
@@ -83,7 +86,7 @@ public(package) entry fun solve(
         user_progress::record_badge(progress, BADGE_TYPE_SHARED_OBJECT, sender);
         transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_SHARED_OBJECT, ctx), sender);
     };
-    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_SHARED_OBJECT, ctx);
+    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_SHARED_OBJECT, BASE_SCORE, mode, assistance_level, ctx);
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 {

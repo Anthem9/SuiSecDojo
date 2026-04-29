@@ -20,6 +20,7 @@ public struct ChallengeInstance has key, store {
 const CHALLENGE_ID: u64 = 6;
 const CHALLENGE_ID_MINI_AMM: u64 = 10;
 const BADGE_TYPE_DEFI_LOGIC: u64 = 4;
+const BASE_SCORE: u64 = 250;
 const PRICE_PER_CREDIT: u64 = 10;
 const SOLVE_CREDITS: u64 = 10;
 const MAX_EXPLOIT_PAYMENT: u64 = 10;
@@ -53,7 +54,13 @@ public(package) entry fun vulnerable_buy(instance: &mut ChallengeInstance, payme
     instance.credits = instance.credits + rounded_credits;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
+public(package) entry fun solve(
+    instance: &mut ChallengeInstance,
+    progress: &mut UserProgress,
+    mode: u8,
+    assistance_level: u8,
+    ctx: &mut TxContext,
+) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
@@ -73,6 +80,9 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
         CHALLENGE_ID,
         sender,
         if (user_progress::has_badge(progress, BADGE_TYPE_DEFI_LOGIC)) { BADGE_TYPE_DEFI_LOGIC } else { 0 },
+        BASE_SCORE,
+        mode,
+        assistance_level,
         ctx,
     );
 }

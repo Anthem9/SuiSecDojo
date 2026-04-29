@@ -16,6 +16,7 @@ public struct ChallengeInstance has key, store {
 }
 
 const CHALLENGE_ID: u64 = 8;
+const BASE_SCORE: u64 = 250;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
 const EInvalidSolution: u64 = 3;
@@ -40,14 +41,20 @@ public(package) entry fun old_vulnerable_path(instance: &mut ChallengeInstance) 
     instance.legacy_flag = true;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &TxContext) {
+public(package) entry fun solve(
+    instance: &mut ChallengeInstance,
+    progress: &mut UserProgress,
+    mode: u8,
+    assistance_level: u8,
+    ctx: &TxContext,
+) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
     assert!(instance.legacy_flag, EInvalidSolution);
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
-    challenge_events::emit_completion(CHALLENGE_ID, sender, 0, ctx);
+    challenge_events::emit_completion(CHALLENGE_ID, sender, 0, BASE_SCORE, mode, assistance_level, ctx);
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 { instance.challenge_id }

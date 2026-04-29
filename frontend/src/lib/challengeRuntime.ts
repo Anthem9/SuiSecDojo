@@ -66,6 +66,7 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
                     : input.chainState.challenge01Instance;
   const hasInstance = Boolean(selectedInstance);
   const hasVault = Boolean(input.chainState.challenge02Vault);
+  const isChallenge01Ready = Number(input.chainState.challenge01Instance?.mintedAmount ?? "0") >= 1_000;
   const isChallenge02Drained = input.chainState.challenge02Vault?.balance === "0";
   const isChallenge03FlagSet = input.chainState.challenge03Instance?.restrictedFlag === true;
   const isChallenge04AdminFlagSet = input.chainState.challenge04Instance?.adminFlag === true;
@@ -90,6 +91,7 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
     isSolved,
     readyToSolve:
       (isChallenge02Selected && hasVault && isChallenge02Drained) ||
+      (isChallenge01Selected && isChallenge01Ready) ||
       (isChallenge03Selected && isChallenge03FlagSet) ||
       (isChallenge04Selected && isChallenge04AdminFlagSet) ||
       (isChallenge05Selected && isChallenge05Initialized) ||
@@ -197,7 +199,7 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       hasInstance &&
       !isSolved &&
       supportsOnChain &&
-      (isChallenge01Selected ||
+      ((isChallenge01Selected && isChallenge01Ready) ||
         isChallenge02Drained ||
         isChallenge03FlagSet ||
         isChallenge04AdminFlagSet ||
@@ -218,6 +220,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isSolved,
           supportsOnChain,
           input.selectedChallengeId,
+          isChallenge01Selected,
+          isChallenge01Ready,
           isChallenge02Selected,
           hasVault,
           isChallenge02Drained,
@@ -384,6 +388,8 @@ function reasonForSolve(
   isSolved: boolean,
   supportsOnChain: boolean,
   selectedChallengeId: string,
+  isChallenge01Selected: boolean,
+  isChallenge01Ready: boolean,
   isChallenge02Selected: boolean,
   hasVault: boolean,
   isChallenge02Drained: boolean,
@@ -412,6 +418,8 @@ function reasonForSolve(
   if (!hasProgress) return "Create a progress object first.";
   if (!hasInstance) return "Claim an instance first.";
   if (isSolved) return `Challenge ${formatChallengeId(selectedChallengeId)} already completed.`;
+  if (isChallenge01Selected && !isChallenge01Ready) return "Run your mint before submitting solve.";
+  if (isChallenge01Selected) return "Ready to submit Anyone Can Mint solve.";
   if (isChallenge02Selected && !hasVault) return "Shared vault is still loading.";
   if (isChallenge02Selected && !isChallenge02Drained) return "Drain the shared vault before solving.";
   if (isChallenge02Selected) return "Ready to solve Shared Vault.";
@@ -433,7 +441,7 @@ function reasonForSolve(
   if (isChallenge09Selected) return "Ready to solve PTB Combo.";
   if (isChallenge10Selected && !isChallenge10Ready) return "Break the AMM invariant first.";
   if (isChallenge10Selected) return "Ready to solve Mini AMM Incident.";
-  return "Ready to run vulnerable mint and solve.";
+  return "Ready to submit solve.";
 }
 
 function formatChallengeId(challengeId: string): string {

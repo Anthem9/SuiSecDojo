@@ -1,4 +1,5 @@
 import type { BadgeObject, ChainChallengeState } from "./chainState";
+import type { LeaderboardEntry } from "./leaderboard";
 import type { ChallengeMetadata } from "../types";
 
 export type ProfileSummary = {
@@ -12,6 +13,10 @@ export type ProfileSummary = {
   badgeCount: number;
   badgeLabels: string[];
   badgeDetails: BadgeDetail[];
+  totalScore: number;
+  averageAssistanceLevel: number;
+  challengeModeCompletions: number;
+  guidedModeCompletions: number;
 };
 
 export type BadgeDetail = {
@@ -28,6 +33,7 @@ export function summarizeProfile(input: {
   challenges: ChallengeMetadata[];
   chainState: ChainChallengeState;
   badges: BadgeObject[];
+  leaderboardEntry?: LeaderboardEntry;
 }): ProfileSummary {
   const claimedIds = new Set(input.chainState.progress?.claimedChallengeIds ?? []);
   const completedIds = new Set(input.chainState.progress?.completedChallengeIds ?? []);
@@ -50,6 +56,10 @@ export function summarizeProfile(input: {
     badgeCount: badgeLabels.length,
     badgeLabels,
     badgeDetails,
+    totalScore: input.leaderboardEntry?.totalScore ?? 0,
+    averageAssistanceLevel: input.leaderboardEntry?.averageAssistanceLevel ?? 0,
+    challengeModeCompletions: input.leaderboardEntry?.challengeModeCount ?? 0,
+    guidedModeCompletions: input.leaderboardEntry?.guidedModeCount ?? 0,
   };
 }
 

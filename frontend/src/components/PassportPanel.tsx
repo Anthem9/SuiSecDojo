@@ -33,6 +33,10 @@ export function PassportPanel({ profile }: PassportPanelProps) {
             <dd>{passport.badgeLabel}</dd>
           </div>
           <div>
+            <dt>Score</dt>
+            <dd>{passport.scoreLabel}</dd>
+          </div>
+          <div>
             <dt>Next Step</dt>
             <dd>{passport.nextStep}</dd>
           </div>

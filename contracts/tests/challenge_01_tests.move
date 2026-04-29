@@ -105,7 +105,7 @@ fun should_solve_after_user_exploits_unrestricted_mint() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_01::vulnerable_mint(&mut instance, challenge_01::solve_threshold_for_testing());
-        challenge_01::solve(&mut instance, &mut progress, ctx);
+        challenge_01::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         assert!(challenge_01::is_solved(&instance));
         assert!(user_progress::has_completed(&progress, 1));
@@ -126,8 +126,8 @@ fun should_reject_duplicate_solve() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_01::vulnerable_mint(&mut instance, challenge_01::solve_threshold_for_testing());
-        challenge_01::solve(&mut instance, &mut progress, ctx);
-        challenge_01::solve(&mut instance, &mut progress, ctx);
+        challenge_01::solve(&mut instance, &mut progress, 1, 0, ctx);
+        challenge_01::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_01::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);
@@ -144,7 +144,7 @@ fun should_reject_solve_before_threshold_is_reached() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_01::vulnerable_mint(&mut instance, 999);
-        challenge_01::solve(&mut instance, &mut progress, ctx);
+        challenge_01::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_01::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);
@@ -161,7 +161,7 @@ fun should_reject_non_owner_solve_attempt() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_01::vulnerable_mint(&mut instance, challenge_01::solve_threshold_for_testing());
-        challenge_01::solve(&mut instance, &mut progress, ctx);
+        challenge_01::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_01::destroy_for_testing(instance);
         user_progress::destroy_for_testing(progress);

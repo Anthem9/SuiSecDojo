@@ -93,7 +93,7 @@ fun should_solve_after_vault_is_drained() {
         let mut instance: challenge_02::ChallengeInstance = test_scenario::take_from_sender(&scenario);
         let vault: challenge_02::SharedVault = test_scenario::take_shared(&scenario);
 
-        challenge_02::solve(&mut instance, &vault, &mut progress, test_scenario::ctx(&mut scenario));
+        challenge_02::solve(&mut instance, &vault, &mut progress, 1, 0, test_scenario::ctx(&mut scenario));
 
         assert!(challenge_02::is_solved(&instance));
         assert!(user_progress::has_completed(&progress, 2));
@@ -114,7 +114,7 @@ fun should_reject_solve_before_vault_is_drained() {
         let mut instance = challenge_02::new_instance_for_testing(ALICE, challenge_02::vault_object_id(&vault), ctx);
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
-        challenge_02::solve(&mut instance, &vault, &mut progress, ctx);
+        challenge_02::solve(&mut instance, &vault, &mut progress, 1, 0, ctx);
 
         challenge_02::destroy_instance_for_testing(instance);
         challenge_02::destroy_vault_for_testing(vault);
@@ -133,8 +133,8 @@ fun should_reject_duplicate_solve() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_02::vulnerable_withdraw(&mut vault, challenge_02::initial_vault_balance_for_testing());
-        challenge_02::solve(&mut instance, &vault, &mut progress, ctx);
-        challenge_02::solve(&mut instance, &vault, &mut progress, ctx);
+        challenge_02::solve(&mut instance, &vault, &mut progress, 1, 0, ctx);
+        challenge_02::solve(&mut instance, &vault, &mut progress, 1, 0, ctx);
 
         challenge_02::destroy_instance_for_testing(instance);
         challenge_02::destroy_vault_for_testing(vault);
@@ -153,7 +153,7 @@ fun should_reject_non_owner_solve_attempt() {
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
         challenge_02::vulnerable_withdraw(&mut vault, challenge_02::initial_vault_balance_for_testing());
-        challenge_02::solve(&mut instance, &vault, &mut progress, ctx);
+        challenge_02::solve(&mut instance, &vault, &mut progress, 1, 0, ctx);
 
         challenge_02::destroy_instance_for_testing(instance);
         challenge_02::destroy_vault_for_testing(vault);

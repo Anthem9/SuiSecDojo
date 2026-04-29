@@ -78,6 +78,56 @@ describe("challenge runtime state", () => {
     expect(state.solveReason).toBe("Challenge 01 already completed.");
   });
 
+  it("should require a mint before Challenge 01 solve is enabled", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "1",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["1"],
+          completedChallengeIds: [],
+        },
+        challenge01Instance: {
+          objectId: "0xinstance",
+          challengeId: "1",
+          mintedAmount: "0",
+          solved: false,
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Run your mint before submitting solve.");
+  });
+
+  it("should enable Challenge 01 solve after the mint threshold is reached", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "1",
+      chainState: {
+        progress: {
+          objectId: "0xprogress",
+          claimedChallengeIds: ["1"],
+          completedChallengeIds: [],
+        },
+        challenge01Instance: {
+          objectId: "0xinstance",
+          challengeId: "1",
+          mintedAmount: "1000",
+          solved: false,
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to submit Anyone Can Mint solve.");
+  });
+
   it("should enable Challenge 02 exploit after claim and before drain", () => {
     const state = getChallenge01ActionState({
       accountAddress: "0xalice",

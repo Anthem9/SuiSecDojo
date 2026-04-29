@@ -19,7 +19,7 @@ fun should_solve_challenge_07_after_wrong_guard_bypass() {
     let mut instance = c7::new_instance_for_testing(ALICE, ctx);
 
     c7::vulnerable_set_value(&mut instance, 1_000);
-    c7::solve(&mut instance, &mut progress, ctx);
+    c7::solve(&mut instance, &mut progress, 1, 0, ctx);
 
     assert!(c7::is_solved(&instance));
     assert!(user_progress::has_completed(&progress, 7));
@@ -34,7 +34,7 @@ fun should_reject_challenge_07_before_bypass() {
     let ctx = test_scenario::ctx(&mut scenario);
     let mut progress = user_progress::new_for_owner(ALICE, ctx);
     let mut instance = c7::new_instance_for_testing(ALICE, ctx);
-    c7::solve(&mut instance, &mut progress, ctx);
+    c7::solve(&mut instance, &mut progress, 1, 0, ctx);
     c7::destroy_for_testing(instance);
     user_progress::destroy_for_testing(progress);
     test_scenario::end(scenario);
@@ -48,7 +48,7 @@ fun should_solve_challenge_08_through_old_path() {
     let mut instance = c8::new_instance_for_testing(ALICE, ctx);
 
     c8::old_vulnerable_path(&mut instance);
-    c8::solve(&mut instance, &mut progress, ctx);
+    c8::solve(&mut instance, &mut progress, 1, 0, ctx);
 
     assert!(c8::legacy_flag(&instance));
     assert!(c8::is_solved(&instance));
@@ -77,7 +77,7 @@ fun should_solve_challenge_09_with_ptb_combo_token() {
 
     c9::prepare_combo(&mut instance);
     c9::finish_combo(&mut instance);
-    c9::solve(&mut instance, &mut progress, ctx);
+    c9::solve(&mut instance, &mut progress, 1, 0, ctx);
 
     assert!(c9::combo_ready(&instance));
     assert!(c9::is_solved(&instance));
@@ -93,7 +93,7 @@ fun should_reject_challenge_09_before_combo() {
     let ctx = test_scenario::ctx(&mut scenario);
     let mut progress = user_progress::new_for_owner(ALICE, ctx);
     let mut instance = c9::new_instance_for_testing(ALICE, ctx);
-    c9::solve(&mut instance, &mut progress, ctx);
+    c9::solve(&mut instance, &mut progress, 1, 0, ctx);
     c9::destroy_for_testing(instance);
     user_progress::destroy_for_testing(progress);
     test_scenario::end(scenario);
@@ -107,7 +107,7 @@ fun should_solve_challenge_10_after_amm_invariant_break() {
     let mut instance = c10::new_instance_for_testing(ALICE, ctx);
 
     c10::vulnerable_swap(&mut instance, 100);
-    c10::solve(&mut instance, &mut progress, ctx);
+    c10::solve(&mut instance, &mut progress, 1, 0, ctx);
 
     assert!(c10::invariant_broken(&instance));
     assert!(c10::attacker_profit(&instance) >= 100);
@@ -124,7 +124,7 @@ fun should_reject_challenge_10_before_invariant_break() {
     let ctx = test_scenario::ctx(&mut scenario);
     let mut progress = user_progress::new_for_owner(ALICE, ctx);
     let mut instance = c10::new_instance_for_testing(ALICE, ctx);
-    c10::solve(&mut instance, &mut progress, ctx);
+    c10::solve(&mut instance, &mut progress, 1, 0, ctx);
     c10::destroy_for_testing(instance);
     user_progress::destroy_for_testing(progress);
     test_scenario::end(scenario);
@@ -137,7 +137,7 @@ fun should_reject_non_owner_challenge_10_solve() {
     let mut progress = user_progress::new_for_owner(ALICE, ctx);
     let mut instance = c10::new_instance_for_testing(ALICE, ctx);
     c10::vulnerable_swap(&mut instance, 100);
-    c10::solve(&mut instance, &mut progress, ctx);
+    c10::solve(&mut instance, &mut progress, 1, 0, ctx);
     c10::destroy_for_testing(instance);
     user_progress::destroy_for_testing(progress);
     test_scenario::end(scenario);

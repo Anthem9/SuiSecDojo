@@ -83,7 +83,7 @@ fun should_reject_solve_before_enough_credits() {
     let mut instance = challenge_06::new_instance_for_testing(ALICE, test_scenario::ctx(&mut scenario));
 
     challenge_06::vulnerable_buy(&mut instance, 1);
-    challenge_06::solve(&mut instance, &mut progress, test_scenario::ctx(&mut scenario));
+    challenge_06::solve(&mut instance, &mut progress, 1, 0, test_scenario::ctx(&mut scenario));
 
     challenge_06::destroy_for_testing(instance);
     user_progress::destroy_for_testing(progress);
@@ -101,7 +101,7 @@ fun should_solve_after_rounding_exploit() {
         challenge_06::vulnerable_buy(&mut instance, 1);
         i = i + 1u64;
     };
-    challenge_06::solve(&mut instance, &mut progress, test_scenario::ctx(&mut scenario));
+    challenge_06::solve(&mut instance, &mut progress, 1, 0, test_scenario::ctx(&mut scenario));
 
     assert!(challenge_06::is_solved(&instance), 0);
     assert!(user_progress::has_completed(&progress, 6), 1);
@@ -125,7 +125,7 @@ fun should_reject_non_owner_solve_attempt() {
     };
 
     test_scenario::next_tx(&mut scenario, BOB);
-    challenge_06::solve(&mut instance, &mut progress, test_scenario::ctx(&mut scenario));
+    challenge_06::solve(&mut instance, &mut progress, 1, 0, test_scenario::ctx(&mut scenario));
 
     challenge_06::destroy_for_testing(instance);
     user_progress::destroy_for_testing(progress);
@@ -144,8 +144,8 @@ fun should_reject_duplicate_solve() {
         challenge_06::vulnerable_buy(&mut instance, 1);
         i = i + 1u64;
     };
-    challenge_06::solve(&mut instance, &mut progress, test_scenario::ctx(&mut scenario));
-    challenge_06::solve(&mut instance, &mut progress, test_scenario::ctx(&mut scenario));
+    challenge_06::solve(&mut instance, &mut progress, 1, 0, test_scenario::ctx(&mut scenario));
+    challenge_06::solve(&mut instance, &mut progress, 1, 0, test_scenario::ctx(&mut scenario));
 
     challenge_06::destroy_for_testing(instance);
     user_progress::destroy_for_testing(progress);

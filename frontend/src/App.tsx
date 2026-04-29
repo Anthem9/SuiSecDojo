@@ -17,8 +17,10 @@ import { getChallenge01ActionState } from "./lib/challengeRuntime";
 import { CONTRACTS, SUI_NETWORK } from "./lib/constants";
 import { filterChallenges } from "./lib/challengeFilters";
 import { dictionaries, type Locale } from "./lib/i18n";
+import { defaultPracticeInputs, type PracticeDefaults } from "./lib/practice";
 import { summarizeProgress } from "./lib/progress";
 import { summarizeProfile } from "./lib/profile";
+import { baseScoreForDifficulty, calculateScore, type AssistanceLevel, type TrainingMode } from "./lib/scoring";
 import type { ChallengeDifficulty } from "./types";
 
 const challenge01Id = "1";
@@ -48,6 +50,9 @@ export function App() {
   const [locale, setLocale] = useState<Locale>("zh");
   const [selectedSlug, setSelectedSlug] = useState(challenges[0]?.slug ?? "");
   const [selectedDocUrl, setSelectedDocUrl] = useState("content/challenges/01-anyone-can-mint/statement.md");
+  const [trainingMode, setTrainingMode] = useState<TrainingMode>("challenge");
+  const [assistanceLevel, setAssistanceLevel] = useState<AssistanceLevel>(0);
+  const [practiceInputs, setPracticeInputs] = useState<PracticeDefaults>(defaultPracticeInputs);
   const t = dictionaries[locale];
   const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, suiBalanceMist, refetchObjects } = useDojoObjects(
     account?.address,
@@ -73,6 +78,7 @@ export function App() {
     challenges,
     chainState,
     badges: chainState.badges ?? [],
+    leaderboardEntry: leaderboardQuery.leaderboard.currentEntry,
   });
   const actionState = getChallenge01ActionState({
     accountAddress: account?.address,
@@ -85,6 +91,62 @@ export function App() {
     SUI_NETWORK !== "testnet" ? `Current network is ${SUI_NETWORK}; SuiSec Dojo challenges are configured for testnet.` : undefined,
     account?.address && suiBalanceMist === "0" ? "Wallet has no SUI available for gas. Fund it from the Sui testnet faucet." : undefined,
   ].filter((message): message is string => Boolean(message));
+  const solveOptions = { mode: trainingMode, assistanceLevel };
+  const scorePreview = calculateScore(baseScoreForDifficulty(selectedChallenge.difficulty), trainingMode, assistanceLevel);
+  const setPracticeInput = <Key extends keyof PracticeDefaults>(key: Key, value: PracticeDefaults[Key]) => {
+    setPracticeInputs((current) => ({ ...current, [key]: value }));
+  };
+  const runPracticeAction = () => {
+    const asPositiveInt = (value: string, fallback: number) => {
+      const parsed = Number.parseInt(value, 10);
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+    };
+
+    if (isChallenge10Selected) {
+      challengeActions.exploitChallenge10(asPositiveInt(practiceInputs.swapAmount, 100));
+    } else if (isChallenge09Selected) {
+      challengeActions.exploitChallenge09();
+    } else if (isChallenge08Selected) {
+      challengeActions.exploitChallenge08(practiceInputs.oldPath);
+    } else if (isChallenge07Selected) {
+      challengeActions.exploitChallenge07(asPositiveInt(practiceInputs.guardedValue, 1_000));
+    } else if (isChallenge06Selected) {
+      challengeActions.exploitChallenge06(asPositiveInt(practiceInputs.buyRepeats, 10), asPositiveInt(practiceInputs.buyPayment, 1));
+    } else if (isChallenge05Selected) {
+      challengeActions.exploitChallenge05();
+    } else if (isChallenge04Selected) {
+      challengeActions.exploitChallenge04();
+    } else if (isChallenge03Selected) {
+      challengeActions.exploitChallenge03(practiceInputs.claimedOwner || chainState.challenge03Instance?.owner);
+    } else if (isChallenge02Selected) {
+      challengeActions.withdrawChallenge02(asPositiveInt(practiceInputs.withdrawAmount, 100));
+    } else {
+      challengeActions.mintChallenge01(asPositiveInt(practiceInputs.mintAmount, 1_000));
+    }
+  };
+  const solveSelectedChallenge = () => {
+    if (isChallenge10Selected) {
+      challengeActions.solveChallenge10(solveOptions);
+    } else if (isChallenge09Selected) {
+      challengeActions.solveChallenge09(solveOptions);
+    } else if (isChallenge08Selected) {
+      challengeActions.solveChallenge08(solveOptions);
+    } else if (isChallenge07Selected) {
+      challengeActions.solveChallenge07(solveOptions);
+    } else if (isChallenge06Selected) {
+      challengeActions.solveChallenge06(solveOptions);
+    } else if (isChallenge05Selected) {
+      challengeActions.solveChallenge05(solveOptions);
+    } else if (isChallenge04Selected) {
+      challengeActions.solveChallenge04(solveOptions);
+    } else if (isChallenge03Selected) {
+      challengeActions.solveChallenge03(solveOptions);
+    } else if (isChallenge02Selected) {
+      challengeActions.solveChallenge02(solveOptions);
+    } else {
+      challengeActions.solveChallenge(solveOptions);
+    }
+  };
 
   return (
     <main className="app-shell">
@@ -159,6 +221,8 @@ export function App() {
           challenge={selectedChallenge}
           lastDigest={challengeActions.lastDigest}
           objectError={ownedObjectsQuery.error ?? challenge02VaultQuery.error}
+          assistanceLevel={assistanceLevel}
+          onAssistanceLevelChange={setAssistanceLevel}
           onExploitChallenge={
             isChallenge10Selected
               ? challengeActions.exploitChallenge10
@@ -200,30 +264,16 @@ export function App() {
                 : challengeActions.claimInstance
           }
           onCreateProgress={challengeActions.createProgress}
-          onSolveChallenge={
-            isChallenge10Selected
-              ? challengeActions.solveChallenge10
-              : isChallenge09Selected
-                ? challengeActions.solveChallenge09
-                : isChallenge08Selected
-                  ? challengeActions.solveChallenge08
-                  : isChallenge07Selected
-                    ? challengeActions.solveChallenge07
-                    : isChallenge06Selected
-              ? challengeActions.solveChallenge06
-              : isChallenge05Selected
-              ? challengeActions.solveChallenge05
-              : isChallenge04Selected
-              ? challengeActions.solveChallenge04
-              : isChallenge03Selected
-              ? challengeActions.solveChallenge03
-              : isChallenge02Selected
-                ? challengeActions.solveChallenge02
-                : challengeActions.solveChallenge
-          }
+          onPracticeInputChange={setPracticeInput}
+          onRunPracticeAction={runPracticeAction}
+          onSolveChallenge={solveSelectedChallenge}
+          onTrainingModeChange={setTrainingMode}
           onUseCapability={isChallenge05Selected ? challengeActions.setChallenge05Initialized : challengeActions.setChallenge04AdminFlag}
           packageId={packageId}
+          practiceInputs={practiceInputs}
+          scorePreview={scorePreview}
           statusMessage={isSolved && selectedChallenge.id === "1" ? "Challenge 01 completed on-chain." : challengeActions.statusMessage}
+          trainingMode={trainingMode}
           warnings={warnings}
         />
       </section>
@@ -235,7 +285,14 @@ export function App() {
         isLoading={leaderboardQuery.query.isFetching}
         recent={leaderboardQuery.leaderboard.recent}
       />
-      <TutorPanel challenge={selectedChallenge} locale={locale} />
+      <TutorPanel
+        assistanceLevel={assistanceLevel}
+        challenge={selectedChallenge}
+        locale={locale}
+        onAssistanceLevelChange={setAssistanceLevel}
+        scorePreview={scorePreview}
+        trainingMode={trainingMode}
+      />
       <ReportPanel />
       <PassportPanel profile={profile} />
       <section className="docs-hub" id="docs">

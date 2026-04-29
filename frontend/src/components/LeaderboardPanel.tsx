@@ -28,8 +28,10 @@ export function LeaderboardPanel({ currentRank, entries, error, isLoading, recen
               {entries.slice(0, 10).map((entry) => (
                 <li key={entry.solver}>
                   <strong>{shortAddress(entry.solver)}</strong>
-                  <span>{entry.completedCount} solved</span>
-                  <small>{entry.badgeCount} badges</small>
+                  <span>{entry.totalScore} pts</span>
+                  <small>
+                    {entry.completedCount} solved / {entry.badgeCount} badges
+                  </small>
                 </li>
               ))}
             </ol>
@@ -44,8 +46,12 @@ export function LeaderboardPanel({ currentRank, entries, error, isLoading, recen
               {recent.map((event) => (
                 <li key={`${event.digest}-${event.challengeId}-${event.solver}`}>
                   <strong>{shortAddress(event.solver)}</strong>
-                  <span>Challenge {event.challengeId}</span>
-                  <small>Epoch {event.epoch}</small>
+                  <span>
+                    Challenge {event.challengeId} / {event.score} pts
+                  </span>
+                  <small>
+                    {event.mode}, hint {event.assistanceLevel}, epoch {event.epoch}
+                  </small>
                 </li>
               ))}
             </ol>
@@ -61,4 +67,3 @@ export function LeaderboardPanel({ currentRank, entries, error, isLoading, recen
 function shortAddress(address: string): string {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
-

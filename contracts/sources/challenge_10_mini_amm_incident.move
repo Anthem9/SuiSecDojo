@@ -22,6 +22,7 @@ public struct ChallengeInstance has key, store {
 const CHALLENGE_ID: u64 = 10;
 const CHALLENGE_ID_PRICE_ROUNDING: u64 = 6;
 const BADGE_TYPE_DEFI_LOGIC: u64 = 4;
+const BASE_SCORE: u64 = 400;
 const INITIAL_RESERVE: u64 = 100;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
@@ -61,7 +62,13 @@ public(package) entry fun vulnerable_swap(instance: &mut ChallengeInstance, inpu
     instance.invariant_broken = instance.reserve_x * instance.reserve_y < INITIAL_RESERVE * INITIAL_RESERVE;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
+public(package) entry fun solve(
+    instance: &mut ChallengeInstance,
+    progress: &mut UserProgress,
+    mode: u8,
+    assistance_level: u8,
+    ctx: &mut TxContext,
+) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
@@ -79,6 +86,9 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
         CHALLENGE_ID,
         sender,
         if (user_progress::has_badge(progress, BADGE_TYPE_DEFI_LOGIC)) { BADGE_TYPE_DEFI_LOGIC } else { 0 },
+        BASE_SCORE,
+        mode,
+        assistance_level,
         ctx,
     );
 }

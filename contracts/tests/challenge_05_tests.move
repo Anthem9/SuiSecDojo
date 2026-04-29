@@ -107,7 +107,7 @@ fun should_solve_after_initialization_and_record_badge() {
         let cap = challenge_05::new_cap_for_testing(challenge_05::instance_id(&instance), ALICE, ctx);
 
         challenge_05::admin_set_initialized(&mut instance, &cap);
-        challenge_05::solve(&mut instance, &mut progress, ctx);
+        challenge_05::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         assert!(challenge_05::is_solved(&instance));
         assert!(user_progress::has_completed(&progress, 5));
@@ -128,7 +128,7 @@ fun should_reject_solve_before_initialized() {
         let mut instance = challenge_05::new_instance_for_testing(ALICE, ctx);
         let mut progress = user_progress::new_for_owner(ALICE, ctx);
 
-        challenge_05::solve(&mut instance, &mut progress, ctx);
+        challenge_05::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_05::destroy_instance_for_testing(instance);
         user_progress::destroy_for_testing(progress);
@@ -146,7 +146,7 @@ fun should_reject_non_owner_solve_attempt() {
         let cap = challenge_05::new_cap_for_testing(challenge_05::instance_id(&instance), BOB, ctx);
 
         challenge_05::admin_set_initialized(&mut instance, &cap);
-        challenge_05::solve(&mut instance, &mut progress, ctx);
+        challenge_05::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_05::destroy_cap_for_testing(cap);
         challenge_05::destroy_instance_for_testing(instance);
@@ -165,8 +165,8 @@ fun should_reject_duplicate_solve() {
         let cap = challenge_05::new_cap_for_testing(challenge_05::instance_id(&instance), ALICE, ctx);
 
         challenge_05::admin_set_initialized(&mut instance, &cap);
-        challenge_05::solve(&mut instance, &mut progress, ctx);
-        challenge_05::solve(&mut instance, &mut progress, ctx);
+        challenge_05::solve(&mut instance, &mut progress, 1, 0, ctx);
+        challenge_05::solve(&mut instance, &mut progress, 1, 0, ctx);
 
         challenge_05::destroy_cap_for_testing(cap);
         challenge_05::destroy_instance_for_testing(instance);

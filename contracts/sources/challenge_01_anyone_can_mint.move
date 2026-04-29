@@ -18,6 +18,7 @@ public struct ChallengeInstance has key, store {
 
 const CHALLENGE_ID: u64 = 1;
 const BADGE_TYPE_OBJECT_SECURITY: u64 = 1;
+const BASE_SCORE: u64 = 100;
 const SOLVE_THRESHOLD: u64 = 1_000;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
@@ -61,7 +62,13 @@ public(package) entry fun vulnerable_mint(instance: &mut ChallengeInstance, amou
     instance.minted_amount = instance.minted_amount + amount;
 }
 
-public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut UserProgress, ctx: &mut TxContext) {
+public(package) entry fun solve(
+    instance: &mut ChallengeInstance,
+    progress: &mut UserProgress,
+    mode: u8,
+    assistance_level: u8,
+    ctx: &mut TxContext,
+) {
     let sender = tx_context::sender(ctx);
     assert!(instance.owner == sender, ENotOwner);
     assert!(!instance.solved, EAlreadySolved);
@@ -73,7 +80,7 @@ public(package) entry fun solve(instance: &mut ChallengeInstance, progress: &mut
         user_progress::record_badge(progress, BADGE_TYPE_OBJECT_SECURITY, sender);
         transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_OBJECT_SECURITY, ctx), sender);
     };
-    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_OBJECT_SECURITY, ctx);
+    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_OBJECT_SECURITY, BASE_SCORE, mode, assistance_level, ctx);
 }
 
 #[test_only]

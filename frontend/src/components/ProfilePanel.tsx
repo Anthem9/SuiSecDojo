@@ -36,6 +36,20 @@ export function ProfilePanel({ summary }: ProfilePanelProps) {
           </dd>
         </div>
         <div>
+          <dt>Score</dt>
+          <dd>{summary.totalScore}</dd>
+        </div>
+        <div>
+          <dt>Mode Split</dt>
+          <dd>
+            {summary.challengeModeCompletions} challenge / {summary.guidedModeCompletions} guided
+          </dd>
+        </div>
+        <div>
+          <dt>Avg Assistance</dt>
+          <dd>{summary.averageAssistanceLevel}</dd>
+        </div>
+        <div>
           <dt>Next</dt>
           <dd>{summary.nextChallenge?.title ?? "All available challenges completed"}</dd>
         </div>

@@ -36,13 +36,13 @@ sui move test
 当前 testnet package：
 
 ```text
-0xeb9229cefe033adf3ef3ac79768d24525f9413c443337360b2a444a13b6d4081
+0xac18fc022854b016c5492fb65209f70bdf7b56986fd9d9ed0a1acc4edf82b580
 ```
 
 当前 Challenge Registry：
 
 ```text
-0xe5f959d224ef239ee522abe19c059e8f93230f1b984a9cc8ba5588b8b51834ca
+0x21a7db45e9f1e58af4c3c3f6221fa94566928117b48a452d70b57d5d756499a5
 ```
 
 开发地址：
@@ -56,8 +56,27 @@ sui move test
 1. 连接 Sui testnet 钱包。
 2. 点击 `Create Progress` 创建 `UserProgress`。
 3. 点击 `Claim Instance` 领取 Challenge 01-10 instance。
-4. 按题目执行 vulnerable action，然后点击 `Solve Challenge`。
-5. 前端刷新链上对象状态，显示完成进度、Badge / Security Passport 和排行榜事件。
+4. 默认使用 `Challenge Mode`：阅读对象状态、函数签名和 CLI/PTB 模板，自行构造关键调用。
+5. 如需降低门槛，可切到 `Guided Mode` 使用辅助按钮，但排行榜记录较低分数。
+6. 点击 `Submit Solve` 时会记录 mode、assistance level 和 score。
+
+## Challenge Mode 与评分
+
+`solve` 入口现在统一在原 object 参数后追加两个评分参数：
+
+```text
+mode: 1 = Challenge Mode, 2 = Guided Mode
+assistance_level: 0 = no hint, 1 = concept, 2 = direction, 3 = checklist, 4 = answer viewed
+```
+
+计分规则：
+
+- beginner/easy/medium/hard 基础分分别为 `100/150/250/400`。
+- Guided Mode 只获得基础分的 `40%`。
+- hint 扣分为 `0%/10%/25%/50%/100%`。
+- 查看 answer 后仍可完成链上题目，但该次 completion 记 `0` 分。
+
+无后端版本无法防止用户自报 hint 使用情况；该分数用于学习激励和进度展示，不作为严肃竞赛防作弊系统。
 
 ## 安全和教育边界
 
@@ -164,7 +183,7 @@ sui client ptb --move-call <PACKAGE_ID>::user_progress::create
 sui client ptb --move-call <PACKAGE_ID>::challenge_01_anyone_can_mint::claim @<PROGRESS_ID>
 sui client ptb \
   --move-call <PACKAGE_ID>::challenge_01_anyone_can_mint::vulnerable_mint @<INSTANCE_ID> 1000 \
-  --move-call <PACKAGE_ID>::challenge_01_anyone_can_mint::solve @<INSTANCE_ID> @<PROGRESS_ID>
+  --move-call <PACKAGE_ID>::challenge_01_anyone_can_mint::solve @<INSTANCE_ID> @<PROGRESS_ID> 1 0
 ```
 
 ## 公开 MVP 复现流程
@@ -187,8 +206,8 @@ npm run dev
 make ci
 make audit
 scripts/smoke-chain.sh \
-  0xeb9229cefe033adf3ef3ac79768d24525f9413c443337360b2a444a13b6d4081 \
-  0xe5f959d224ef239ee522abe19c059e8f93230f1b984a9cc8ba5588b8b51834ca
+  0xac18fc022854b016c5492fb65209f70bdf7b56986fd9d9ed0a1acc4edf82b580 \
+  0x21a7db45e9f1e58af4c3c3f6221fa94566928117b48a452d70b57d5d756499a5
 ```
 
 Walrus 更新：

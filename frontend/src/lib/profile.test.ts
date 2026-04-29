@@ -15,6 +15,7 @@ describe("profile summary", () => {
     expect(summary.claimed).toBe(0);
     expect(summary.completed).toBe(0);
     expect(summary.badgeCount).toBe(0);
+    expect(summary.totalScore).toBe(0);
     expect(summary.nextChallenge?.id).toBe("1");
   });
 
@@ -43,6 +44,30 @@ describe("profile summary", () => {
       badgeType: "1",
       requirement: "Complete Challenge 01.",
     });
+  });
+
+  it("should include score and completion mode stats from leaderboard events", () => {
+    const summary = summarizeProfile({
+      network: "testnet",
+      challenges,
+      chainState: {},
+      badges: [],
+      leaderboardEntry: {
+        solver: "0xalice",
+        completedCount: 2,
+        badgeCount: 1,
+        totalScore: 154,
+        challengeModeCount: 1,
+        guidedModeCount: 1,
+        averageAssistanceLevel: 0.5,
+        latestEpoch: "10",
+      },
+    });
+
+    expect(summary.totalScore).toBe(154);
+    expect(summary.challengeModeCompletions).toBe(1);
+    expect(summary.guidedModeCompletions).toBe(1);
+    expect(summary.averageAssistanceLevel).toBe(0.5);
   });
 
   it("should merge badge ids from progress and owned badge objects", () => {

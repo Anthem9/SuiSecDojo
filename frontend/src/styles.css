@@ -321,6 +321,85 @@ dd {
   opacity: 0.72;
 }
 
+.training-panel,
+.practice-panel {
+  background: #fbfdfb;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  margin-top: 18px;
+  padding: 16px;
+}
+
+.mode-toggle,
+.hint-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mode-toggle button,
+.hint-grid button,
+.practice-grid button {
+  background: #ffffff;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  color: #172018;
+  cursor: pointer;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.mode-toggle button.active,
+.hint-grid button.active {
+  background: #172018;
+  border-color: #172018;
+  color: #ffffff;
+}
+
+.score-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.practice-grid {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.practice-grid label {
+  color: #172018;
+  display: grid;
+  font-weight: 700;
+  gap: 6px;
+}
+
+.practice-grid input,
+.practice-grid select {
+  background: #ffffff;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  color: #172018;
+  min-height: 40px;
+  min-width: 0;
+  padding: 0 10px;
+  width: 100%;
+}
+
+.practice-panel pre {
+  background: #172018;
+  border-radius: 8px;
+  color: #f8fbf8;
+  font: 0.82rem ui-monospace, SFMono-Regular, Menlo, monospace;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .action-hint {
   color: #4b5563;
   font-size: 0.92rem;
@@ -605,7 +684,8 @@ dd {
   .hero,
   .workspace,
   .profile-grid,
-  .docs-layout {
+  .docs-layout,
+  .score-grid {
     grid-template-columns: 1fr;
   }
 
