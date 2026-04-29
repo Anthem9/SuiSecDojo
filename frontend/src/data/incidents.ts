@@ -138,6 +138,13 @@ export const incidents: IncidentMetadata[] = [
   },
 ];
 
+const legacyIncidentSlugMap: Record<string, string> = {
+  "amm-math-error-replay": "cetus-clmm-exploit-2025",
+  "capability-leak-replay": "scallop-deprecated-rewards-contract-2026",
+  "shared-object-pollution-replay": "volo-vault-exploit-2026",
+};
+
 export function getIncidentBySlug(slug: string): IncidentMetadata | undefined {
-  return incidents.find((incident) => incident.slug === slug);
+  const canonicalSlug = legacyIncidentSlugMap[slug] ?? slug;
+  return incidents.find((incident) => incident.slug === canonicalSlug);
 }

@@ -5,6 +5,7 @@ describe("incident metadata", () => {
   it("should include the expanded incident library", () => {
     expect(incidents).toHaveLength(6);
     expect(getIncidentBySlug("cetus-clmm-exploit-2025")?.relatedChallengeIds).toContain("10");
+    expect(getIncidentBySlug("amm-math-error-replay")?.slug).toBe("cetus-clmm-exploit-2025");
     expect(getIncidentBySlug("dango-perps-insurance-fund-2026")).toBeUndefined();
     expect(getIncidentBySlug("nemo-protocol-usdc-exploit-2025")?.affectedProtocol).toBe("Nemo Protocol");
     expect(getIncidentBySlug("typus-prep-vault-exploit-2025")?.affectedProtocol).toContain("Typus");
