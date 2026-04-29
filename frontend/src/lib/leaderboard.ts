@@ -111,9 +111,15 @@ export function aggregateLeaderboard(events: CompletionEvent[], currentAddress?:
 
   const currentEntry = currentAddress ? entries.find((entry) => entry.solver.toLowerCase() === currentAddress.toLowerCase()) : undefined;
 
+  const recent = events.slice(0, 10);
+  if (currentAddress && !recent.some((event) => event.solver.toLowerCase() === currentAddress.toLowerCase())) {
+    const currentRecent = events.find((event) => event.solver.toLowerCase() === currentAddress.toLowerCase());
+    if (currentRecent) recent.push(currentRecent);
+  }
+
   return {
     entries,
-    recent: [...events].slice(0, 10),
+    recent,
     currentRank: currentRank > 0 ? currentRank : undefined,
     currentEntry,
   };

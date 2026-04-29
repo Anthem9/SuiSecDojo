@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useEffect, useState } from "react";
 import { localizedContentCandidates, type Locale } from "../lib/i18n";
-import { externalLinkProps } from "../lib/markdown";
+import { externalLinkProps, isMarkdownPayload } from "../lib/markdown";
 
 type MarkdownRendererProps = {
   sourceUrl?: string;
@@ -31,7 +31,12 @@ export function MarkdownRenderer({ locale = "en", sourceUrl }: MarkdownRendererP
       sourceCandidates.map((candidate) =>
         fetch(candidate).then((response) => {
           if (!response.ok) throw new Error(`Failed to load ${candidate}`);
-          return response.text();
+          return response.text().then((text) => {
+            if (!isMarkdownPayload(text, response.headers.get("content-type"))) {
+              throw new Error(`Failed to load ${candidate}`);
+            }
+            return text;
+          });
         }),
       ),
     )

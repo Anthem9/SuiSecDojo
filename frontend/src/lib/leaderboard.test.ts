@@ -40,4 +40,30 @@ describe("leaderboard helpers", () => {
     expect(board.entries[0].guidedModeCount).toBe(1);
     expect(board.currentRank).toBe(2);
   });
+
+  it("should include the current wallet in recent completions even when outside the first page slice", () => {
+    const events = Array.from({ length: 12 }, (_, index) => ({
+      challengeId: String(index + 1),
+      solver: `0x${index}`,
+      epoch: String(100 + index),
+      badgeType: "0",
+      mode: "challenge" as const,
+      assistanceLevel: "0",
+      score: 100,
+    }));
+    events.push({
+      challengeId: "1",
+      solver: "0xcurrent",
+      epoch: "90",
+      badgeType: "1",
+      mode: "challenge",
+      assistanceLevel: "4",
+      score: 0,
+    });
+
+    const board = aggregateLeaderboard(events, "0xcurrent");
+
+    expect(board.currentEntry).toMatchObject({ solver: "0xcurrent", totalScore: 0, completedCount: 1 });
+    expect(board.recent.some((event) => event.solver === "0xcurrent" && event.score === 0)).toBe(true);
+  });
 });

@@ -8,16 +8,16 @@
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
   "packageId": "0x84f5e4308892eea91c4e5cc0492e076274d55db8bf0b410369ffd732071b6e46",
   "challengeRegistryId": "0x72af7af44a79679d73f8afeddbf662e3e0c9474bdf8cb88eca2d222d2e5fd180",
-  "deployedAt": "2026-04-29T05:30:15.866Z",
-  "note": "Existing testnet site object updated with Challenge 01-20 live set, full 11-20 docs, tutor content, and latest testnet package.",
+  "deployedAt": "2026-04-29T06:24:18Z",
+  "note": "Existing testnet site object updated with QA fixes for incident markdown fallback handling, zero-score leaderboard visibility, and mobile About card wrapping.",
   "challengeModeScoring": true,
-  "lastUpdatedDigest": "PkWz2rWu8v0-vUmqVyQgK2aVhnW8ZJljeAOT5tkK1EAB9wH4AQ",
+  "lastUpdatedDigest": "lFpieyzmzPMUW5fvNhzBMaGn-WdDJ_8xo27NPjDzAuwByAHJAQ",
   "liveChallenges": 20,
   "incidentDocs": 9,
   "roadmapChallenges": [],
-  "lastIndexPatchId": "PkWz2rWu8v0-vUmqVyQgK2aVhnW8ZJljeAOT5tkK1EAB9wH4AQ",
+  "lastIndexPatchId": "lFpieyzmzPMUW5fvNhzBMaGn-WdDJ_8xo27NPjDzAuwByAHJAQ",
   "lastAsset": {
-    "path": "/assets/index-CaGESTVD.js",
-    "patchId": "PkWz2rWu8v0-vUmqVyQgK2aVhnW8ZJljeAOT5tkK1EABAgC7AQ"
+    "path": "/assets/index-DAGLL8hw.js",
+    "patchId": "lFpieyzmzPMUW5fvNhzBMaGn-WdDJ_8xo27NPjDzAuwBDgDIAQ"
   }
 }

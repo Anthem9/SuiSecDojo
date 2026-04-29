@@ -179,8 +179,17 @@ a {
   color: #172018;
   display: grid;
   gap: 10px;
+  min-width: 0;
   padding: 18px;
   text-decoration: none;
+}
+
+.feature-link *,
+.incident-card *,
+.info-card *,
+.donation-card * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .feature-link svg {
@@ -211,9 +220,16 @@ a {
 
 .incident-card span,
 .incident-card small,
+.info-card p,
 .donation-card span {
   color: #647067;
   overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.info-card h2 {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .donation-panel {
@@ -602,6 +618,8 @@ dd {
   color: #4b5563;
   line-height: 1.7;
   max-width: 760px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .leaderboard-grid,
@@ -840,6 +858,18 @@ dd {
     justify-content: flex-start;
   }
 
+  .main-nav {
+    flex-wrap: nowrap;
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-nav a {
+    flex: 0 0 auto;
+  }
+
   .topbar-actions {
     align-items: flex-start;
     flex-direction: column;
@@ -882,8 +912,10 @@ dd {
   }
 
   .leaderboard-grid,
-  .report-grid {
-    grid-template-columns: 1fr;
+  .report-grid,
+  .about-grid,
+  .donation-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .filters {

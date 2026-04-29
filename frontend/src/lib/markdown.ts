@@ -8,3 +8,13 @@ export function externalLinkProps(href?: string): { target?: string; rel?: strin
   return { target: "_blank", rel: "noreferrer" };
 }
 
+export function isMarkdownPayload(text: string, contentType?: string | null): boolean {
+  const normalizedType = contentType?.toLowerCase() ?? "";
+  const trimmed = text.trimStart().toLowerCase();
+
+  if (normalizedType.includes("text/html")) return false;
+  if (trimmed.startsWith("<!doctype html") || trimmed.startsWith("<html")) return false;
+  if (trimmed.includes("/@vite/client") || trimmed.includes("/src/main.tsx")) return false;
+
+  return true;
+}

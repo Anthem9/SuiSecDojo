@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { externalLinkProps, markdownSourceUrl } from "./markdown";
+import { externalLinkProps, isMarkdownPayload, markdownSourceUrl } from "./markdown";
 
 describe("markdown helpers", () => {
   it("should normalize bundled content paths", () => {
@@ -16,5 +16,10 @@ describe("markdown helpers", () => {
     expect(externalLinkProps("/docs")).toEqual({});
     expect(externalLinkProps("#section")).toEqual({});
   });
-});
 
+  it("should reject Vite fallback html as markdown", () => {
+    expect(isMarkdownPayload("# Title", "text/markdown")).toBe(true);
+    expect(isMarkdownPayload("<!doctype html><script type=\"module\" src=\"/@vite/client\"></script>", "text/html")).toBe(false);
+    expect(isMarkdownPayload("<html><script type=\"module\" src=\"/src/main.tsx\"></script></html>")).toBe(false);
+  });
+});
