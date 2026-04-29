@@ -49,13 +49,21 @@ sui move test
 当前 testnet package：
 
 ```text
-0x84f5e4308892eea91c4e5cc0492e076274d55db8bf0b410369ffd732071b6e46
+0x7ca36f2b3cf31799d2104a75fadfd209f886a925265349581d5e41efebde63de
 ```
 
 当前 Challenge Registry：
 
 ```text
-0x72af7af44a79679d73f8afeddbf662e3e0c9474bdf8cb88eca2d222d2e5fd180
+0x2eb11b9cf70477a220d83285b6caccae6f1e534089094e52f950ff383f670c24
+```
+
+当前付费模块测试网配置：
+
+```text
+PaidAccessConfig: 0x943166f16eeba5a1574f3a78507ee03630332fb85d50f376bdfa7717e7b14744
+Answer price: 0.01 testnet SUI
+Badge price: 0.05 testnet SUI
 ```
 
 开发地址：
@@ -219,8 +227,8 @@ npm run dev
 make ci
 make audit
 scripts/smoke-chain.sh \
-  0x84f5e4308892eea91c4e5cc0492e076274d55db8bf0b410369ffd732071b6e46 \
-  0x72af7af44a79679d73f8afeddbf662e3e0c9474bdf8cb88eca2d222d2e5fd180
+  0x7ca36f2b3cf31799d2104a75fadfd209f886a925265349581d5e41efebde63de \
+  0x2eb11b9cf70477a220d83285b6caccae6f1e534089094e52f950ff383f670c24
 ```
 
 Walrus 更新：
@@ -247,6 +255,7 @@ scripts/update-walrus-site.sh 0x0187c85b9d044089b616316855887d4e29b29268f94f451e
 - 本地审计报告训练。
 - `en` / `zh` locale switch 和中文核心内容 fallback。
 - testnet-only Security Passport / certificate preview。
+- 独立 `paid_access` 模块：测试阶段部署在 testnet，用于验证付费查看答案和付费 mint 公开徽章；正式上线后再部署主网版本。漏洞挑战本身仍只在 testnet 运行。
 - GitHub Actions CI 质量门禁。
 
 排行榜从 Phase 4 package 的 `challenge_events::ChallengeCompleted` 事件开始统计，旧 package 的历史完成记录不会回填。Profile 仍以当前钱包 owned objects 为准。

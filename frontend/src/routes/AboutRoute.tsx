@@ -1,11 +1,19 @@
 import { Copy, HeartHandshake } from "lucide-react";
 import { useState } from "react";
 import { contactConfigFromEnv, donationConfigFromEnv } from "../lib/donation";
-import { CONTRACTS } from "../lib/constants";
+import { CONTRACTS, PAID_ACCESS } from "../lib/constants";
 import { useDojo } from "../app/DojoContext";
+import { mistPriceLabel, paidAccessConfigFromEnv } from "../lib/paidAccess";
 
 const donationConfig = donationConfigFromEnv(import.meta.env);
 const contactConfig = contactConfigFromEnv(import.meta.env);
+const paidAccessConfig = paidAccessConfigFromEnv({
+  VITE_PAID_ACCESS_NETWORK: PAID_ACCESS.NETWORK,
+  VITE_PAID_ACCESS_PACKAGE_ID: PAID_ACCESS.PACKAGE_ID,
+  VITE_PAID_ACCESS_CONFIG_ID: PAID_ACCESS.CONFIG_ID,
+  VITE_PAID_ANSWER_PRICE_MIST: PAID_ACCESS.ANSWER_PRICE_MIST,
+  VITE_PAID_BADGE_PRICE_MIST: PAID_ACCESS.BADGE_PRICE_MIST,
+});
 
 export function AboutRoute() {
   const { t } = useDojo();
@@ -45,6 +53,32 @@ export function AboutRoute() {
           <p>{t.answerRevenueCopy}</p>
         </article>
       </div>
+      <section className="donation-panel">
+        <h2>{t.paidAccessTitle}</h2>
+        <p className="section-copy">{t.paidAccessCopy}</p>
+        <div className="donation-grid">
+          <div className="donation-card">
+            <strong>{t.paidAnswer}</strong>
+            <span>
+              {paidAccessConfig.enabled
+                ? `${paidAccessConfig.network} / ${mistPriceLabel(paidAccessConfig.answerPriceMist)}`
+                : t.paidUnavailable}
+            </span>
+            <button disabled type="button">
+              {t.paidAnswer}
+            </button>
+          </div>
+          <div className="donation-card">
+            <strong>{t.paidBadge}</strong>
+            <span>
+              {paidAccessConfig.enabled ? `${paidAccessConfig.network} / ${mistPriceLabel(paidAccessConfig.badgePriceMist)}` : t.paidUnavailable}
+            </span>
+            <button disabled type="button">
+              {t.paidBadge}
+            </button>
+          </div>
+        </div>
+      </section>
       <section className="donation-panel">
         <h2>{t.supportProject}</h2>
         <p className="section-copy">{t.supportProjectCopy}</p>

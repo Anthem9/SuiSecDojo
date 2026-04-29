@@ -1,8 +1,8 @@
-import { ConnectButton } from "@mysten/dapp-kit";
-import { Languages, Shield, Wallet } from "lucide-react";
+import { Languages, Shield } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useDojo } from "../app/DojoContext";
 import { navItems } from "../lib/navigation";
+import { WalletMenu } from "./WalletMenu";
 
 export function AppShell() {
   const { locale, setLocale, t } = useDojo();
@@ -36,19 +36,10 @@ export function AppShell() {
               </button>
             ))}
           </div>
-          <ConnectButton className="wallet-button" connectText={<WalletLabel label={t.connectWallet} />} />
+          <WalletMenu />
         </div>
       </header>
       <Outlet />
     </main>
-  );
-}
-
-function WalletLabel({ label }: { label: string }) {
-  return (
-    <>
-      <Wallet aria-hidden="true" />
-      {label}
-    </>
   );
 }

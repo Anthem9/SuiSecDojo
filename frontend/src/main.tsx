@@ -9,17 +9,10 @@ import "@mysten/dapp-kit/dist/index.css";
 import "./styles.css";
 
 const queryClient = new QueryClient();
-const networks = {
-  [SUI_NETWORK]: {
-    url: SUI_RPC_URL,
-    network: SUI_NETWORK,
-  },
-};
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <SuiClientProvider networks={networks} defaultNetwork={SUI_NETWORK}>
+      <SuiClientProvider networks={{ [SUI_NETWORK]: { url: SUI_RPC_URL, network: SUI_NETWORK } }} defaultNetwork={SUI_NETWORK}>
         <WalletProvider autoConnect enableUnsafeBurner>
           <BrowserRouter>
             <App />

@@ -35,9 +35,14 @@ a {
 .topbar {
   align-items: center;
   display: flex;
+  flex-wrap: nowrap;
   gap: 20px;
   justify-content: space-between;
+  overflow-x: auto;
+  overflow-y: visible;
   padding: 20px clamp(20px, 5vw, 72px);
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
 .locale-switch {
@@ -78,6 +83,7 @@ a {
 
 .brand {
   color: #172018;
+  flex: 0 0 auto;
   gap: 10px;
   font-weight: 750;
   text-decoration: none;
@@ -103,13 +109,17 @@ a {
   background: #ffffff;
   color: #172018;
   display: inline-flex;
+  white-space: nowrap;
 }
 
 .main-nav {
-  flex: 1;
-  flex-wrap: wrap;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
   gap: 8px;
   justify-content: center;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .main-nav a {
@@ -118,6 +128,7 @@ a {
   min-height: 34px;
   padding: 8px 10px;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .main-nav a.active {
@@ -126,8 +137,51 @@ a {
 }
 
 .topbar-actions {
+  flex: 0 0 auto;
+  position: relative;
   gap: 10px;
   justify-content: flex-end;
+}
+
+.wallet-menu {
+  position: relative;
+}
+
+.wallet-dropdown {
+  background: #ffffff;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  box-shadow: 0 18px 40px rgb(17 24 39 / 14%);
+  display: grid;
+  gap: 10px;
+  min-width: min(320px, calc(100vw - 32px));
+  padding: 14px;
+  position: fixed;
+  right: 16px;
+  top: 72px;
+  white-space: normal;
+  z-index: 20;
+}
+
+.wallet-dropdown span,
+.wallet-dropdown p {
+  color: #647067;
+  margin: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.wallet-dropdown button {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  color: #172018;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
 }
 
 .page-section {
@@ -1012,16 +1066,16 @@ dd {
   }
 
   .topbar {
-    align-items: stretch;
-    gap: 16px;
-    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-direction: row;
     padding-left: 16px;
     padding-right: 16px;
   }
 
   .main-nav,
   .topbar-actions {
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .main-nav {
@@ -1037,8 +1091,8 @@ dd {
   }
 
   .topbar-actions {
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    flex-direction: row;
   }
 
   .locale-switch {

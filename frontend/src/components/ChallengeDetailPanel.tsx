@@ -442,6 +442,7 @@ export function ChallengeDetailPanel({
               actionState={actionState}
               challengeId={challenge.id}
               inputs={practiceInputs}
+              locale={locale}
               onChange={onPracticeInputChange}
               onRun={onRunPracticeAction}
               owner={isChallenge16 ? chainState.challenge16Instance?.owner : chainState.challenge03Instance?.owner}
@@ -465,13 +466,13 @@ export function ChallengeDetailPanel({
         <button
           type="button"
           disabled={!actionState.canCreateProgress}
-          title={actionState.createProgressReason}
+          title={localizedReason(actionState.createProgressReason, locale)}
           onClick={onCreateProgress}
         >
-          Create Progress
+          {localLabel(locale, "创建进度", "Create Progress")}
         </button>
-        <button type="button" disabled={!actionState.canClaim} title={actionState.claimReason} onClick={onClaimInstance}>
-          Claim Instance
+        <button type="button" disabled={!actionState.canClaim} title={localizedReason(actionState.claimReason, locale)} onClick={onClaimInstance}>
+          {localLabel(locale, "领取实例", "Claim Instance")}
         </button>
         {trainingMode === "guided" &&
         (isChallenge02 ||
@@ -493,59 +494,23 @@ export function ChallengeDetailPanel({
         isChallenge18 ||
         isChallenge19 ||
         isChallenge20) ? (
-          <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
-            {isChallenge10
-              ? "Run AMM Swap"
-              : isChallenge20
-                ? "Run Edge Liquidation"
-                : isChallenge19
-                  ? "Mint Old Witness"
-                  : isChallenge18
-                    ? "Accrue Rewards"
-                    : isChallenge17
-                      ? "Write Shadow Key"
-                      : isChallenge16
-                        ? "Accept Intent"
-              : isChallenge09
-                ? "Execute PTB"
-                : isChallenge15
-                  ? "Create Mismatch"
-                  : isChallenge14
-                    ? "Use Stale Price"
-                    : isChallenge13
-                      ? "Delegate Cap"
-                      : isChallenge12
-                        ? "Pollute State"
-                        : isChallenge11
-                          ? "Accept Custody"
-                : isChallenge08
-                  ? "Use Old Path"
-                  : isChallenge07
-                    ? "Run Guarded Value"
-                    : isChallenge06
-              ? "Run Rounded Buys"
-              : isChallenge05
-                ? "Create Bad Init Cap"
-                : isChallenge04
-                  ? "Claim Leaked Cap"
-                : isChallenge03
-                    ? "Run Owner Claim"
-                    : "Run Withdraw Call"}
+          <button type="button" disabled={!actionState.canExploit} title={localizedReason(actionState.exploitReason, locale)} onClick={onExploitChallenge}>
+            {guidedActionLabel(challenge.id, locale)}
           </button>
         ) : null}
         {trainingMode === "guided" && (isChallenge04 || isChallenge05 || isChallenge13 || isChallenge19) ? (
-          <button type="button" disabled={!actionState.canUseCapability} title={actionState.useCapabilityReason} onClick={onUseCapability}>
-            {isChallenge19 ? "Use Old Witness" : isChallenge13 ? "Use Delegated Cap" : isChallenge05 ? "Initialize State" : "Use Admin Cap"}
+          <button type="button" disabled={!actionState.canUseCapability} title={localizedReason(actionState.useCapabilityReason, locale)} onClick={onUseCapability}>
+            {capabilityActionLabel(challenge.id, locale)}
           </button>
         ) : null}
         {!isSolved ? (
-          <button type="button" disabled={!actionState.canSolve} title={actionState.solveReason} onClick={onSolveChallenge}>
-            Submit Solve
+          <button type="button" disabled={!actionState.canSolve} title={localizedReason(actionState.solveReason, locale)} onClick={onSolveChallenge}>
+            {localLabel(locale, "提交判题", "Submit Solve")}
           </button>
         ) : null}
       </div>
 
-      <p className="action-hint">{visibleReason(actionState)}</p>
+      <p className="action-hint">{localizedReason(visibleReason(actionState), locale)}</p>
       <p className={statusMessage.toLowerCase().includes("fail") ? "status-line error" : "status-line"}>{statusMessage}</p>
       {warnings.map((warning) => (
         <p className="status-line warning" key={warning}>
@@ -568,6 +533,7 @@ function PracticeInputs({
   actionState,
   challengeId,
   inputs,
+  locale,
   onChange,
   onRun,
   owner,
@@ -575,11 +541,12 @@ function PracticeInputs({
   actionState: ChallengeActionState;
   challengeId: string;
   inputs: PracticeDefaults;
+  locale: "en" | "zh";
   onChange: <Key extends keyof PracticeDefaults>(key: Key, value: PracticeDefaults[Key]) => void;
   onRun: () => void;
   owner?: string;
 }) {
-  const runLabel = practiceRunLabel(challengeId);
+  const runLabel = practiceRunLabel(challengeId, locale);
   const canRunPractice =
     challengeId === "1"
       ? actionState.runtimeState === "claimed" || actionState.runtimeState === "ready-to-solve"
@@ -703,14 +670,20 @@ function PracticeInputs({
           </label>
         </>
       ) : null}
-      <button type="button" disabled={!canRunPractice} title={challengeId === "1" ? actionState.solveReason : actionState.exploitReason} onClick={onRun}>
+      <button
+        type="button"
+        disabled={!canRunPractice}
+        title={localizedReason(challengeId === "1" ? actionState.solveReason : actionState.exploitReason, locale)}
+        onClick={onRun}
+      >
         {runLabel}
       </button>
     </div>
   );
 }
 
-function practiceRunLabel(challengeId: string): string {
+function practiceRunLabel(challengeId: string, locale: "en" | "zh"): string {
+  if (locale === "zh") return guidedActionLabel(challengeId, locale);
   switch (challengeId) {
     case "1":
       return "Run Your Mint";
@@ -745,6 +718,113 @@ function practiceRunLabel(challengeId: string): string {
     default:
       return "Run Practice Call";
   }
+}
+
+function guidedActionLabel(challengeId: string, locale: "en" | "zh"): string {
+  if (locale !== "zh") {
+    switch (challengeId) {
+      case "1":
+        return "Run Your Mint";
+      case "2":
+        return "Run Withdraw Call";
+      case "3":
+        return "Run Owner Claim";
+      case "9":
+        return "Execute PTB";
+      case "10":
+        return "Run AMM Swap";
+      case "11":
+        return "Accept Custody";
+      case "12":
+        return "Pollute State";
+      case "13":
+        return "Delegate Cap";
+      case "14":
+        return "Use Stale Price";
+      case "15":
+        return "Create Mismatch";
+      case "16":
+        return "Accept Intent";
+      case "17":
+        return "Write Shadow Key";
+      case "18":
+        return "Accrue Rewards";
+      case "19":
+        return "Mint Old Witness";
+      case "20":
+        return "Run Edge Liquidation";
+      case "8":
+        return "Use Old Path";
+      case "7":
+        return "Run Guarded Value";
+      case "6":
+        return "Run Rounded Buys";
+      case "5":
+        return "Create Bad Init Cap";
+      case "4":
+        return "Claim Leaked Cap";
+      default:
+        return "Run Practice Call";
+    }
+  }
+
+  switch (challengeId) {
+    case "1":
+      return "执行铸币调用";
+    case "2":
+      return "执行提现调用";
+    case "3":
+      return "执行伪 owner 调用";
+    case "4":
+      return "领取泄露 Cap";
+    case "5":
+      return "创建错误初始化 Cap";
+    case "6":
+      return "执行舍入购买";
+    case "7":
+      return "提交边界数值";
+    case "8":
+      return "调用旧入口";
+    case "9":
+      return "执行 PTB";
+    case "10":
+      return "执行 AMM Swap";
+    case "11":
+      return "接收托管对象";
+    case "12":
+      return "污染共享状态";
+    case "13":
+      return "委托 Capability";
+    case "14":
+      return "使用过期价格";
+    case "15":
+      return "制造记账不一致";
+    case "16":
+      return "接受伪造意图";
+    case "17":
+      return "写入 Shadow Key";
+    case "18":
+      return "累计奖励";
+    case "19":
+      return "铸造旧 Witness";
+    case "20":
+      return "执行边界清算";
+    default:
+      return "执行练习调用";
+  }
+}
+
+function capabilityActionLabel(challengeId: string, locale: "en" | "zh"): string {
+  if (locale !== "zh") {
+    if (challengeId === "19") return "Use Old Witness";
+    if (challengeId === "13") return "Use Delegated Cap";
+    if (challengeId === "5") return "Initialize State";
+    return "Use Admin Cap";
+  }
+  if (challengeId === "19") return "使用旧 Witness";
+  if (challengeId === "13") return "使用委托 Cap";
+  if (challengeId === "5") return "初始化状态";
+  return "使用 AdminCap";
 }
 
 function visibleReason(actionState: ChallengeActionState): string {
@@ -787,4 +867,23 @@ function localizedAssistance(level: AssistanceLevel, locale: "en" | "zh"): strin
     case 4:
       return "已查看答案";
   }
+}
+
+function localizedReason(reason: string, locale: "en" | "zh"): string {
+  if (locale !== "zh") return reason;
+  if (reason === "Connect a wallet first.") return "请先连接钱包。";
+  if (reason === "Missing package configuration.") return "缺少合约包配置。";
+  if (reason === "Create a progress object first.") return "请先创建进度对象。";
+  if (reason === "Progress object already exists.") return "进度对象已创建。";
+  if (reason === "Claim an instance first.") return "请先领取题目实例。";
+  if (reason === "Instance already claimed.") return "题目实例已领取。";
+  if (reason === "Run your mint before submitting solve.") return "提交判题前，请先执行 mint 调用。";
+  if (reason === "Run the PTB combo first.") return "请先执行 PTB 组合调用。";
+  if (reason.includes("already completed")) return "这道题已经完成。";
+  if (reason.includes("Ready to solve")) return "已经满足判题条件，可以提交。";
+  if (reason.includes("not yet connected to an on-chain instance")) return "这道题还没有接入链上实例。";
+  if (reason.includes("Claim the leaked admin capability first")) return "请先领取泄露的 AdminCap。";
+  if (reason.includes("Create the bad init admin capability first")) return "请先创建错误初始化 AdminCap。";
+  if (reason.includes("Use the capability before solving")) return "请先使用 capability 完成受限操作。";
+  return reason;
 }

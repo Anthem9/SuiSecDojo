@@ -122,6 +122,6 @@ function mergeBadgeDetails(progressBadgeIds: string[], badges: BadgeObject[]): B
   return Array.from(detailsByType.values());
 }
 
-function shortAddress(address: string): string {
+export function shortAddress(address: string): string {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }

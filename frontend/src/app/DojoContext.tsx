@@ -1,11 +1,11 @@
-import { useCurrentAccount } from "@mysten/dapp-kit";
+import { useCurrentAccount, useSuiClientContext } from "@mysten/dapp-kit";
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import { challenges } from "../data/challenges";
 import { useChallenge01Actions } from "../hooks/useChallenge01Actions";
 import { useDojoObjects } from "../hooks/useDojoObjects";
 import { useLeaderboardEvents } from "../hooks/useLeaderboardEvents";
 import { getChallenge01ActionState } from "../lib/challengeRuntime";
-import { CONTRACTS, SUI_NETWORK } from "../lib/constants";
+import { CONTRACTS } from "../lib/constants";
 import { dictionaries, type Locale } from "../lib/i18n";
 import { defaultPracticeInputs, type PracticeDefaults } from "../lib/practice";
 import { summarizeProfile } from "../lib/profile";
@@ -32,6 +32,7 @@ export function useDojo() {
 
 function useDojoState() {
   const account = useCurrentAccount();
+  const { network } = useSuiClientContext();
   const packageId = CONTRACTS.PACKAGE_ID;
   const [locale, setLocale] = useState<Locale>("zh");
   const [trainingMode, setTrainingMode] = useState<TrainingMode>("challenge");
@@ -44,14 +45,14 @@ function useDojoState() {
   const progress = summarizeProgress(challenges, chainProgress);
   const profile = summarizeProfile({
     accountAddress: account?.address,
-    network: SUI_NETWORK,
+    network,
     challenges,
     chainState,
     badges: chainState.badges ?? [],
     leaderboardEntry: leaderboardQuery.leaderboard.currentEntry,
   });
   const warnings = [
-    SUI_NETWORK !== "testnet" ? `Current network is ${SUI_NETWORK}; SuiSec Dojo challenges are configured for testnet.` : undefined,
+    network !== "testnet" ? dictionaries[locale].challengeNetworkWarning : undefined,
     account?.address && suiBalanceMist === "0" ? "Wallet has no SUI available for gas. Fund it from the Sui testnet faucet." : undefined,
   ].filter((message): message is string => Boolean(message));
   const t = dictionaries[locale];
@@ -331,6 +332,7 @@ function useDojoState() {
       trainingMode,
       useCapability,
       warnings,
+      network,
     }),
     [
       account,
@@ -350,6 +352,7 @@ function useDojoState() {
       t,
       trainingMode,
       warnings,
+      network,
     ],
   );
 }

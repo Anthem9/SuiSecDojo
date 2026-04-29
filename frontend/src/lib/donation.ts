@@ -12,7 +12,7 @@ export type ContactConfig = {
 };
 
 export function donationConfigFromEnv(env: Record<string, string | undefined>): DonationConfig {
-  return makeDonationConfig("SUI / WAL", env.VITE_DONATION_ADDRESS ?? env.VITE_DONATION_SUI_ADDRESS ?? env.VITE_DONATION_WAL_ADDRESS);
+  return makeDonationConfig("Sui Address", env.VITE_DONATION_ADDRESS ?? env.VITE_DONATION_SUI_ADDRESS ?? env.VITE_DONATION_WAL_ADDRESS);
 }
 
 export function contactConfigFromEnv(env: Record<string, string | undefined>): ContactConfig[] {
