@@ -32,6 +32,12 @@ a {
   overflow-x: hidden;
 }
 
+.route-loading {
+  color: #4b5563;
+  margin: 0 clamp(20px, 5vw, 72px) 72px;
+  padding: 32px 0;
+}
+
 .topbar {
   align-items: center;
   display: flex;
@@ -712,7 +718,8 @@ dd {
 
 .mode-toggle button,
 .hint-grid button,
-.practice-grid button {
+.practice-grid button,
+.dojo-pass-button {
   background: #ffffff;
   border: 1px solid #d9e2d7;
   border-radius: 8px;
@@ -727,6 +734,20 @@ dd {
   background: #172018;
   border-color: #172018;
   color: #ffffff;
+}
+
+.dojo-pass-button {
+  background: #172018;
+  border-color: #172018;
+  color: #ffffff;
+  margin-top: 4px;
+}
+
+.dojo-pass-button:disabled {
+  background: #eef3ee;
+  border-color: #ccd6cc;
+  color: #8a948c;
+  cursor: not-allowed;
 }
 
 .score-grid {

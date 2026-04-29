@@ -41,7 +41,7 @@ function useDojoState() {
   const [practiceInputs, setPracticeInputs] = useState<PracticeDefaults>(defaultPracticeInputs);
   const walletNetwork = walletNetworkFromChains(account?.chains, network);
   const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, suiBalanceMist, refetchObjects } =
-    useDojoObjects(account?.address, packageId, DOJO_PASS.PACKAGE_ID || packageId);
+    useDojoObjects(account?.address, packageId, DOJO_PASS.PACKAGE_ID || packageId, DOJO_PASS.NETWORK);
   const challengeActions = useChallenge01Actions(packageId, chainState, refetchObjects, walletNetwork);
   const leaderboardQuery = useLeaderboardEvents(packageId, account?.address);
   const progress = summarizeProgress(challenges, chainProgress);

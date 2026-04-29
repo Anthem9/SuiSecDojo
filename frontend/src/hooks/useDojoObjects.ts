@@ -1,9 +1,27 @@
 import { useSuiClientQuery } from "@mysten/dapp-kit";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { SUI_NETWORK, SUI_NETWORKS, type SuiNetworkName } from "../lib/constants";
 import { parseChallenge02VaultObject, parseChainChallengeState } from "../lib/chainState";
 import type { ChallengeProgress } from "../types";
 
-export function useDojoObjects(accountAddress: string | undefined, packageId: string, dojoPassPackageId = packageId) {
+const rpcClients = new Map<SuiNetworkName, SuiJsonRpcClient>();
+
+function rpcClientForNetwork(network: SuiNetworkName): SuiJsonRpcClient {
+  const existing = rpcClients.get(network);
+  if (existing) return existing;
+  const client = new SuiJsonRpcClient({ url: SUI_NETWORKS[network].url, network: SUI_NETWORKS[network].network });
+  rpcClients.set(network, client);
+  return client;
+}
+
+export function useDojoObjects(
+  accountAddress: string | undefined,
+  packageId: string,
+  dojoPassPackageId = packageId,
+  dojoPassNetwork: SuiNetworkName = SUI_NETWORK,
+) {
   const ownedObjectsQuery = useSuiClientQuery(
     "getOwnedObjects",
     {
@@ -35,8 +53,6 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
           { StructType: `${packageId}::challenge_19_upgrade_witness_gap::ChallengeInstance` },
           { StructType: `${packageId}::challenge_19_upgrade_witness_gap::OldWitness` },
           { StructType: `${packageId}::challenge_20_liquidation_edge_case::ChallengeInstance` },
-          { StructType: `${dojoPassPackageId}::dojo_pass::DojoPass` },
-          { StructType: `${dojoPassPackageId}::badge::Badge` },
         ],
       },
       options: {
@@ -51,6 +67,26 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
     },
   );
 
+  const dojoPassObjectsQuery = useQuery({
+    queryKey: ["dojo-pass-owned-objects", dojoPassNetwork, accountAddress, dojoPassPackageId],
+    enabled: Boolean(accountAddress && dojoPassPackageId),
+    queryFn: async () => {
+      const client = rpcClientForNetwork(dojoPassNetwork);
+      return client.getOwnedObjects({
+        owner: accountAddress!,
+        filter: {
+          MatchAny: [{ StructType: `${dojoPassPackageId}::dojo_pass::DojoPass` }, { StructType: `${dojoPassPackageId}::badge::Badge` }],
+        },
+        options: {
+          showContent: true,
+          showType: true,
+          showOwner: true,
+        },
+        limit: 50,
+      });
+    },
+  });
+
   const suiBalanceQuery = useSuiClientQuery(
     "getBalance",
     {
@@ -62,8 +98,13 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
   );
 
   const chainState = useMemo(
-    () => parseChainChallengeState(ownedObjectsQuery.data?.data ?? [], packageId, dojoPassPackageId),
-    [ownedObjectsQuery.data?.data, packageId, dojoPassPackageId],
+    () =>
+      parseChainChallengeState(
+        [...(ownedObjectsQuery.data?.data ?? []), ...(dojoPassObjectsQuery.data?.data ?? [])],
+        packageId,
+        dojoPassPackageId,
+      ),
+    [ownedObjectsQuery.data?.data, dojoPassObjectsQuery.data?.data, packageId, dojoPassPackageId],
   );
 
   const challenge02VaultQuery = useSuiClientQuery(
@@ -117,6 +158,7 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
     refetchObjects: async () => {
       await retryRefetch(async () => {
         await ownedObjectsQuery.refetch();
+        await dojoPassObjectsQuery.refetch();
         if (chainState.challenge02Instance?.vaultId) {
           await challenge02VaultQuery.refetch();
         }
@@ -126,6 +168,7 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
       });
     },
     ownedObjectsQuery,
+    dojoPassObjectsQuery,
     challenge02VaultQuery,
     suiBalanceQuery,
     suiBalanceMist: suiBalanceQuery.data?.totalBalance,

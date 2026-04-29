@@ -1,5 +1,7 @@
-import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { useCurrentAccount, useCurrentWallet, useSuiClient } from "@mysten/dapp-kit";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import type { Transaction } from "@mysten/sui/transactions";
+import { signTransaction as signWalletTransaction } from "@mysten/wallet-standard";
 import { useState } from "react";
 import type { ChainChallengeState } from "../lib/chainState";
 import {
@@ -51,11 +53,21 @@ import {
 import type { PracticeDefaults } from "../lib/practice";
 import { txStatusDigest, txStatusMessage, readableTxError } from "../lib/txStatus";
 import type { TxStatus } from "../lib/txStatus";
-import { DOJO_PASS, SUI_NETWORK, type SuiNetworkName } from "../lib/constants";
+import { DOJO_PASS, SUI_NETWORK, SUI_NETWORKS, type SuiNetworkName } from "../lib/constants";
 
 type RefetchObjects = () => Promise<unknown>;
 
 const defaultSolveOptions: SolveOptions = { mode: "challenge", assistanceLevel: 0 };
+const rpcClients = new Map<SuiNetworkName, SuiJsonRpcClient>();
+
+function rpcClientForNetwork(network: SuiNetworkName, fallbackClient: ReturnType<typeof useSuiClient>): SuiJsonRpcClient {
+  if (network === SUI_NETWORK) return fallbackClient as SuiJsonRpcClient;
+  const existing = rpcClients.get(network);
+  if (existing) return existing;
+  const client = new SuiJsonRpcClient({ url: SUI_NETWORKS[network].url, network: SUI_NETWORKS[network].network });
+  rpcClients.set(network, client);
+  return client;
+}
 
 export function useChallenge01Actions(
   packageId: string,
@@ -64,8 +76,9 @@ export function useChallenge01Actions(
   currentNetwork: string,
 ) {
   const account = useCurrentAccount();
+  const { currentWallet, supportedIntents } = useCurrentWallet();
   const client = useSuiClient();
-  const signAndExecute = useSignAndExecuteTransaction();
+  const [isPending, setIsPending] = useState(false);
   const [txStatus, setTxStatus] = useState<TxStatus>({ kind: "idle" });
 
   async function executeAndRefresh(label: string, transactionFactory: () => Transaction, requiredNetwork: SuiNetworkName = SUI_NETWORK) {
@@ -83,21 +96,41 @@ export function useChallenge01Actions(
     }
 
     try {
+      const targetClient = rpcClientForNetwork(requiredNetwork, client);
+      const transaction = transactionFactory();
+      transaction.setSenderIfNotSet(account.address);
       setTxStatus({ kind: "awaiting-signature", label });
-      const result = await signAndExecute.mutateAsync({
-        transaction: transactionFactory(),
+      setIsPending(true);
+      if (!currentWallet) {
+        throw new Error("No wallet is connected.");
+      }
+      const { bytes, signature } = await signWalletTransaction(currentWallet, {
+        account,
+        chain: `sui:${requiredNetwork}`,
+        transaction: {
+          async toJSON() {
+            return transaction.toJSON({ supportedIntents, client: targetClient });
+          },
+        },
+      });
+      const result = await targetClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature,
+        options: { showRawEffects: true },
       });
       setTxStatus({ kind: "submitted", label, digest: result.digest });
-      await client.waitForTransaction({ digest: result.digest });
+      await targetClient.waitForTransaction({ digest: result.digest });
       await refetchObjects();
       setTxStatus({ kind: "confirmed", label, digest: result.digest });
     } catch (error) {
       setTxStatus({ kind: "failed", label, message: readableTxError(error) });
+    } finally {
+      setIsPending(false);
     }
   }
 
   return {
-    isPending: signAndExecute.isPending,
+    isPending,
     lastDigest: txStatusDigest(txStatus),
     statusMessage: txStatusMessage(txStatus),
     txStatus,

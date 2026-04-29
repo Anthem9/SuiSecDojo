@@ -83,7 +83,7 @@ export function TutorPanel({
                 : "Mint your soulbound Dojo Pass first. It records unlocked answers and can support membership features later."}
             </p>
             {dojoPassNetworkMessage ? <p className="empty-state">{dojoPassNetworkMessage}</p> : null}
-            <button type="button" disabled={!passConfigured || Boolean(dojoPassNetworkMessage)} onClick={onMintDojoPass}>
+            <button className="dojo-pass-button" type="button" disabled={!passConfigured || Boolean(dojoPassNetworkMessage)} onClick={onMintDojoPass}>
               {locale === "zh" ? "领取 Dojo Pass" : "Mint Dojo Pass"}
             </button>
           </>
@@ -106,7 +106,7 @@ export function TutorPanel({
                 : `Unlocking records this challenge in your Dojo Pass. Price: ${mistPriceLabel(DOJO_PASS.ANSWER_PRICE_MIST)}.`}
             </p>
             {dojoPassNetworkMessage ? <p className="empty-state">{dojoPassNetworkMessage}</p> : null}
-            <button type="button" disabled={!passConfigured || Boolean(dojoPassNetworkMessage)} onClick={onUnlockAnswer}>
+            <button className="dojo-pass-button" type="button" disabled={!passConfigured || Boolean(dojoPassNetworkMessage)} onClick={onUnlockAnswer}>
               {locale === "zh" ? "解锁答案" : "Unlock Answer"}
             </button>
           </>
