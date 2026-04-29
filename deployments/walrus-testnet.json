@@ -8,8 +8,8 @@
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
   "packageId": "0xac18fc022854b016c5492fb65209f70bdf7b56986fd9d9ed0a1acc4edf82b580",
   "challengeRegistryId": "0x21a7db45e9f1e58af4c3c3f6221fa94566928117b48a452d70b57d5d756499a5",
-  "deployedAt": "2026-04-29T01:13:10Z",
-  "note": "Existing testnet site object updated with Challenge Mode, scoring UI, and new package configuration.",
+  "deployedAt": "2026-04-29T01:59:08Z",
+  "note": "Existing testnet site object updated with Statement-before-practice layout.",
   "challengeModeScoring": true,
-  "lastUpdatedDigest": "r6Q4QH2sCnESJCSuFv2nqHgtCDW9b3DbXUOH_bCdt7EBXAJdAg"
+  "lastUpdatedDigest": "kuzXxJkE2bJYs3eY9A2oc2xSbVsiZT1stZgc1elE2ycBXAJdAg"
 }

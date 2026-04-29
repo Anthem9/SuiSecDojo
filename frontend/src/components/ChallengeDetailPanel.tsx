@@ -262,6 +262,11 @@ export function ChallengeDetailPanel({
         ))}
       </div>
 
+      <section className="docs-panel">
+        <h3>Statement</h3>
+        <MarkdownRenderer sourceUrl={challenge.sourceUrl} />
+      </section>
+
       {!isSolved ? (
         <section className="practice-panel">
           <h3>CLI / PTB Practice</h3>
@@ -348,10 +353,6 @@ export function ChallengeDetailPanel({
       ) : null}
       {!packageId ? <p className="status-line error">Missing frontend deployment configuration.</p> : null}
       {objectError ? <p className="status-line error">{objectError.message}</p> : null}
-      <section className="docs-panel">
-        <h3>Statement</h3>
-        <MarkdownRenderer sourceUrl={challenge.sourceUrl} />
-      </section>
     </article>
   );
 }
