@@ -1,4 +1,5 @@
 import { Trophy } from "lucide-react";
+import { useDojo } from "../app/DojoContext";
 import type { CompletionEvent, LeaderboardEntry } from "../lib/leaderboard";
 
 type LeaderboardPanelProps = {
@@ -10,19 +11,25 @@ type LeaderboardPanelProps = {
 };
 
 export function LeaderboardPanel({ currentRank, entries, error, isLoading, recent }: LeaderboardPanelProps) {
+  const { t } = useDojo();
+
   return (
     <section className="leaderboard-panel" id="leaderboard">
       <div className="section-heading">
         <Trophy aria-hidden="true" />
-        <h2>Leaderboard</h2>
+        <h2>{t.leaderboard}</h2>
       </div>
-      <p className="section-copy">Completion events are indexed from the current Phase 4 testnet package.</p>
-      {currentRank ? <p className="status-line">Current wallet rank: #{currentRank}</p> : null}
-      {isLoading ? <p className="empty-state">Loading events...</p> : null}
+      <p className="section-copy">{t.leaderboardCopy}</p>
+      {currentRank ? (
+        <p className="status-line">
+          {t.currentWalletRank}: #{currentRank}
+        </p>
+      ) : null}
+      {isLoading ? <p className="empty-state">{t.loadingEvents}</p> : null}
       {error ? <p className="status-line error">{error.message}</p> : null}
       <div className="leaderboard-grid">
         <div>
-          <h3>Top learners</h3>
+          <h3>{t.topLearners}</h3>
           {entries.length > 0 ? (
             <ol className="leaderboard-list">
               {entries.slice(0, 10).map((entry) => (
@@ -30,17 +37,17 @@ export function LeaderboardPanel({ currentRank, entries, error, isLoading, recen
                   <strong>{shortAddress(entry.solver)}</strong>
                   <span>{entry.totalScore} pts</span>
                   <small>
-                    {entry.completedCount} solved / {entry.badgeCount} badges
+                    {entry.completedCount} {t.solved} / {entry.badgeCount} {t.badges}
                   </small>
                 </li>
               ))}
             </ol>
           ) : (
-            <p className="empty-state">No completion events yet.</p>
+            <p className="empty-state">{t.noCompletionEvents}</p>
           )}
         </div>
         <div>
-          <h3>Recent completions</h3>
+          <h3>{t.recentCompletions}</h3>
           {recent.length > 0 ? (
             <ol className="leaderboard-list">
               {recent.map((event) => (
@@ -50,13 +57,13 @@ export function LeaderboardPanel({ currentRank, entries, error, isLoading, recen
                     Challenge {event.challengeId} / {event.score} pts
                   </span>
                   <small>
-                    {event.mode}, hint {event.assistanceLevel}, epoch {event.epoch}
+                    {event.mode}, {t.hint} {event.assistanceLevel}, {t.epoch} {event.epoch}
                   </small>
                 </li>
               ))}
             </ol>
           ) : (
-            <p className="empty-state">No recent completions.</p>
+            <p className="empty-state">{t.noRecentCompletions}</p>
           )}
         </div>
       </div>

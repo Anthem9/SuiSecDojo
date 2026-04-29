@@ -158,6 +158,7 @@ a {
 .home-grid,
 .challenge-grid,
 .incident-grid,
+.incident-timeline,
 .about-grid,
 .donation-grid {
   display: grid;
@@ -303,12 +304,137 @@ h1 {
   background: #172018;
   color: #ffffff;
   display: inline-flex;
+  justify-content: center;
+  line-height: 1;
   text-decoration: none;
 }
 
 .hero-actions .secondary {
   background: transparent;
   color: #172018;
+}
+
+.incident-timeline {
+  margin-top: 24px;
+  position: relative;
+}
+
+.incident-timeline::before {
+  background: #b9d4ca;
+  bottom: 20px;
+  content: "";
+  left: 118px;
+  position: absolute;
+  top: 20px;
+  width: 1px;
+}
+
+.incident-timeline-item {
+  align-items: start;
+  color: #172018;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 96px minmax(0, 1fr);
+  position: relative;
+  text-decoration: none;
+}
+
+.incident-timeline-item::before {
+  background: #0f766e;
+  border: 4px solid #f4f7f4;
+  border-radius: 999px;
+  content: "";
+  height: 14px;
+  left: 111px;
+  position: absolute;
+  top: 22px;
+  width: 14px;
+  z-index: 1;
+}
+
+.incident-timeline-item time {
+  color: #0f766e;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding-top: 18px;
+}
+
+.incident-timeline-item > div {
+  background: #ffffff;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px;
+}
+
+.incident-timeline-item span {
+  color: #0f766e;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.incident-timeline-item strong {
+  font-size: 1.15rem;
+}
+
+.incident-timeline-item p {
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.incident-facts,
+.incident-detail-facts {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.incident-facts div,
+.incident-detail-facts div {
+  min-width: 0;
+}
+
+.incident-facts dt,
+.incident-detail-facts dt {
+  color: #647067;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.incident-facts dd,
+.incident-detail-facts dd {
+  color: #172018;
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.incident-detail-facts {
+  background: #f7faf7;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  margin: 18px 0;
+  padding: 16px;
+}
+
+.reference-list {
+  border-top: 1px solid #d9e2d7;
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.reference-list a {
+  color: #0f766e;
+}
+
+.profile-passport-page {
+  display: grid;
+  gap: 24px;
 }
 
 .progress-panel,
@@ -914,8 +1040,28 @@ dd {
   .leaderboard-grid,
   .report-grid,
   .about-grid,
-  .donation-grid {
+  .donation-grid,
+  .incident-facts,
+  .incident-detail-facts {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .incident-timeline::before {
+    left: 8px;
+  }
+
+  .incident-timeline-item {
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 28px;
+  }
+
+  .incident-timeline-item::before {
+    left: 1px;
+  }
+
+  .incident-timeline-item time {
+    padding-top: 0;
   }
 
   .filters {

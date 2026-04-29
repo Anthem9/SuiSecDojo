@@ -8,16 +8,16 @@
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
   "packageId": "0x84f5e4308892eea91c4e5cc0492e076274d55db8bf0b410369ffd732071b6e46",
   "challengeRegistryId": "0x72af7af44a79679d73f8afeddbf662e3e0c9474bdf8cb88eca2d222d2e5fd180",
-  "deployedAt": "2026-04-29T06:24:18Z",
-  "note": "Existing testnet site object updated with QA fixes for incident markdown fallback handling, zero-score leaderboard visibility, and mobile About card wrapping.",
+  "deployedAt": "2026-04-29T06:43:15Z",
+  "note": "Existing testnet site object updated with localized navigation/profile text, merged profile/passport page, real incident timeline content, and home CTA alignment fixes.",
   "challengeModeScoring": true,
-  "lastUpdatedDigest": "lFpieyzmzPMUW5fvNhzBMaGn-WdDJ_8xo27NPjDzAuwByAHJAQ",
+  "lastUpdatedDigest": "3cG92-Yc5vuBZfXNMPe0OPLDRajoEYFSz2I7YKlvpDIB2QHaAQ",
   "liveChallenges": 20,
-  "incidentDocs": 9,
+  "incidentDocs": 6,
   "roadmapChallenges": [],
-  "lastIndexPatchId": "lFpieyzmzPMUW5fvNhzBMaGn-WdDJ_8xo27NPjDzAuwByAHJAQ",
+  "lastIndexPatchId": "3cG92-Yc5vuBZfXNMPe0OPLDRajoEYFSz2I7YKlvpDIB2QHaAQ",
   "lastAsset": {
-    "path": "/assets/index-DAGLL8hw.js",
-    "patchId": "lFpieyzmzPMUW5fvNhzBMaGn-WdDJ_8xo27NPjDzAuwBDgDIAQ"
+    "path": "/assets/index-B_7nxGbQ.js",
+    "patchId": "3cG92-Yc5vuBZfXNMPe0OPLDRajoEYFSz2I7YKlvpDIBAQC_AQ"
   }
 }

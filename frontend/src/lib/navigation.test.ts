@@ -10,7 +10,6 @@ describe("navigation", () => {
       "/docs",
       "/leaderboard",
       "/profile",
-      "/passport",
       "/about",
     ]);
   });

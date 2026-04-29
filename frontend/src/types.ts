@@ -18,6 +18,25 @@ export type ChallengeMetadata = {
   cliTemplateUrl?: string;
 };
 
+export type IncidentReference = {
+  label: string;
+  url: string;
+};
+
+export type IncidentMetadata = {
+  slug: string;
+  title: string;
+  summary: string;
+  category: string;
+  date: string;
+  affectedProtocol: string;
+  impact: string;
+  status: string;
+  relatedChallengeIds: string[];
+  sourceUrl: string;
+  references: IncidentReference[];
+};
+
 export type ChallengeProgress = {
   completedChallengeIds: string[];
   badgeIds: string[];

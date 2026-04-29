@@ -3,12 +3,18 @@ import { getIncidentBySlug, incidents } from "./incidents";
 
 describe("incident metadata", () => {
   it("should include the expanded incident library", () => {
-    expect(incidents).toHaveLength(9);
-    expect(getIncidentBySlug("oracle-staleness")?.relatedChallengeIds).toContain("14");
+    expect(incidents).toHaveLength(6);
+    expect(getIncidentBySlug("cetus-clmm-exploit-2025")?.relatedChallengeIds).toContain("10");
   });
 
   it("should keep every incident backed by content", () => {
-    expect(incidents.every((incident) => incident.sourceUrl.startsWith("content/replays/"))).toBe(true);
+    expect(incidents.every((incident) => incident.sourceUrl.startsWith("content/incidents/"))).toBe(true);
     expect(incidents.every((incident) => incident.sourceUrl.endsWith("/index.md"))).toBe(true);
+  });
+
+  it("should expose timeline fields and references", () => {
+    expect(incidents.every((incident) => /^\d{4}-\d{2}-\d{2}$/.test(incident.date))).toBe(true);
+    expect(incidents.every((incident) => incident.affectedProtocol.length > 0)).toBe(true);
+    expect(incidents.every((incident) => incident.references.length > 0)).toBe(true);
   });
 });

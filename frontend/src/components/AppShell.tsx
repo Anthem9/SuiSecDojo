@@ -5,7 +5,7 @@ import { useDojo } from "../app/DojoContext";
 import { navItems } from "../lib/navigation";
 
 export function AppShell() {
-  const { locale, setLocale } = useDojo();
+  const { locale, setLocale, t } = useDojo();
 
   return (
     <main className="app-shell">
@@ -17,7 +17,7 @@ export function AppShell() {
         <nav className="main-nav" aria-label="Primary navigation">
           {navItems.map((item) => (
             <NavLink key={item.id} to={item.path}>
-              {item.label}
+              {t[item.labelKey]}
             </NavLink>
           ))}
         </nav>
@@ -30,7 +30,7 @@ export function AppShell() {
               </button>
             ))}
           </div>
-          <ConnectButton className="wallet-button" connectText={<WalletLabel />} />
+          <ConnectButton className="wallet-button" connectText={<WalletLabel label={t.connectWallet} />} />
         </div>
       </header>
       <Outlet />
@@ -38,11 +38,11 @@ export function AppShell() {
   );
 }
 
-function WalletLabel() {
+function WalletLabel({ label }: { label: string }) {
   return (
     <>
       <Wallet aria-hidden="true" />
-      Connect Wallet
+      {label}
     </>
   );
 }

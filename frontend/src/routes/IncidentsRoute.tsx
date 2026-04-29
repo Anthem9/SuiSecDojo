@@ -5,23 +5,34 @@ import { incidents, getIncidentBySlug } from "../data/incidents";
 import { useDojo } from "../app/DojoContext";
 
 export function IncidentsRoute() {
+  const { t } = useDojo();
+
   return (
     <section className="page-section">
       <div className="section-heading">
         <FileText aria-hidden="true" />
-        <h1>Incident Library</h1>
+        <h1>{t.incidentLibraryTitle}</h1>
       </div>
-      <p className="safety-notice">
-        These notes describe simplified defensive patterns. They do not reproduce complete production exploits or target live
-        protocols.
-      </p>
-      <div className="incident-grid">
+      <p className="safety-notice">{t.safetyNotice}</p>
+      <div className="incident-timeline">
         {incidents.map((incident) => (
-          <Link key={incident.slug} className="incident-card" to={`/incidents/${incident.slug}`}>
-            <span>{incident.category}</span>
-            <strong>{incident.title}</strong>
-            <p>{incident.summary}</p>
-            <small>Related challenges: {incident.relatedChallengeIds.join(", ")}</small>
+          <Link key={incident.slug} className="incident-timeline-item" to={`/incidents/${incident.slug}`}>
+            <time dateTime={incident.date}>{incident.date}</time>
+            <div>
+              <span>{incident.category}</span>
+              <strong>{incident.title}</strong>
+              <dl className="incident-facts">
+                <div>
+                  <dt>{t.affectedProtocol}</dt>
+                  <dd>{incident.affectedProtocol}</dd>
+                </div>
+                <div>
+                  <dt>{t.impact}</dt>
+                  <dd>{incident.impact}</dd>
+                </div>
+              </dl>
+              <p>{incident.summary}</p>
+            </div>
           </Link>
         ))}
       </div>
@@ -31,15 +42,15 @@ export function IncidentsRoute() {
 
 export function IncidentDetailRoute() {
   const { slug = "" } = useParams();
-  const { locale } = useDojo();
+  const { locale, t } = useDojo();
   const incident = getIncidentBySlug(slug);
 
   if (!incident) {
     return (
       <section className="page-section">
-        <h1>Incident not found</h1>
+        <h1>{t.incidentNotFound}</h1>
         <Link className="back-link" to="/incidents">
-          Back to incidents
+          {t.backToIncidents}
         </Link>
       </section>
     );
@@ -48,13 +59,47 @@ export function IncidentDetailRoute() {
   return (
     <section className="page-section">
       <Link className="back-link" to="/incidents">
-        Back to incidents
+        {t.backToIncidents}
       </Link>
       <article className="detail-panel">
         <span className="difficulty">{incident.category}</span>
         <h1>{incident.title}</h1>
         <p>{incident.summary}</p>
+        <dl className="incident-detail-facts">
+          <div>
+            <dt>{t.date}</dt>
+            <dd>{incident.date}</dd>
+          </div>
+          <div>
+            <dt>{t.affectedProtocol}</dt>
+            <dd>{incident.affectedProtocol}</dd>
+          </div>
+          <div>
+            <dt>{t.impact}</dt>
+            <dd>{incident.impact}</dd>
+          </div>
+          <div>
+            <dt>{t.status}</dt>
+            <dd>{incident.status}</dd>
+          </div>
+          <div>
+            <dt>{t.relatedChallenges}</dt>
+            <dd>{incident.relatedChallengeIds.join(", ")}</dd>
+          </div>
+        </dl>
         <MarkdownRenderer locale={locale} sourceUrl={incident.sourceUrl} />
+        <section className="reference-list">
+          <h2>{t.references}</h2>
+          <ul>
+            {incident.references.map((reference) => (
+              <li key={reference.url}>
+                <a href={reference.url} rel="noreferrer" target="_blank">
+                  {reference.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
       </article>
     </section>
   );
