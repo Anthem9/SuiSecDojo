@@ -1,7 +1,9 @@
 import { ExternalLink } from "lucide-react";
 import { MarkdownRenderer } from "./MarkdownRenderer";
+import { useDojo } from "../app/DojoContext";
 import type { ChainChallengeState } from "../lib/chainState";
 import type { ChallengeActionState } from "../lib/challengeRuntime";
+import { challengeDescription, challengeTags, challengeTitle, formatDifficulty } from "../lib/challengeText";
 import { cliPracticeTemplate, type PracticeDefaults } from "../lib/practice";
 import { assistanceLabels, formatTrainingMode, type AssistanceLevel, type TrainingMode } from "../lib/scoring";
 import type { ChallengeMetadata } from "../types";
@@ -53,6 +55,7 @@ export function ChallengeDetailPanel({
   trainingMode,
   warnings,
 }: ChallengeDetailPanelProps) {
+  const { locale } = useDojo();
   const isChallenge01 = challenge.id === "1";
   const isChallenge02 = challenge.id === "2";
   const isChallenge03 = challenge.id === "3";
@@ -118,9 +121,9 @@ export function ChallengeDetailPanel({
 
   return (
     <article className="detail-panel">
-      <span className="difficulty">{challenge.difficulty}</span>
-      <h2>{challenge.title}</h2>
-      <p>{challenge.description}</p>
+      <span className="difficulty">{formatDifficulty(challenge.difficulty)}</span>
+      <h2>{challengeTitle(challenge, locale)}</h2>
+      <p>{challengeDescription(challenge, locale)}</p>
       <p className="safety-notice">
         本平台仅用于安全教育、审计训练和防御研究。所有漏洞案例均为最小化模拟版本，禁止用于攻击真实协议、真实资产或未授权系统。
       </p>
@@ -147,7 +150,13 @@ export function ChallengeDetailPanel({
           </div>
         </dl>
         <p className="section-copy">
-          Challenge Mode expects you to inspect the entry points and construct the call yourself. Guided Mode keeps helper buttons but records a lower score.
+          {trainingMode === "challenge"
+              ? locale === "zh"
+                ? "挑战模式：页面会隐藏辅助执行按钮。请根据下方对象 ID 和 CLI/PTB 模板，自己构造交易。"
+                : "Challenge Mode: helper execution buttons are hidden. Use the object ids and CLI/PTB template below to construct the transaction yourself."
+              : locale === "zh"
+                ? "引导模式：页面会显示练习按钮，方便上手；最终 solve 事件会记录较低分数。"
+                : "Guided Mode: helper buttons are enabled for practice, but the solve event records a lower score."}
         </p>
       </section>
 
@@ -417,27 +426,35 @@ export function ChallengeDetailPanel({
       </dl>
 
       <div className="tag-row">
-        {challenge.tags.map((tag) => (
+        {challengeTags(challenge, locale).map((tag) => (
           <span key={tag}>{tag}</span>
         ))}
       </div>
 
       <section className="docs-panel">
-        <h3>Statement</h3>
-        <MarkdownRenderer sourceUrl={challenge.sourceUrl} />
+        <h3>{locale === "zh" ? "题面" : "Statement"}</h3>
+        <MarkdownRenderer locale={locale} sourceUrl={challenge.sourceUrl} />
       </section>
 
       {!isSolved ? (
         <section className="practice-panel">
           <h3>CLI / PTB Practice</h3>
-          <PracticeInputs
-            actionState={actionState}
-            challengeId={challenge.id}
-            inputs={practiceInputs}
-            onChange={onPracticeInputChange}
-            onRun={onRunPracticeAction}
-            owner={isChallenge16 ? chainState.challenge16Instance?.owner : chainState.challenge03Instance?.owner}
-          />
+          {trainingMode === "guided" ? (
+            <PracticeInputs
+              actionState={actionState}
+              challengeId={challenge.id}
+              inputs={practiceInputs}
+              onChange={onPracticeInputChange}
+              onRun={onRunPracticeAction}
+              owner={isChallenge16 ? chainState.challenge16Instance?.owner : chainState.challenge03Instance?.owner}
+            />
+          ) : (
+            <p className="empty-state">
+              {locale === "zh"
+                ? "挑战模式隐藏辅助执行按钮。请修改 CLI/PTB 模板中的参数，并使用钱包或 Sui CLI 自行执行。"
+                : "Challenge Mode hides helper execution. Fill values by editing the CLI/PTB template and run it with your wallet or Sui CLI."}
+            </p>
+          )}
           <pre>{cliTemplate}</pre>
         </section>
       ) : (
@@ -516,7 +533,7 @@ export function ChallengeDetailPanel({
                     : "Run Withdraw Call"}
           </button>
         ) : null}
-        {isChallenge04 || isChallenge05 || isChallenge13 || isChallenge19 ? (
+        {trainingMode === "guided" && (isChallenge04 || isChallenge05 || isChallenge13 || isChallenge19) ? (
           <button type="button" disabled={!actionState.canUseCapability} title={actionState.useCapabilityReason} onClick={onUseCapability}>
             {isChallenge19 ? "Use Old Witness" : isChallenge13 ? "Use Delegated Cap" : isChallenge05 ? "Initialize State" : "Use Admin Cap"}
           </button>

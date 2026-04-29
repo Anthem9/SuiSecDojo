@@ -15,6 +15,7 @@ describe("challenge filters", () => {
     expect(filterChallenges(challenges, { query: "TreasuryCap" }).map((item) => item.slug)).toEqual([
       "anyone-can-mint",
     ]);
+    expect(filterChallenges(challenges, { query: "金库" }).map((item) => item.slug)).toContain("shared-vault");
   });
 
   it("should return a challenge by slug", () => {

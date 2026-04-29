@@ -8,16 +8,16 @@
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
   "packageId": "0x84f5e4308892eea91c4e5cc0492e076274d55db8bf0b410369ffd732071b6e46",
   "challengeRegistryId": "0x72af7af44a79679d73f8afeddbf662e3e0c9474bdf8cb88eca2d222d2e5fd180",
-  "deployedAt": "2026-04-29T07:01:19Z",
-  "note": "Existing testnet site object updated with corrected incident timeline entries, localized incident metadata, single SUI/WAL donation address, contact section, and stronger home CTA alignment.",
+  "deployedAt": "2026-04-29T07:15:09Z",
+  "note": "Existing testnet site object updated with localized challenge cards/details, distinct Challenge Mode versus Guided Mode behavior, title-cased difficulty filters, and latest UI fixes.",
   "challengeModeScoring": true,
-  "lastUpdatedDigest": "2sBqRVnanob5ot6aAdvB_Ipv8jiBoMZ5dmkXjB5Dju8B1QHWAQ",
+  "lastUpdatedDigest": "123rUbc_sWsYMyCtvA-qUiigK2oHPY3uK6zR6zNblPoB0gHTAQ",
   "liveChallenges": 20,
   "incidentDocs": 6,
   "roadmapChallenges": [],
-  "lastIndexPatchId": "2sBqRVnanob5ot6aAdvB_Ipv8jiBoMZ5dmkXjB5Dju8B1QHWAQ",
+  "lastIndexPatchId": "123rUbc_sWsYMyCtvA-qUiigK2oHPY3uK6zR6zNblPoB0gHTAQ",
   "lastAsset": {
-    "path": "/assets/index-xz2CPkPJ.js",
-    "patchId": "2sBqRVnanob5ot6aAdvB_Ipv8jiBoMZ5dmkXjB5Dju8BDwDPAQ"
+    "path": "/assets/index-CZIQDmBv.js",
+    "patchId": "123rUbc_sWsYMyCtvA-qUiigK2oHPY3uK6zR6zNblPoBDwDSAQ"
   }
 }

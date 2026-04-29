@@ -40,6 +40,10 @@ export function AboutRoute() {
           <h2>{t.roadmap}</h2>
           <p>{t.roadmapCopy}</p>
         </article>
+        <article className="info-card">
+          <h2>{t.answerRevenueTitle}</h2>
+          <p>{t.answerRevenueCopy}</p>
+        </article>
       </div>
       <section className="donation-panel">
         <h2>{t.supportProject}</h2>

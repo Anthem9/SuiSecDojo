@@ -203,7 +203,12 @@ a {
 }
 
 .challenge-grid .challenge-card {
+  color: #172018;
   text-decoration: none;
+}
+
+.challenge-grid .challenge-card:visited {
+  color: #172018;
 }
 
 .challenge-card em {

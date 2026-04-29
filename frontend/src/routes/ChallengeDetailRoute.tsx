@@ -3,12 +3,13 @@ import { useDojo } from "../app/DojoContext";
 import { ChallengeDetailPanel } from "../components/ChallengeDetailPanel";
 import { TutorPanel } from "../components/TutorPanel";
 import { challenges } from "../data/challenges";
+import { challengeDescription, challengeTitle, formatDifficulty } from "../lib/challengeText";
 import { getChallengeBySlug } from "../lib/challengeFilters";
 
 export function ChallengeDetailRoute() {
+  const dojo = useDojo();
   const { slug = challenges[0]?.slug ?? "" } = useParams();
   const challenge = getChallengeBySlug(challenges, slug) ?? challenges[0];
-  const dojo = useDojo();
   const statusMessage =
     dojo.isSolved && challenge.id === "1" ? "Challenge 01 completed on-chain." : dojo.challengeActions.statusMessage;
 
@@ -16,12 +17,12 @@ export function ChallengeDetailRoute() {
     return (
       <section className="page-section">
         <Link className="back-link" to="/challenges">
-          Back to challenges
+          {dojo.locale === "zh" ? "返回挑战列表" : "Back to challenges"}
         </Link>
         <article className="detail-panel">
-          <span className="difficulty">{challenge.difficulty}</span>
-          <h1>{challenge.title}</h1>
-          <p>{challenge.description}</p>
+          <span className="difficulty">{formatDifficulty(challenge.difficulty)}</span>
+          <h1>{challengeTitle(challenge, dojo.locale)}</h1>
+          <p>{challengeDescription(challenge, dojo.locale)}</p>
           <p className="status-line warning">
             This challenge is on the public roadmap. It is intentionally not claimable until the Move module, tests, frontend
             parser, transaction builder, docs, and testnet deployment are complete.
@@ -34,7 +35,7 @@ export function ChallengeDetailRoute() {
   return (
     <section className="page-section challenge-detail-page">
       <Link className="back-link" to="/challenges">
-        Back to challenges
+        {dojo.locale === "zh" ? "返回挑战列表" : "Back to challenges"}
       </Link>
       <ChallengeDetailPanel
         actionState={dojo.actionStateFor(challenge)}

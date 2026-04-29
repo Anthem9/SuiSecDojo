@@ -4,11 +4,15 @@ export type ChallengeStatus = "live" | "coming-soon";
 export type ChallengeMetadata = {
   id: string;
   title: string;
+  titleZh?: string;
   slug: string;
   difficulty: ChallengeDifficulty;
   category: string;
+  categoryZh?: string;
   tags: string[];
+  tagsZh?: string[];
   description: string;
+  descriptionZh?: string;
   packageId?: string;
   moduleName?: string;
   walrusBlobId?: string;

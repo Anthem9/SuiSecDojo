@@ -1,4 +1,5 @@
 import type { ChallengeDifficulty, ChallengeMetadata } from "../types";
+import { challengeDescription, challengeTitle, challengeTags } from "./challengeText";
 
 export type ChallengeFilters = {
   difficulty?: ChallengeDifficulty | "all";
@@ -19,8 +20,11 @@ export function filterChallenges(
     const matchesQuery =
       !query ||
       challenge.title.toLowerCase().includes(query) ||
+      challengeTitle(challenge, "zh").toLowerCase().includes(query) ||
       challenge.description.toLowerCase().includes(query) ||
-      challenge.tags.some((tag) => tag.toLowerCase().includes(query));
+      challengeDescription(challenge, "zh").toLowerCase().includes(query) ||
+      challenge.tags.some((tag) => tag.toLowerCase().includes(query)) ||
+      challengeTags(challenge, "zh").some((tag) => tag.toLowerCase().includes(query));
 
     return matchesDifficulty && matchesCategory && matchesQuery;
   });
@@ -29,4 +33,3 @@ export function filterChallenges(
 export function getChallengeBySlug(challenges: ChallengeMetadata[], slug: string): ChallengeMetadata | undefined {
   return challenges.find((challenge) => challenge.slug === slug);
 }
-
