@@ -1,0 +1,15 @@
+{
+  "network": "mainnet",
+  "packageId": "0x02832a4c5d1056428e12fba6eaf480b0103a2000dd1f877f10debbf21e659a02",
+  "dojoPassConfigId": "0x444a75a4bd554e60b874bebeec4468e4479094c981f3cf74f366316834b4b8b4",
+  "recipient": "0x7b367a7a1eabcaffda0f3b501fece7ca9d07769ae74185d55452dc15ee556bb8",
+  "answerPriceMist": "100000000",
+  "badgePriceMist": "1000000000",
+  "proofPublicKey": "36d6cd844d56339babb51bfa4c36dca713a20ac49c6f1c35c1885c0a1ab425aa",
+  "createConfigDigest": "BRLVkXXMtzBPqkWNDuLWv7YzVZr72CsM69LttwMujpcS",
+  "configCreatedAt": "2026-04-29T11:29:51Z",
+  "deployer": "0x7b367a7a1eabcaffda0f3b501fece7ca9d07769ae74185d55452dc15ee556bb8",
+  "upgradeCapId": "0xc06e648d24bfe38c62f371d4466380122f72af7a950c5b58e77540d54c3bc8bb",
+  "publishDigest": "ABv55BgSaDCjyvvYyTLEnXNcnGAvD8CkXUD8z2aauuRf",
+  "publishedAt": "2026-04-29T11:26:59Z"
+}

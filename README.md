@@ -59,12 +59,15 @@ sui move test
 0xf329c8d04a377719cea5b7bf3a1514a8c2f75267a23c38fa28d2c83cbf92b37b
 ```
 
-当前 Dojo Pass 测试网配置：
+当前 Dojo Pass 主网配置：
 
 ```text
-DojoPassConfig: 0x00d7f1da0a9c7f3be49889edb6bec24fa5c0b128611696223ec0b95132c05985
-Answer unlock price: 0.01 testnet SUI
-Badge mint price: 0.05 testnet SUI
+Package: 0x02832a4c5d1056428e12fba6eaf480b0103a2000dd1f877f10debbf21e659a02
+DojoPassConfig: 0x444a75a4bd554e60b874bebeec4468e4479094c981f3cf74f366316834b4b8b4
+Answer unlock price: 0.1 SUI
+Badge mint price: 1 SUI
+Recipient: 0x7b367a7a1eabcaffda0f3b501fece7ca9d07769ae74185d55452dc15ee556bb8
+Walrus Site ID: 0x821cb4fa65d1e15a76f1d8481ff5298abfd8cad042150dcea114a148ca289d40
 ```
 
 开发地址：
@@ -104,7 +107,7 @@ python3 scripts/badge-proof-service.py
 /Users/anitya/Development/.secrets/suisec-dojo/dojo-pass-proof-ed25519.json
 ```
 
-生产上线前，应将 Dojo Pass / 答案解锁 / 徽章铸造模块重新部署到 mainnet，并用受控服务签发徽章资格证明；vulnerable challenge 仍只运行在 testnet。
+Dojo Pass / 答案解锁 / 徽章铸造模块已部署到 mainnet。Vulnerable challenge 仍只运行在 testnet；徽章资格证明由受控服务按 testnet 进度签发。
 
 ## 主网上线前准备
 

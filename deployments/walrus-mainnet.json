@@ -1,0 +1,13 @@
+{
+  "network": "mainnet",
+  "siteObjectId": "0x821cb4fa65d1e15a76f1d8481ff5298abfd8cad042150dcea114a148ca289d40",
+  "siteBase36": "38qsyqhkzi52uy9t4u0dqnu3tsgvmx2xzeajds5t0pcjy6418g",
+  "walAppUrl": "https://38qsyqhkzi52uy9t4u0dqnu3tsgvmx2xzeajds5t0pcjy6418g.wal.app",
+  "epochs": 5,
+  "walrusVersion": "walrus 1.47.0-15e070d60189",
+  "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
+  "testnetChallengePackageId": "0xee8f947a01cef8784f23b981297ee35fb79ff74036c307059185e06b851b803e",
+  "mainnetDojoPassPackageId": "0x02832a4c5d1056428e12fba6eaf480b0103a2000dd1f877f10debbf21e659a02",
+  "mainnetDojoPassConfigId": "0x444a75a4bd554e60b874bebeec4468e4479094c981f3cf74f366316834b4b8b4",
+  "deployedAt": "2026-04-29T11:31:16Z"
+}
