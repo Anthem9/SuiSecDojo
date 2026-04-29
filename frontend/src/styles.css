@@ -262,6 +262,32 @@ a {
   cursor: not-allowed;
 }
 
+.contact-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.contact-list a {
+  align-items: center;
+  background: #fbfdfb;
+  border: 1px solid #d9e2d7;
+  border-radius: 8px;
+  color: #172018;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 12px;
+  text-decoration: none;
+}
+
+.contact-list span {
+  color: #0f766e;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
 .hero > *,
 .workspace > *,
 .docs-layout > * {
@@ -296,16 +322,20 @@ h1 {
 }
 
 .hero-actions {
+  align-items: center;
   gap: 12px;
   margin-top: 28px;
 }
 
 .hero-actions a {
+  align-items: center;
   background: #172018;
   color: #ffffff;
   display: inline-flex;
+  height: 42px;
   justify-content: center;
   line-height: 1;
+  min-height: 42px;
   text-decoration: none;
 }
 

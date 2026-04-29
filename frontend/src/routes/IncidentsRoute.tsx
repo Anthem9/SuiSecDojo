@@ -3,9 +3,10 @@ import { Link, useParams } from "react-router-dom";
 import { MarkdownRenderer } from "../components/MarkdownRenderer";
 import { incidents, getIncidentBySlug } from "../data/incidents";
 import { useDojo } from "../app/DojoContext";
+import type { IncidentMetadata } from "../types";
 
 export function IncidentsRoute() {
-  const { t } = useDojo();
+  const { locale, t } = useDojo();
 
   return (
     <section className="page-section">
@@ -19,19 +20,19 @@ export function IncidentsRoute() {
           <Link key={incident.slug} className="incident-timeline-item" to={`/incidents/${incident.slug}`}>
             <time dateTime={incident.date}>{incident.date}</time>
             <div>
-              <span>{incident.category}</span>
-              <strong>{incident.title}</strong>
+              <span>{localizedIncident(incident, locale, "category")}</span>
+              <strong>{localizedIncident(incident, locale, "title")}</strong>
               <dl className="incident-facts">
                 <div>
                   <dt>{t.affectedProtocol}</dt>
-                  <dd>{incident.affectedProtocol}</dd>
+                  <dd>{localizedIncident(incident, locale, "affectedProtocol")}</dd>
                 </div>
                 <div>
                   <dt>{t.impact}</dt>
-                  <dd>{incident.impact}</dd>
+                  <dd>{localizedIncident(incident, locale, "impact")}</dd>
                 </div>
               </dl>
-              <p>{incident.summary}</p>
+              <p>{localizedIncident(incident, locale, "summary")}</p>
             </div>
           </Link>
         ))}
@@ -62,9 +63,9 @@ export function IncidentDetailRoute() {
         {t.backToIncidents}
       </Link>
       <article className="detail-panel">
-        <span className="difficulty">{incident.category}</span>
-        <h1>{incident.title}</h1>
-        <p>{incident.summary}</p>
+        <span className="difficulty">{localizedIncident(incident, locale, "category")}</span>
+        <h1>{localizedIncident(incident, locale, "title")}</h1>
+        <p>{localizedIncident(incident, locale, "summary")}</p>
         <dl className="incident-detail-facts">
           <div>
             <dt>{t.date}</dt>
@@ -72,15 +73,15 @@ export function IncidentDetailRoute() {
           </div>
           <div>
             <dt>{t.affectedProtocol}</dt>
-            <dd>{incident.affectedProtocol}</dd>
+            <dd>{localizedIncident(incident, locale, "affectedProtocol")}</dd>
           </div>
           <div>
             <dt>{t.impact}</dt>
-            <dd>{incident.impact}</dd>
+            <dd>{localizedIncident(incident, locale, "impact")}</dd>
           </div>
           <div>
             <dt>{t.status}</dt>
-            <dd>{incident.status}</dd>
+            <dd>{localizedIncident(incident, locale, "status")}</dd>
           </div>
           <div>
             <dt>{t.relatedChallenges}</dt>
@@ -103,4 +104,15 @@ export function IncidentDetailRoute() {
       </article>
     </section>
   );
+}
+
+function localizedIncident(
+  incident: IncidentMetadata,
+  locale: "en" | "zh",
+  key: "title" | "summary" | "category" | "affectedProtocol" | "impact" | "status",
+): string {
+  if (locale !== "zh") return incident[key];
+  const zhKey = `${key}Zh` as keyof IncidentMetadata;
+  const localized = incident[zhKey];
+  return typeof localized === "string" && localized.length > 0 ? localized : incident[key];
 }

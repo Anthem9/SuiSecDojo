@@ -1,10 +1,11 @@
 import { Copy, HeartHandshake } from "lucide-react";
 import { useState } from "react";
-import { donationConfigFromEnv } from "../lib/donation";
+import { contactConfigFromEnv, donationConfigFromEnv } from "../lib/donation";
 import { CONTRACTS } from "../lib/constants";
 import { useDojo } from "../app/DojoContext";
 
 const donationConfig = donationConfigFromEnv(import.meta.env);
+const contactConfig = contactConfigFromEnv(import.meta.env);
 
 export function AboutRoute() {
   const { t } = useDojo();
@@ -44,18 +45,38 @@ export function AboutRoute() {
         <h2>{t.supportProject}</h2>
         <p className="section-copy">{t.supportProjectCopy}</p>
         <div className="donation-grid">
-          {donationConfig.map((item) => (
-            <div key={item.asset} className="donation-card">
-              <strong>{item.asset}</strong>
-              <span>{item.address ?? t.donationMissing}</span>
-              <button disabled={!item.enabled || !item.address} type="button" onClick={() => item.address && copyAddress(item.address, item.asset)}>
-                <Copy aria-hidden="true" />
-                {t.copyAddress}
-              </button>
-            </div>
-          ))}
+          <div className="donation-card">
+            <strong>{donationConfig.label}</strong>
+            <span>{donationConfig.address ?? t.donationMissing}</span>
+            <button
+              disabled={!donationConfig.enabled || !donationConfig.address}
+              type="button"
+              onClick={() => donationConfig.address && copyAddress(donationConfig.address, donationConfig.label)}
+            >
+              <Copy aria-hidden="true" />
+              {t.copyAddress}
+            </button>
+          </div>
         </div>
         {copyStatus ? <p className="status-line">{copyStatus}</p> : null}
+      </section>
+      <section className="donation-panel">
+        <h2>{t.contactTitle}</h2>
+        <p className="section-copy">{t.contactCopy}</p>
+        <div className="contact-list">
+          {contactConfig.some((item) => item.enabled) ? (
+            contactConfig
+              .filter((item) => item.enabled)
+              .map((item) => (
+                <a key={item.label} href={item.href} rel="noreferrer" target={item.href?.startsWith("http") ? "_blank" : undefined}>
+                  <strong>{item.label}</strong>
+                  <span>{item.value}</span>
+                </a>
+              ))
+          ) : (
+            <p className="empty-state">{t.contactMissing}</p>
+          )}
+        </div>
       </section>
     </section>
   );

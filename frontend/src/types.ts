@@ -26,12 +26,18 @@ export type IncidentReference = {
 export type IncidentMetadata = {
   slug: string;
   title: string;
+  titleZh?: string;
   summary: string;
+  summaryZh?: string;
   category: string;
+  categoryZh?: string;
   date: string;
   affectedProtocol: string;
+  affectedProtocolZh?: string;
   impact: string;
+  impactZh?: string;
   status: string;
+  statusZh?: string;
   relatedChallengeIds: string[];
   sourceUrl: string;
   references: IncidentReference[];
