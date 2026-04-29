@@ -63,8 +63,11 @@ export function ChallengeDetailRoute() {
       <TutorPanel
         assistanceLevel={dojo.assistanceLevel}
         challenge={challenge}
+        dojoPass={dojo.chainState.dojoPass}
         locale={dojo.locale}
         onAssistanceLevelChange={dojo.setAssistanceLevel}
+        onMintDojoPass={dojo.challengeActions.mintDojoPass}
+        onUnlockAnswer={() => dojo.challengeActions.unlockAnswer(challenge.id)}
         scorePreview={dojo.scorePreviewFor(challenge)}
         trainingMode={dojo.trainingMode}
       />

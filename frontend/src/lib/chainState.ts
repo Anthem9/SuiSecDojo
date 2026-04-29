@@ -218,8 +218,18 @@ export type BadgeObject = {
   issuedAtEpoch: string;
 };
 
+export type DojoPassObject = {
+  objectId: string;
+  owner: string;
+  unlockedChallengeIds: string[];
+  mintedBadgeIds: string[];
+  membershipTier: string;
+  createdEpoch: string;
+};
+
 export type ChainChallengeState = {
   progress?: UserProgressObject;
+  dojoPass?: DojoPassObject;
   challenge01Instance?: ChallengeInstanceObject;
   challenge02Instance?: Challenge02InstanceObject;
   challenge02Vault?: SharedVaultObject;
@@ -362,8 +372,13 @@ export function getBadgeType(packageId: string): string {
   return `${packageId}::badge::Badge`;
 }
 
+export function getDojoPassType(packageId: string): string {
+  return `${packageId}::dojo_pass::DojoPass`;
+}
+
 export function parseChainChallengeState(objects: SuiObjectResponse[], packageId: string): ChainChallengeState {
   const progressType = getUserProgressType(packageId);
+  const dojoPassType = getDojoPassType(packageId);
   const challenge01Type = getChallenge01InstanceType(packageId);
   const challenge02Type = getChallenge02InstanceType(packageId);
   const challenge03Type = getChallenge03InstanceType(packageId);
@@ -406,6 +421,20 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
           claimedChallengeIds: toStringArray(content.fields.claimed_challenges),
           completedChallengeIds: toStringArray(content.fields.completed_challenges),
           badgeIds: toStringArray(content.fields.badges),
+        },
+      };
+    }
+
+    if (content.type === dojoPassType) {
+      return {
+        ...state,
+        dojoPass: {
+          objectId: data.objectId,
+          owner: String(content.fields.owner),
+          unlockedChallengeIds: toStringArray(content.fields.unlocked_challenges),
+          mintedBadgeIds: toStringArray(content.fields.minted_badges),
+          membershipTier: String(content.fields.membership_tier),
+          createdEpoch: String(content.fields.created_epoch),
         },
       };
     }

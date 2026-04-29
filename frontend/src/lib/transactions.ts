@@ -18,6 +18,54 @@ export function createProgressTransaction(packageId: string): Transaction {
   return tx;
 }
 
+export function mintDojoPassTransaction(packageId: string, configId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::dojo_pass::mint_pass`,
+    arguments: [tx.object(configId)],
+  });
+  return tx;
+}
+
+export function unlockAnswerTransaction(packageId: string, configId: string, passId: string, challengeId: string, priceMist: string): Transaction {
+  const tx = new Transaction();
+  const [payment] = tx.splitCoins(tx.gas, [tx.pure.u64(priceMist || "0")]);
+  tx.moveCall({
+    target: `${packageId}::dojo_pass::unlock_answer`,
+    arguments: [tx.object(configId), tx.object(passId), tx.pure.u64(challengeId), payment],
+  });
+  return tx;
+}
+
+export function mintDojoBadgeTransaction(
+  packageId: string,
+  configId: string,
+  passId: string,
+  badgeType: string,
+  expiresEpoch: string,
+  nonce: string,
+  signature: number[],
+  priceMist: string,
+  recipient: string,
+): Transaction {
+  const tx = new Transaction();
+  const [payment] = tx.splitCoins(tx.gas, [tx.pure.u64(priceMist || "0")]);
+  const badge = tx.moveCall({
+    target: `${packageId}::dojo_pass::mint_badge`,
+    arguments: [
+      tx.object(configId),
+      tx.object(passId),
+      tx.pure.u64(badgeType),
+      tx.pure.u64(expiresEpoch),
+      tx.pure.u64(nonce),
+      tx.pure.vector("u8", signature),
+      payment,
+    ],
+  });
+  tx.transferObjects([badge], recipient);
+  return tx;
+}
+
 export function claimChallenge01Transaction(packageId: string, progressId: string): Transaction {
   const tx = new Transaction();
   tx.moveCall({

@@ -5,7 +5,7 @@ import { useChallenge01Actions } from "../hooks/useChallenge01Actions";
 import { useDojoObjects } from "../hooks/useDojoObjects";
 import { useLeaderboardEvents } from "../hooks/useLeaderboardEvents";
 import { getChallenge01ActionState } from "../lib/challengeRuntime";
-import { CONTRACTS } from "../lib/constants";
+import { CONTRACTS, DOJO_PASS } from "../lib/constants";
 import { dictionaries, type Locale } from "../lib/i18n";
 import { defaultPracticeInputs, type PracticeDefaults } from "../lib/practice";
 import { summarizeProfile } from "../lib/profile";
@@ -304,6 +304,26 @@ function useDojoState() {
     challengeActions.setChallenge04AdminFlag();
   }
 
+  async function mintBadge(badgeType: string) {
+    if (!DOJO_PASS.BADGE_PROOF_API_URL || !account?.address || !chainState.progress?.objectId) return;
+    const response = await fetch(DOJO_PASS.BADGE_PROOF_API_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        owner: account.address,
+        badgeType,
+        progressObjectId: chainState.progress.objectId,
+      }),
+    });
+    if (!response.ok) return;
+    const proof = (await response.json()) as { expiresEpoch: string; nonce: string; signature: number[] | string };
+    challengeActions.mintDojoBadge(badgeType, {
+      expiresEpoch: proof.expiresEpoch,
+      nonce: proof.nonce,
+      signature: Array.isArray(proof.signature) ? proof.signature : hexToBytes(proof.signature),
+    });
+  }
+
   return useMemo(
     () => ({
       account,
@@ -316,6 +336,7 @@ function useDojoState() {
       isSolved,
       leaderboardQuery,
       locale,
+      mintBadge,
       ownedObjectsQuery,
       packageId,
       practiceInputs,
@@ -355,4 +376,9 @@ function useDojoState() {
       network,
     ],
   );
+}
+
+function hexToBytes(value: string): number[] {
+  const clean = value.startsWith("0x") ? value.slice(2) : value;
+  return Array.from({ length: Math.floor(clean.length / 2) }, (_, index) => Number.parseInt(clean.slice(index * 2, index * 2 + 2), 16));
 }

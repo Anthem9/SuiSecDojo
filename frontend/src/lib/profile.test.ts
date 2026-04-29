@@ -31,6 +31,14 @@ describe("profile summary", () => {
           completedChallengeIds: ["1", "999"],
           badgeIds: ["1"],
         },
+        dojoPass: {
+          objectId: "0xpass",
+          owner: "0xalice",
+          unlockedChallengeIds: ["1"],
+          mintedBadgeIds: ["1"],
+          membershipTier: "0",
+          createdEpoch: "9",
+        },
       },
       badges: [],
     });
@@ -39,6 +47,8 @@ describe("profile summary", () => {
     expect(summary.claimed).toBe(1);
     expect(summary.completed).toBe(1);
     expect(summary.percent).toBe(5);
+    expect(summary.hasDojoPass).toBe(true);
+    expect(summary.unlockedAnswerCount).toBe(1);
     expect(summary.badgeLabels).toEqual(["Object Security Beginner"]);
     expect(summary.badgeDetails[0]).toMatchObject({
       badgeType: "1",
@@ -70,7 +80,7 @@ describe("profile summary", () => {
     expect(summary.averageAssistanceLevel).toBe(0.5);
   });
 
-  it("should merge badge ids from progress and owned badge objects", () => {
+  it("should merge badge ids from Dojo Pass and owned badge objects", () => {
     const summary = summarizeProfile({
       network: "testnet",
       challenges,
@@ -80,6 +90,14 @@ describe("profile summary", () => {
           claimedChallengeIds: [],
           completedChallengeIds: [],
           badgeIds: ["1"],
+        },
+        dojoPass: {
+          objectId: "0xpass",
+          owner: "0xalice",
+          unlockedChallengeIds: [],
+          mintedBadgeIds: ["1"],
+          membershipTier: "0",
+          createdEpoch: "9",
         },
       },
       badges: [{ objectId: "0xbadge", owner: "0xalice", badgeType: "3", issuedAtEpoch: "42" }],
@@ -104,6 +122,14 @@ describe("profile summary", () => {
           claimedChallengeIds: [],
           completedChallengeIds: [],
           badgeIds: ["4", "5"],
+        },
+        dojoPass: {
+          objectId: "0xpass",
+          owner: "0xalice",
+          unlockedChallengeIds: [],
+          mintedBadgeIds: ["4", "5"],
+          membershipTier: "0",
+          createdEpoch: "9",
         },
       },
       badges: [],

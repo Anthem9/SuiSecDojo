@@ -35,6 +35,7 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
           { StructType: `${packageId}::challenge_19_upgrade_witness_gap::ChallengeInstance` },
           { StructType: `${packageId}::challenge_19_upgrade_witness_gap::OldWitness` },
           { StructType: `${packageId}::challenge_20_liquidation_edge_case::ChallengeInstance` },
+          { StructType: `${packageId}::dojo_pass::DojoPass` },
           { StructType: `${packageId}::badge::Badge` },
         ],
       },
@@ -97,11 +98,11 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
     () => ({
       completedChallengeIds: fullChainState.progress?.completedChallengeIds ?? [],
       badgeIds: [
-        ...(fullChainState.progress?.badgeIds ?? []),
+        ...(fullChainState.dojoPass?.mintedBadgeIds ?? []),
         ...(fullChainState.badges ?? []).map((badge) => badge.badgeType),
       ],
     }),
-    [fullChainState.progress, fullChainState.badges],
+    [fullChainState.progress, fullChainState.dojoPass, fullChainState.badges],
   );
 
   const isSolved =

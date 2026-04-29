@@ -30,6 +30,8 @@ WALRUS_VERSION="$(walrus --version)"
 SITE_BUILDER_VERSION="$(site-builder --version)"
 PACKAGE_ID="$(grep -E '^VITE_PACKAGE_ID=' "$ROOT_DIR/frontend/.env.local" 2>/dev/null | cut -d= -f2- || true)"
 CHALLENGE_REGISTRY_ID="$(grep -E '^VITE_CHALLENGE_REGISTRY_ID=' "$ROOT_DIR/frontend/.env.local" 2>/dev/null | cut -d= -f2- || true)"
+DOJO_PASS_PACKAGE_ID="$(grep -E '^VITE_DOJO_PASS_PACKAGE_ID=' "$ROOT_DIR/frontend/.env.local" 2>/dev/null | cut -d= -f2- || true)"
+DOJO_PASS_CONFIG_ID="$(grep -E '^VITE_DOJO_PASS_CONFIG_ID=' "$ROOT_DIR/frontend/.env.local" 2>/dev/null | cut -d= -f2- || true)"
 TMP_OUTPUT="$(mktemp)"
 EXISTING_SITE_OBJECT_ID=""
 if [[ -f "$DEPLOYMENT_FILE" ]]; then
@@ -65,6 +67,8 @@ cat > "$DEPLOYMENT_FILE" <<JSON
   "siteBuilderVersion": "$SITE_BUILDER_VERSION",
   "packageId": "$PACKAGE_ID",
   "challengeRegistryId": "$CHALLENGE_REGISTRY_ID",
+  "dojoPassPackageId": "$DOJO_PASS_PACKAGE_ID",
+  "dojoPassConfigId": "$DOJO_PASS_CONFIG_ID",
   "deployedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 JSON

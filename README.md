@@ -49,21 +49,21 @@ sui move test
 当前 testnet package：
 
 ```text
-0x7ca36f2b3cf31799d2104a75fadfd209f886a925265349581d5e41efebde63de
+0xee8f947a01cef8784f23b981297ee35fb79ff74036c307059185e06b851b803e
 ```
 
 当前 Challenge Registry：
 
 ```text
-0x2eb11b9cf70477a220d83285b6caccae6f1e534089094e52f950ff383f670c24
+0xf329c8d04a377719cea5b7bf3a1514a8c2f75267a23c38fa28d2c83cbf92b37b
 ```
 
-当前付费模块测试网配置：
+当前 Dojo Pass 测试网配置：
 
 ```text
-PaidAccessConfig: 0x943166f16eeba5a1574f3a78507ee03630332fb85d50f376bdfa7717e7b14744
-Answer price: 0.01 testnet SUI
-Badge price: 0.05 testnet SUI
+DojoPassConfig: 0x00d7f1da0a9c7f3be49889edb6bec24fa5c0b128611696223ec0b95132c05985
+Answer unlock price: 0.01 testnet SUI
+Badge mint price: 0.05 testnet SUI
 ```
 
 开发地址：
@@ -80,6 +80,30 @@ Badge price: 0.05 testnet SUI
 4. 默认使用 `Challenge Mode`：阅读对象状态、函数签名和 CLI/PTB 模板，自行构造关键调用。
 5. 如需降低门槛，可切到 `Guided Mode` 使用辅助按钮，但排行榜记录较低分数。
 6. 点击 `Submit Solve` 时会记录 mode、assistance level 和 score。
+
+## Dojo Pass 与徽章
+
+Dojo Pass 是每个地址可领取一次的灵魂绑定凭证：
+
+- 领取 Dojo Pass 不设置价格，只需要用户承担 gas。
+- `DojoPass` 只有 `key` 能力，没有 `store` 能力；合约也不提供转让入口。
+- 答案解锁状态写入 Dojo Pass 的 `unlocked_challenges`。
+- 徽章不再由 challenge solve 自动发放；用户满足条件后，通过 Dojo Pass 的铸造流程获得独立 `Badge` object。
+- 徽章铸造资格由本地证明服务读取 testnet `UserProgress` 后签名，合约验签后才允许铸造。
+
+本地证明服务用于开发和测试：
+
+```bash
+python3 scripts/badge-proof-service.py
+```
+
+服务读取项目外的开发签名密钥：
+
+```text
+/Users/anitya/Development/.secrets/suisec-dojo/dojo-pass-proof-ed25519.json
+```
+
+生产上线前，应将 Dojo Pass / 答案解锁 / 徽章铸造模块重新部署到 mainnet，并用受控服务签发徽章资格证明；vulnerable challenge 仍只运行在 testnet。
 
 ## Challenge Mode 与评分
 
@@ -227,8 +251,8 @@ npm run dev
 make ci
 make audit
 scripts/smoke-chain.sh \
-  0x7ca36f2b3cf31799d2104a75fadfd209f886a925265349581d5e41efebde63de \
-  0x2eb11b9cf70477a220d83285b6caccae6f1e534089094e52f950ff383f670c24
+  0xee8f947a01cef8784f23b981297ee35fb79ff74036c307059185e06b851b803e \
+  0xf329c8d04a377719cea5b7bf3a1514a8c2f75267a23c38fa28d2c83cbf92b37b
 ```
 
 Walrus 更新：
@@ -246,8 +270,8 @@ scripts/update-walrus-site.sh 0x0187c85b9d044089b616316855887d4e29b29268f94f451e
 - Challenge 11-15 的完整 walkthrough / fix / checklist / source 文档。
 - Challenge 16-20 的 Move module、测试、前端 adapter、CLI/PTB 模板和链上 solve 闭环。
 - Challenge Registry，已注册 Challenge 01-20。
-- Progress-level badge 记录。
-- 普通 Badge object mint 和 Profile 展示。
+- Soulbound Dojo Pass，用于记录答案解锁状态和已铸造徽章类型。
+- 通过 Dojo Pass 铸造普通 Badge object，并在 Profile / Passport 展示。
 - 三篇事件复盘文档。
 - 九篇事件/模式复盘入口：现有 3 篇加 TreasuryCap、upgrade、PTB、oracle、shared authorization、coin accounting 六个扩展主题。
 - Completion event，用于无后端排行榜。
@@ -255,7 +279,7 @@ scripts/update-walrus-site.sh 0x0187c85b9d044089b616316855887d4e29b29268f94f451e
 - 本地审计报告训练。
 - `en` / `zh` locale switch 和中文核心内容 fallback。
 - testnet-only Security Passport / certificate preview。
-- 独立 `paid_access` 模块：测试阶段部署在 testnet，用于验证付费查看答案和付费 mint 公开徽章；正式上线后再部署主网版本。漏洞挑战本身仍只在 testnet 运行。
+- 独立 `dojo_pass` 模块：测试阶段部署在 testnet，用于验证答案解锁和徽章铸造；正式上线后再部署主网版本。漏洞挑战本身仍只在 testnet 运行。
 - GitHub Actions CI 质量门禁。
 
 排行榜从 Phase 4 package 的 `challenge_events::ChallengeCompleted` 事件开始统计，旧 package 的历史完成记录不会回填。Profile 仍以当前钱包 owned objects 为准。

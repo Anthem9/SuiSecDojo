@@ -30,6 +30,9 @@ import {
   exploitChallenge20Transaction,
   guidedSolveChallenge01Transaction,
   mintChallenge01Transaction,
+  mintDojoPassTransaction,
+  unlockAnswerTransaction,
+  mintDojoBadgeTransaction,
   claimSimpleChallengeTransaction,
   setChallenge04AdminFlagTransaction,
   setChallenge05InitializedTransaction,
@@ -48,6 +51,7 @@ import {
 import type { PracticeDefaults } from "../lib/practice";
 import { txStatusDigest, txStatusMessage, readableTxError } from "../lib/txStatus";
 import type { TxStatus } from "../lib/txStatus";
+import { DOJO_PASS } from "../lib/constants";
 
 type RefetchObjects = () => Promise<unknown>;
 
@@ -85,6 +89,32 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
     statusMessage: txStatusMessage(txStatus),
     txStatus,
     createProgress: () => executeAndRefresh("Create progress", () => createProgressTransaction(packageId)),
+    mintDojoPass: () =>
+      executeAndRefresh("Mint Dojo Pass", () => mintDojoPassTransaction(DOJO_PASS.PACKAGE_ID || packageId, DOJO_PASS.CONFIG_ID)),
+    unlockAnswer: (challengeId: string) =>
+      executeAndRefresh("Unlock answer", () =>
+        unlockAnswerTransaction(
+          DOJO_PASS.PACKAGE_ID || packageId,
+          DOJO_PASS.CONFIG_ID,
+          chainState.dojoPass!.objectId,
+          challengeId,
+          DOJO_PASS.ANSWER_PRICE_MIST,
+        ),
+      ),
+    mintDojoBadge: (badgeType: string, proof: { expiresEpoch: string; nonce: string; signature: number[] }) =>
+      executeAndRefresh("Mint badge", () =>
+        mintDojoBadgeTransaction(
+          DOJO_PASS.PACKAGE_ID || packageId,
+          DOJO_PASS.CONFIG_ID,
+          chainState.dojoPass!.objectId,
+          badgeType,
+          proof.expiresEpoch,
+          proof.nonce,
+          proof.signature,
+          DOJO_PASS.BADGE_PRICE_MIST,
+          account!.address,
+        ),
+      ),
     claimInstance: () =>
       executeAndRefresh("Claim instance", () => claimChallenge01Transaction(packageId, chainState.progress!.objectId)),
     mintChallenge01: (amount = 1_000) =>

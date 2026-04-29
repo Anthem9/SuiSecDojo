@@ -27,6 +27,7 @@ import {
   getChallenge19OldWitnessType,
   getChallenge20InstanceType,
   getBadgeType,
+  getDojoPassType,
   getUserProgressType,
   hasPhase0Deployment,
   parseChallenge02VaultObject,
@@ -204,6 +205,13 @@ describe("chain state adapter", () => {
         badge_type: "1",
         issued_at_epoch: "12",
       }),
+      moveObject("0xpass", getDojoPassType(packageId), {
+        owner: "0xalice",
+        unlocked_challenges: ["1", "3"],
+        minted_badges: ["1"],
+        membership_tier: "0",
+        created_epoch: "9",
+      }),
     ];
 
     expect(parseChainChallengeState(objects, packageId)).toEqual({
@@ -212,6 +220,14 @@ describe("chain state adapter", () => {
         claimedChallengeIds: ["1"],
         completedChallengeIds: ["1"],
         badgeIds: ["1"],
+      },
+      dojoPass: {
+        objectId: "0xpass",
+        owner: "0xalice",
+        unlockedChallengeIds: ["1", "3"],
+        mintedBadgeIds: ["1"],
+        membershipTier: "0",
+        createdEpoch: "9",
       },
       challenge01Instance: {
         objectId: "0xinstance",

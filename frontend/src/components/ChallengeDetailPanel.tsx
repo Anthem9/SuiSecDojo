@@ -206,7 +206,7 @@ export function ChallengeDetailPanel({
         {isChallenge06 ? (
           <>
             <div>
-              <dt>Paid Amount</dt>
+              <dt>{localLabel(locale, "投入数值", "Spent Amount")}</dt>
               <dd>{chainState.challenge06Instance?.paidAmount ?? "0"}</dd>
             </div>
             <div>

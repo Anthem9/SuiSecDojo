@@ -13,6 +13,11 @@ export type ProfileSummary = {
   badgeCount: number;
   badgeLabels: string[];
   badgeDetails: BadgeDetail[];
+  hasDojoPass: boolean;
+  unlockedAnswerCount: number;
+  dojoPassId?: string;
+  mintedBadgeIds: string[];
+  completedChallengeIds: string[];
   totalScore: number;
   averageAssistanceLevel: number;
   challengeModeCompletions: number;
@@ -43,7 +48,7 @@ export function summarizeProfile(input: {
   const claimed = liveChallenges.filter((challenge) => claimedIds.has(challenge.id)).length;
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
   const nextChallenge = liveChallenges.find((challenge) => !completedIds.has(challenge.id));
-  const badgeDetails = mergeBadgeDetails(input.chainState.progress?.badgeIds ?? [], input.badges);
+  const badgeDetails = mergeBadgeDetails(input.chainState.dojoPass?.mintedBadgeIds ?? [], input.badges);
   const badgeLabels = badgeDetails.map((badge) => badge.label);
 
   return {
@@ -57,6 +62,11 @@ export function summarizeProfile(input: {
     badgeCount: badgeLabels.length,
     badgeLabels,
     badgeDetails,
+    hasDojoPass: Boolean(input.chainState.dojoPass),
+    unlockedAnswerCount: input.chainState.dojoPass?.unlockedChallengeIds.length ?? 0,
+    dojoPassId: input.chainState.dojoPass?.objectId,
+    mintedBadgeIds: input.chainState.dojoPass?.mintedBadgeIds ?? [],
+    completedChallengeIds: input.chainState.progress?.completedChallengeIds ?? [],
     totalScore: input.leaderboardEntry?.totalScore ?? 0,
     averageAssistanceLevel: input.leaderboardEntry?.averageAssistanceLevel ?? 0,
     challengeModeCompletions: input.leaderboardEntry?.challengeModeCount ?? 0,

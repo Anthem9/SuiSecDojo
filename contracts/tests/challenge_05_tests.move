@@ -98,7 +98,7 @@ fun should_reject_cap_for_another_instance() {
 }
 
 #[test]
-fun should_solve_after_initialization_and_record_badge() {
+fun should_solve_after_initialization_without_free_badge() {
     let mut scenario = test_scenario::begin(ALICE);
     {
         let ctx = test_scenario::ctx(&mut scenario);
@@ -111,7 +111,7 @@ fun should_solve_after_initialization_and_record_badge() {
 
         assert!(challenge_05::is_solved(&instance));
         assert!(user_progress::has_completed(&progress, 5));
-        assert!(user_progress::has_badge(&progress, 3));
+        assert!(!user_progress::has_badge(&progress, 3));
 
         challenge_05::destroy_cap_for_testing(cap);
         challenge_05::destroy_instance_for_testing(instance);
@@ -174,4 +174,3 @@ fun should_reject_duplicate_solve() {
     };
     test_scenario::end(scenario);
 }
-

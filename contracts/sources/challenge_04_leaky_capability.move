@@ -4,7 +4,6 @@ module suisec_dojo::challenge_04_leaky_capability;
 use sui::object::{Self, ID, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
-use suisec_dojo::badge;
 use suisec_dojo::challenge_events;
 use suisec_dojo::user_progress::{Self, UserProgress};
 
@@ -24,7 +23,6 @@ public struct AdminCap has key, store {
 }
 
 const CHALLENGE_ID: u64 = 4;
-const BADGE_TYPE_CAPABILITY_PATTERN: u64 = 3;
 const BASE_SCORE: u64 = 150;
 const ENotOwner: u64 = 1;
 const EAlreadySolved: u64 = 2;
@@ -81,11 +79,7 @@ public(package) entry fun solve(
 
     instance.solved = true;
     user_progress::mark_completed(progress, CHALLENGE_ID, sender);
-    if (!user_progress::has_badge(progress, BADGE_TYPE_CAPABILITY_PATTERN)) {
-        user_progress::record_badge(progress, BADGE_TYPE_CAPABILITY_PATTERN, sender);
-        transfer::public_transfer(badge::mint_for_owner(sender, BADGE_TYPE_CAPABILITY_PATTERN, ctx), sender);
-    };
-    challenge_events::emit_completion(CHALLENGE_ID, sender, BADGE_TYPE_CAPABILITY_PATTERN, BASE_SCORE, mode, assistance_level, ctx);
+    challenge_events::emit_completion(CHALLENGE_ID, sender, 0, BASE_SCORE, mode, assistance_level, ctx);
 }
 
 public fun challenge_id(instance: &ChallengeInstance): u64 {
