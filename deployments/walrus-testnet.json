@@ -6,7 +6,9 @@
   "epochs": 5,
   "walrusVersion": "walrus 1.47.0-15e070d60189",
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
-  "packageId": "0x7ca36f2b3cf31799d2104a75fadfd209f886a925265349581d5e41efebde63de",
-  "challengeRegistryId": "0x2eb11b9cf70477a220d83285b6caccae6f1e534089094e52f950ff383f670c24",
-  "deployedAt": "2026-04-29T08:21:19Z"
+  "packageId": "0xee8f947a01cef8784f23b981297ee35fb79ff74036c307059185e06b851b803e",
+  "challengeRegistryId": "0xf329c8d04a377719cea5b7bf3a1514a8c2f75267a23c38fa28d2c83cbf92b37b",
+  "dojoPassPackageId": "0xee8f947a01cef8784f23b981297ee35fb79ff74036c307059185e06b851b803e",
+  "dojoPassConfigId": "0x00d7f1da0a9c7f3be49889edb6bec24fa5c0b128611696223ec0b95132c05985",
+  "deployedAt": "2026-04-29T09:21:34Z"
 }
