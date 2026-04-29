@@ -4,6 +4,7 @@ import { MarkdownRenderer } from "../components/MarkdownRenderer";
 import { challenges } from "../data/challenges";
 import { incidents } from "../data/incidents";
 import { useDojo } from "../app/DojoContext";
+import { challengeTitle } from "../lib/challengeText";
 
 export function DocsRoute() {
   const { locale, t } = useDojo();
@@ -21,13 +22,13 @@ export function DocsRoute() {
           <h3>{locale === "zh" ? "挑战题面" : "Challenge Statements"}</h3>
           {challenges.map((challenge) => (
             <button key={challenge.id} type="button" onClick={() => setSelectedDocUrl(challenge.sourceUrl ?? selectedDocUrl)}>
-              {challenge.id}. {challenge.title}
+              {challenge.id}. {challengeTitle(challenge, locale)}
             </button>
           ))}
           <h3>{locale === "zh" ? "安全事件时间轴" : "Incident Timeline"}</h3>
           {incidents.map((incident) => (
             <button key={incident.sourceUrl} type="button" onClick={() => setSelectedDocUrl(incident.sourceUrl)}>
-              {incident.title}
+              {locale === "zh" ? incident.titleZh ?? incident.title : incident.title}
             </button>
           ))}
         </div>

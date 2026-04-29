@@ -8,16 +8,20 @@
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
   "packageId": "0x84f5e4308892eea91c4e5cc0492e076274d55db8bf0b410369ffd732071b6e46",
   "challengeRegistryId": "0x72af7af44a79679d73f8afeddbf662e3e0c9474bdf8cb88eca2d222d2e5fd180",
-  "deployedAt": "2026-04-29T07:15:09Z",
-  "note": "Existing testnet site object updated with localized challenge cards/details, distinct Challenge Mode versus Guided Mode behavior, title-cased difficulty filters, and latest UI fixes.",
+  "deployedAt": "2026-04-29T07:40:32Z",
+  "note": "Existing testnet site object updated with official faucet navigation, single-line Dojo hero title, localized hint/practice labels, Challenge/Guided mode controls above CLI/PTB practice, and Chinese statement docs for Challenge 04-20.",
   "challengeModeScoring": true,
-  "lastUpdatedDigest": "123rUbc_sWsYMyCtvA-qUiigK2oHPY3uK6zR6zNblPoB0gHTAQ",
+  "lastUpdatedDigest": "HPf90ZF_sRJrj8ohzkiVsi3op0Ou1Q3GEWMBlax0keoB0gHTAQ",
   "liveChallenges": 20,
   "incidentDocs": 6,
   "roadmapChallenges": [],
-  "lastIndexPatchId": "123rUbc_sWsYMyCtvA-qUiigK2oHPY3uK6zR6zNblPoB0gHTAQ",
+  "lastIndexPatchId": "HPf90ZF_sRJrj8ohzkiVsi3op0Ou1Q3GEWMBlax0keoB0gHTAQ",
   "lastAsset": {
-    "path": "/assets/index-CZIQDmBv.js",
-    "patchId": "123rUbc_sWsYMyCtvA-qUiigK2oHPY3uK6zR6zNblPoBDwDSAQ"
+    "path": "/assets/index-j9M2kNkZ.js",
+    "patchId": "HPf90ZF_sRJrj8ohzkiVsi3op0Ou1Q3GEWMBlax0keoBDwDSAQ"
+  },
+  "lastContentPatch": {
+    "path": "/content/zh/challenges/20-liquidation-edge-case/statement.md",
+    "patchId": "vQVaQ9P9qaZU3dWd4ySKhCpbdrA2VfuYw9m0DfkPQloBFgAXAA"
   }
 }

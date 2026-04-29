@@ -127,50 +127,18 @@ export function ChallengeDetailPanel({
       <p className="safety-notice">
         本平台仅用于安全教育、审计训练和防御研究。所有漏洞案例均为最小化模拟版本，禁止用于攻击真实协议、真实资产或未授权系统。
       </p>
-      <section className="training-panel">
-        <div className="mode-toggle" aria-label="Training mode">
-          {(["challenge", "guided"] as const).map((mode) => (
-            <button key={mode} className={trainingMode === mode ? "active" : ""} type="button" onClick={() => onTrainingModeChange(mode)}>
-              {formatTrainingMode(mode)}
-            </button>
-          ))}
-        </div>
-        <dl className="score-grid">
-          <div>
-            <dt>Mode</dt>
-            <dd>{formatTrainingMode(trainingMode)}</dd>
-          </div>
-          <div>
-            <dt>Assistance</dt>
-            <dd>{assistanceLabels[assistanceLevel]}</dd>
-          </div>
-          <div>
-            <dt>Score Preview</dt>
-            <dd>{scorePreview}</dd>
-          </div>
-        </dl>
-        <p className="section-copy">
-          {trainingMode === "challenge"
-              ? locale === "zh"
-                ? "挑战模式：页面会隐藏辅助执行按钮。请根据下方对象 ID 和 CLI/PTB 模板，自己构造交易。"
-                : "Challenge Mode: helper execution buttons are hidden. Use the object ids and CLI/PTB template below to construct the transaction yourself."
-              : locale === "zh"
-                ? "引导模式：页面会显示练习按钮，方便上手；最终 solve 事件会记录较低分数。"
-                : "Guided Mode: helper buttons are enabled for practice, but the solve event records a lower score."}
-        </p>
-      </section>
 
       <dl>
         <div>
-          <dt>Package</dt>
+          <dt>{localLabel(locale, "合约包", "Package")}</dt>
           <dd>{packageId || "missing VITE_PACKAGE_ID"}</dd>
         </div>
         <div>
-          <dt>Progress Object</dt>
-          <dd>{chainState.progress?.objectId ?? "not created"}</dd>
+          <dt>{localLabel(locale, "进度对象", "Progress Object")}</dt>
+          <dd>{chainState.progress?.objectId ?? localLabel(locale, "尚未创建", "not created")}</dd>
         </div>
         <div>
-          <dt>Challenge Instance</dt>
+          <dt>{localLabel(locale, "题目实例", "Challenge Instance")}</dt>
           <dd>
             {isChallenge01 ||
             isChallenge02 ||
@@ -192,8 +160,8 @@ export function ChallengeDetailPanel({
             isChallenge18 ||
             isChallenge19 ||
             isChallenge20
-              ? selectedInstance?.objectId ?? "not claimed"
-              : "not enabled yet"}
+              ? selectedInstance?.objectId ?? localLabel(locale, "尚未领取", "not claimed")
+              : localLabel(locale, "暂未启用", "not enabled yet")}
           </dd>
         </div>
         {isChallenge02 ? (
@@ -420,8 +388,8 @@ export function ChallengeDetailPanel({
           </>
         ) : null}
         <div>
-          <dt>Completion</dt>
-          <dd>{isSolved ? "solved" : "not solved"}</dd>
+          <dt>{localLabel(locale, "完成状态", "Completion")}</dt>
+          <dd>{isSolved ? localLabel(locale, "已完成", "solved") : localLabel(locale, "未完成", "not solved")}</dd>
         </div>
       </dl>
 
@@ -438,7 +406,37 @@ export function ChallengeDetailPanel({
 
       {!isSolved ? (
         <section className="practice-panel">
-          <h3>CLI / PTB Practice</h3>
+          <div className="mode-toggle" aria-label="Training mode">
+            {(["challenge", "guided"] as const).map((mode) => (
+              <button key={mode} className={trainingMode === mode ? "active" : ""} type="button" onClick={() => onTrainingModeChange(mode)}>
+                {localizedTrainingMode(mode, locale)}
+              </button>
+            ))}
+          </div>
+          <dl className="score-grid">
+            <div>
+              <dt>{localLabel(locale, "模式", "Mode")}</dt>
+              <dd>{localizedTrainingMode(trainingMode, locale)}</dd>
+            </div>
+            <div>
+              <dt>{localLabel(locale, "提示", "Assistance")}</dt>
+              <dd>{localizedAssistance(assistanceLevel, locale)}</dd>
+            </div>
+            <div>
+              <dt>{localLabel(locale, "预计分数", "Score Preview")}</dt>
+              <dd>{scorePreview}</dd>
+            </div>
+          </dl>
+          <p className="section-copy">
+            {trainingMode === "challenge"
+              ? locale === "zh"
+                ? "挑战模式：页面会隐藏辅助执行按钮。请根据下方对象 ID 和 CLI/PTB 模板，自己构造交易。"
+                : "Challenge Mode: helper execution buttons are hidden. Use the object ids and CLI/PTB template below to construct the transaction yourself."
+              : locale === "zh"
+                ? "引导模式：页面会显示练习按钮，方便上手；最终 solve 事件会记录较低分数。"
+                : "Guided Mode: helper buttons are enabled for practice, but the solve event records a lower score."}
+          </p>
+          <h3>{localLabel(locale, "CLI / PTB 练习", "CLI / PTB Practice")}</h3>
           {trainingMode === "guided" ? (
             <PracticeInputs
               actionState={actionState}
@@ -458,7 +456,9 @@ export function ChallengeDetailPanel({
           <pre>{cliTemplate}</pre>
         </section>
       ) : (
-        <p className="status-line">Challenge solved. Review the statement, fix notes, and your final score instead of resubmitting.</p>
+        <p className="status-line">
+          {localLabel(locale, "题目已完成。请查看题面、修复说明和最终分数，不需要重复提交。", "Challenge solved. Review the statement, fix notes, and your final score instead of resubmitting.")}
+        </p>
       )}
 
       <div className="detail-actions">
@@ -762,4 +762,29 @@ function visibleReason(actionState: ChallengeActionState): string {
 
 function shortDigest(digest: string): string {
   return `${digest.slice(0, 10)}...${digest.slice(-6)}`;
+}
+
+function localLabel(locale: "en" | "zh", zh: string, en: string): string {
+  return locale === "zh" ? zh : en;
+}
+
+function localizedTrainingMode(mode: TrainingMode, locale: "en" | "zh"): string {
+  if (locale !== "zh") return formatTrainingMode(mode);
+  return mode === "challenge" ? "挑战模式" : "引导模式";
+}
+
+function localizedAssistance(level: AssistanceLevel, locale: "en" | "zh"): string {
+  if (locale !== "zh") return assistanceLabels[level];
+  switch (level) {
+    case 0:
+      return "未查看提示";
+    case 1:
+      return "概念提示";
+    case 2:
+      return "方向提示";
+    case 3:
+      return "检查清单提示";
+    case 4:
+      return "已查看答案";
+  }
 }

@@ -15,11 +15,17 @@ export function AppShell() {
           <span>SuiSec Dojo</span>
         </NavLink>
         <nav className="main-nav" aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <NavLink key={item.id} to={item.path}>
-              {t[item.labelKey]}
-            </NavLink>
-          ))}
+          {navItems.map((item) =>
+            item.external ? (
+              <a key={item.id} href={item.path} rel="noreferrer" target="_blank">
+                {t[item.labelKey]}
+              </a>
+            ) : (
+              <NavLink key={item.id} to={item.path}>
+                {t[item.labelKey]}
+              </NavLink>
+            ),
+          )}
         </nav>
         <div className="topbar-actions">
           <div className="locale-switch" aria-label="Language switch">
