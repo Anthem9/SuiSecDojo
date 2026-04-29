@@ -22,4 +22,13 @@ describe("donation config", () => {
       enabled: true,
     });
   });
+
+  it("should turn a Telegram handle into a public t.me link", () => {
+    expect(contactConfigFromEnv({ VITE_CONTACT_TELEGRAM: " @Anitya_9527 " })[2]).toEqual({
+      label: "Telegram",
+      value: "@Anitya_9527",
+      href: "https://t.me/Anitya_9527",
+      enabled: true,
+    });
+  });
 });

@@ -19,7 +19,7 @@ export function contactConfigFromEnv(env: Record<string, string | undefined>): C
   return [
     makeContactConfig("Email", env.VITE_CONTACT_EMAIL, (value) => `mailto:${value}`),
     makeContactConfig("X / Twitter", env.VITE_CONTACT_X, (value) => value),
-    makeContactConfig("Telegram", env.VITE_CONTACT_TELEGRAM, (value) => value),
+    makeContactConfig("Telegram", env.VITE_CONTACT_TELEGRAM, telegramHref),
   ];
 }
 
@@ -40,4 +40,12 @@ function makeContactConfig(label: string, value: string | undefined, hrefFor: (v
     href: normalized ? hrefFor(normalized) : undefined,
     enabled: Boolean(normalized),
   };
+}
+
+function telegramHref(value: string): string {
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+  const handle = value.startsWith("@") ? value.slice(1) : value;
+  return `https://t.me/${handle}`;
 }
