@@ -143,6 +143,13 @@ scripts/publish-dojo-pass-mainnet.sh
 CONFIRM_MAINNET=1 scripts/publish-dojo-pass-mainnet.sh
 ```
 
+如果主网运营地址保存在外部签名器或钱包管理器中，不要为了发布导出私钥。
+可以先生成 compiled package JSON，再交给受控签名流程预览和发布：
+
+```bash
+scripts/build-dojo-pass-mainnet-package.sh
+```
+
 创建主网 Dojo Pass config：
 
 ```bash
