@@ -6,7 +6,7 @@ import { useDojoObjects } from "../hooks/useDojoObjects";
 import { useLeaderboardEvents } from "../hooks/useLeaderboardEvents";
 import { getChallenge01ActionState } from "../lib/challengeRuntime";
 import { CONTRACTS, DOJO_PASS, SUI_NETWORK } from "../lib/constants";
-import { requiredNetworkMessage } from "../lib/dojoPass";
+import { requiredNetworkMessage, testnetGasWarning, walletNetworkFromChains } from "../lib/dojoPass";
 import { dictionaries, type Locale } from "../lib/i18n";
 import { defaultPracticeInputs, type PracticeDefaults } from "../lib/practice";
 import { summarizeProfile } from "../lib/profile";
@@ -39,25 +39,25 @@ function useDojoState() {
   const [trainingMode, setTrainingMode] = useState<TrainingMode>("challenge");
   const [assistanceLevel, setAssistanceLevel] = useState<AssistanceLevel>(0);
   const [practiceInputs, setPracticeInputs] = useState<PracticeDefaults>(defaultPracticeInputs);
+  const walletNetwork = walletNetworkFromChains(account?.chains, network);
   const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, suiBalanceMist, refetchObjects } =
     useDojoObjects(account?.address, packageId, DOJO_PASS.PACKAGE_ID || packageId);
-  const challengeActions = useChallenge01Actions(packageId, chainState, refetchObjects, network);
+  const challengeActions = useChallenge01Actions(packageId, chainState, refetchObjects, walletNetwork);
   const leaderboardQuery = useLeaderboardEvents(packageId, account?.address);
   const progress = summarizeProgress(challenges, chainProgress);
   const profile = summarizeProfile({
     accountAddress: account?.address,
-    network,
+    network: walletNetwork,
     challenges,
     chainState,
     badges: chainState.badges ?? [],
     leaderboardEntry: leaderboardQuery.leaderboard.currentEntry,
   });
-  const challengeNetworkMessage = requiredNetworkMessage(network, SUI_NETWORK, locale);
-  const dojoPassNetworkMessage = requiredNetworkMessage(network, DOJO_PASS.NETWORK, locale);
+  const challengeNetworkMessage = account?.address ? requiredNetworkMessage(walletNetwork, SUI_NETWORK, locale, "challenge") : undefined;
+  const dojoPassNetworkMessage = account?.address ? requiredNetworkMessage(walletNetwork, DOJO_PASS.NETWORK, locale, "dojo-pass") : undefined;
   const warnings = [
     challengeNetworkMessage,
-    DOJO_PASS.CONFIG_ID ? dojoPassNetworkMessage : undefined,
-    account?.address && suiBalanceMist === "0" ? "Wallet has no SUI available for gas. Fund it from the Sui testnet faucet." : undefined,
+    testnetGasWarning(suiBalanceMist, Boolean(account?.address), locale),
   ].filter((message): message is string => Boolean(message));
   const t = dictionaries[locale];
 
@@ -373,7 +373,7 @@ function useDojoState() {
       trainingMode,
       useCapability,
       warnings,
-      network,
+      network: walletNetwork,
     }),
     [
       account,
@@ -395,7 +395,7 @@ function useDojoState() {
       t,
       trainingMode,
       warnings,
-      network,
+      walletNetwork,
     ],
   );
 }

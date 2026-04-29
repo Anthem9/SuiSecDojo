@@ -33,6 +33,40 @@ if [[ -f "$DEPLOYMENT_FILE" ]]; then
   EXISTING_SITE_OBJECT_ID="$(jq -r '.siteObjectId // empty' "$DEPLOYMENT_FILE")"
 fi
 
+WS_RESOURCES_FILE="$DIST_DIR/ws-resources.json"
+if [[ -n "$EXISTING_SITE_OBJECT_ID" ]]; then
+  cat > "$WS_RESOURCES_FILE" <<JSON
+{
+  "object_id": "$EXISTING_SITE_OBJECT_ID",
+  "routes": {
+    "/challenges": "/index.html",
+    "/challenges/*": "/index.html",
+    "/incidents": "/index.html",
+    "/incidents/*": "/index.html",
+    "/docs": "/index.html",
+    "/leaderboard": "/index.html",
+    "/profile": "/index.html",
+    "/about": "/index.html"
+  }
+}
+JSON
+else
+  cat > "$WS_RESOURCES_FILE" <<JSON
+{
+  "routes": {
+    "/challenges": "/index.html",
+    "/challenges/*": "/index.html",
+    "/incidents": "/index.html",
+    "/incidents/*": "/index.html",
+    "/docs": "/index.html",
+    "/leaderboard": "/index.html",
+    "/profile": "/index.html",
+    "/about": "/index.html"
+  }
+}
+JSON
+fi
+
 DEPLOY_ARGS=(--context mainnet deploy "$DIST_DIR" --epochs "$EPOCHS" --site-name "$SITE_NAME")
 if [[ -n "$EXISTING_SITE_OBJECT_ID" ]]; then
   DEPLOY_ARGS+=(--object-id "$EXISTING_SITE_OBJECT_ID")

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { dojoPassConfigFromEnv, hasUnlockedAnswer, mistPriceLabel, requiredNetworkMessage } from "./dojoPass";
+import {
+  dojoPassConfigFromEnv,
+  hasUnlockedAnswer,
+  mistPriceLabel,
+  requiredNetworkMessage,
+  testnetGasWarning,
+  walletNetworkFromChains,
+} from "./dojoPass";
 
 describe("dojo pass config", () => {
   it("should disable pass actions when config is missing", () => {
@@ -30,7 +37,19 @@ describe("dojo pass config", () => {
   });
 
   it("should explain required wallet network switches", () => {
-    expect(requiredNetworkMessage("testnet", "mainnet", "zh")).toContain("切换到 mainnet");
+    expect(requiredNetworkMessage("mainnet", "testnet", "zh", "challenge")).toContain("训练挑战只在 testnet 运行");
+    expect(requiredNetworkMessage("testnet", "mainnet", "zh", "dojo-pass")).toContain("答案解锁和徽章铸造使用 mainnet");
     expect(requiredNetworkMessage("mainnet", "mainnet", "en")).toBeUndefined();
+  });
+
+  it("should derive wallet network from wallet-standard chains", () => {
+    expect(walletNetworkFromChains(["sui:mainnet"], "testnet")).toBe("mainnet");
+    expect(walletNetworkFromChains(["sui:unknown"], "testnet")).toBe("testnet");
+  });
+
+  it("should warn when the current address has no testnet gas", () => {
+    expect(testnetGasWarning("0", true, "zh")).toContain("领取测试水");
+    expect(testnetGasWarning("1000", true, "zh")).toBeUndefined();
+    expect(testnetGasWarning("0", false, "en")).toBeUndefined();
   });
 });
