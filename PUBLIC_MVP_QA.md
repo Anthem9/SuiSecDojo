@@ -1,6 +1,8 @@
 # Public MVP QA Checklist
 
-This checklist captures the Phase 3 release gate for the testnet-only public MVP.
+This checklist captures the release gate for the testnet-only public MVP.
+
+Latest manual QA: `QA_ROUND_2.md`, completed on 2026-04-29. Result: passed for the local Sui testnet MVP, with no blocking failures.
 
 ## Safety Boundary
 
@@ -53,6 +55,12 @@ Latest CLI result on 2026-04-28:
 ## Walrus QA
 
 - `frontend/dist` exists after build.
-- Existing Walrus Site object is updated, not replaced.
+- Current Walrus Site object is recorded in `deployments/walrus-testnet.json`.
 - Sitemap includes challenge docs, replay docs, and frontend assets.
-- Local testnet portal URL opens the current app.
+- Local testnet portal browser access requires a separate portal process on port `3000`.
+
+Latest Walrus verification on 2026-04-29:
+
+- Site object: `0x0187c85b9d044089b616316855887d4e29b29268f94f451e1240d3b753842b32`
+- `site-builder --context testnet sitemap` showed the current JS/CSS assets and content paths.
+- Browser portal access was not tested because no local Walrus testnet portal server was running.

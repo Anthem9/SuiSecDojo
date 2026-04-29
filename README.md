@@ -115,6 +115,48 @@ deployments/walrus-testnet.json
 0x0187c85b9d044089b616316855887d4e29b29268f94f451e1240d3b753842b32
 ```
 
+当前 Walrus testnet local portal URL：
+
+```text
+http://1dfmlb4xz3wfc6ajfzyf7ydahsjoiyqu27v2yah42o6hczm7m.localhost:3000
+```
+
+注意：这个 URL 只有在本机运行 Walrus Sites portal 时才可访问。`*.localhost:3000` 不是公共网关；Walrus 官方 `wal.app` 只支持 mainnet sites。testnet site 的内容可先用 sitemap 验证：
+
+```bash
+site-builder --context testnet sitemap 0x0187c85b9d044089b616316855887d4e29b29268f94f451e1240d3b753842b32
+```
+
+如果本机无法解析或无法打开 testnet portal，请启动本地 portal。官方推荐的两种方式是：
+
+```bash
+# Docker 方式，适合只想浏览 testnet site
+git clone https://github.com/MystenLabs/walrus-sites.git
+cd walrus-sites
+git checkout mainnet
+cp portal/server/portal-config.testnet.example.yaml portal/server/portal-config.yaml
+PORTAL_TAG="$(site-builder -V | awk '{ print $2 }' | awk -F - '{ printf("v%s\n", $1) }')"
+docker run \
+  -it \
+  --rm \
+  -v "$(pwd)/portal/server/portal-config.yaml:/portal-config.yaml:ro" \
+  -e PORTAL_CONFIG=/portal-config.yaml \
+  -p 3000:3000 \
+  "mysten/walrus-sites-server-portal:mainnet-${PORTAL_TAG}"
+```
+
+或从 Walrus Sites 源码启动 portal：
+
+```bash
+git clone https://github.com/MystenLabs/walrus-sites.git
+cd walrus-sites/portal
+bun install
+cp server/portal-config.testnet.example.yaml server/portal-config.yaml
+bun run server
+```
+
+然后再访问上面的 `1dfmlb...localhost:3000` 地址。若 Docker 镜像或源码命令随官方版本变化，以 Walrus portal 文档为准：https://docs.wal.app/docs/sites/portals/deploy-locally.html
+
 CLI smoke 示例：
 
 ```bash
