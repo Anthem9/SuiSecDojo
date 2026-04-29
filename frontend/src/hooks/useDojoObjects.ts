@@ -102,13 +102,30 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
     hasInstance: Boolean(fullChainState.challenge01Instance),
     isSolved,
     refetchObjects: async () => {
-      await ownedObjectsQuery.refetch();
-      await challenge02VaultQuery.refetch();
-      await suiBalanceQuery.refetch();
+      await retryRefetch(async () => {
+        await ownedObjectsQuery.refetch();
+        if (chainState.challenge02Instance?.vaultId) {
+          await challenge02VaultQuery.refetch();
+        }
+        if (accountAddress) {
+          await suiBalanceQuery.refetch();
+        }
+      });
     },
     ownedObjectsQuery,
     challenge02VaultQuery,
     suiBalanceQuery,
     suiBalanceMist: suiBalanceQuery.data?.totalBalance,
   };
+}
+
+async function retryRefetch(refetch: () => Promise<void>) {
+  const delaysMs = [0, 650, 1400];
+
+  for (const delayMs of delaysMs) {
+    if (delayMs > 0) {
+      await new Promise((resolve) => window.setTimeout(resolve, delayMs));
+    }
+    await refetch();
+  }
 }

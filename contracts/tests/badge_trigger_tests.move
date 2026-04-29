@@ -6,6 +6,7 @@ use sui::event;
 use suisec_dojo::badge::{Self, Badge};
 use suisec_dojo::challenge_01_anyone_can_mint as challenge_01;
 use suisec_dojo::challenge_02_shared_vault as challenge_02;
+use suisec_dojo::challenge_03_fake_owner as challenge_03;
 use suisec_dojo::challenge_04_leaky_capability as challenge_04;
 use suisec_dojo::challenge_06_price_rounding as challenge_06;
 use suisec_dojo::challenge_10_mini_amm_incident as challenge_10;
@@ -65,6 +66,33 @@ fun should_record_shared_object_badge_after_challenge_02() {
         let badge: Badge = test_scenario::take_from_sender(&scenario);
         assert!(badge::owner(&badge) == ALICE);
         assert!(badge::badge_type(&badge) == 2);
+        badge::destroy_for_testing(badge);
+    };
+    test_scenario::end(scenario);
+}
+
+#[test]
+fun should_record_authorization_badge_after_challenge_03() {
+    let mut scenario = test_scenario::begin(ALICE);
+    {
+        let ctx = test_scenario::ctx(&mut scenario);
+        let mut instance = challenge_03::new_instance_for_testing(ALICE, ctx);
+        let mut progress = user_progress::new_for_owner(ALICE, ctx);
+
+        challenge_03::vulnerable_set_flag(&mut instance, ALICE, true);
+        challenge_03::solve(&mut instance, &mut progress, ctx);
+
+        assert!(user_progress::has_badge(&progress, 3));
+        assert_latest_event(3, ALICE, 3);
+
+        challenge_03::destroy_for_testing(instance);
+        user_progress::destroy_for_testing(progress);
+    };
+    test_scenario::next_tx(&mut scenario, ALICE);
+    {
+        let badge: Badge = test_scenario::take_from_sender(&scenario);
+        assert!(badge::owner(&badge) == ALICE);
+        assert!(badge::badge_type(&badge) == 3);
         badge::destroy_for_testing(badge);
     };
     test_scenario::end(scenario);

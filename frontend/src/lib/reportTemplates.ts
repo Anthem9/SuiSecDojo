@@ -27,3 +27,19 @@ export const reportTemplates: ReportTemplate[] = [
 export function reportFilename(title: string): string {
   return `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "suisec-report"}.md`;
 }
+
+export async function copyMarkdownToClipboard(
+  body: string,
+  clipboard: Pick<Clipboard, "writeText"> | undefined = navigator.clipboard,
+): Promise<"copied" | "denied"> {
+  if (!clipboard?.writeText) {
+    return "denied";
+  }
+
+  try {
+    await clipboard.writeText(body);
+    return "copied";
+  } catch {
+    return "denied";
+  }
+}

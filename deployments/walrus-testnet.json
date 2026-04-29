@@ -1,12 +1,13 @@
 {
   "network": "testnet",
-  "siteObjectId": "0xd4beb8861856bb3a7654de6e8aea7c2ebe474659fd796af86dae9a708688d92a",
-  "siteBase36": "5avymwokdz3z0hou081zmndklj1flmku3mi83x30ohgt8r8bvu",
-  "localPortalUrl": "http://5avymwokdz3z0hou081zmndklj1flmku3mi83x30ohgt8r8bvu.localhost:3000",
+  "siteObjectId": "0x0187c85b9d044089b616316855887d4e29b29268f94f451e1240d3b753842b32",
+  "siteBase36": "1dfmlb4xz3wfc6ajfzyf7ydahsjoiyqu27v2yah42o6hczm7m",
+  "localPortalUrl": "http://1dfmlb4xz3wfc6ajfzyf7ydahsjoiyqu27v2yah42o6hczm7m.localhost:3000",
   "epochs": 5,
   "walrusVersion": "walrus 1.47.0-15e070d60189",
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
-  "packageId": "0xdbf7e00e86c32f9f985230f0f51dfbdee91e96d1168d033b84de3c738967b26e",
-  "challengeRegistryId": "0x1080d10372793d04363449566909b54b1e52c856af9067aa527b15ae8826ae46",
-  "deployedAt": "2026-04-28T15:18:12Z"
+  "packageId": "0xeb9229cefe033adf3ef3ac79768d24525f9413c443337360b2a444a13b6d4081",
+  "challengeRegistryId": "0xe5f959d224ef239ee522abe19c059e8f93230f1b984a9cc8ba5588b8b51834ca",
+  "deployedAt": "2026-04-29T00:04:46Z",
+  "note": "Previous site update failed during Walrus blob extension; this deployment created a fresh testnet site object."
 }

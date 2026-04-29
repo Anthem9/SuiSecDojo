@@ -2,17 +2,19 @@ import { Download, FilePenLine } from "lucide-react";
 import { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { reportFilename, reportTemplates } from "../lib/reportTemplates";
+import { copyMarkdownToClipboard, reportFilename, reportTemplates } from "../lib/reportTemplates";
 
 export function ReportPanel() {
   const [templateId, setTemplateId] = useState(reportTemplates[0].id);
   const template = useMemo(() => reportTemplates.find((item) => item.id === templateId) ?? reportTemplates[0], [templateId]);
   const [body, setBody] = useState(template.body);
+  const [copyMessage, setCopyMessage] = useState("");
 
   function selectTemplate(nextTemplateId: string) {
     const next = reportTemplates.find((item) => item.id === nextTemplateId) ?? reportTemplates[0];
     setTemplateId(next.id);
     setBody(next.body);
+    setCopyMessage("");
   }
 
   function downloadReport() {
@@ -40,7 +42,17 @@ export function ReportPanel() {
             </option>
           ))}
         </select>
-        <button type="button" onClick={() => navigator.clipboard?.writeText(body)}>
+        <button
+          type="button"
+          onClick={async () => {
+            const result = await copyMarkdownToClipboard(body);
+            setCopyMessage(
+              result === "copied"
+                ? "Markdown copied."
+                : "Copy failed: browser denied clipboard permission. Select the text and copy manually.",
+            );
+          }}
+        >
           Copy Markdown
         </button>
         <button type="button" onClick={downloadReport}>
@@ -48,6 +60,7 @@ export function ReportPanel() {
           Download
         </button>
       </div>
+      {copyMessage ? <p className="status-line">{copyMessage}</p> : null}
       <div className="report-grid">
         <textarea value={body} onChange={(event) => setBody(event.target.value)} />
         <div className="markdown-body report-preview">
@@ -57,4 +70,3 @@ export function ReportPanel() {
     </section>
   );
 }
-

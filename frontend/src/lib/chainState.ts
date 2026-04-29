@@ -236,7 +236,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge01Type && content.fields.challenge_id === "1") {
+    if (content.type === challenge01Type && String(content.fields.challenge_id) === "1") {
       return {
         ...state,
         challenge01Instance: {
@@ -248,7 +248,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge02Type && content.fields.challenge_id === "2") {
+    if (content.type === challenge02Type && String(content.fields.challenge_id) === "2") {
       return {
         ...state,
         challenge02Instance: {
@@ -260,7 +260,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge03Type && content.fields.challenge_id === "3") {
+    if (content.type === challenge03Type && String(content.fields.challenge_id) === "3") {
       return {
         ...state,
         challenge03Instance: {
@@ -273,7 +273,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge04Type && content.fields.challenge_id === "4") {
+    if (content.type === challenge04Type && String(content.fields.challenge_id) === "4") {
       return {
         ...state,
         challenge04Instance: {
@@ -298,7 +298,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge05Type && content.fields.challenge_id === "5") {
+    if (content.type === challenge05Type && String(content.fields.challenge_id) === "5") {
       return {
         ...state,
         challenge05Instance: {
@@ -323,7 +323,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge06Type && content.fields.challenge_id === "6") {
+    if (content.type === challenge06Type && String(content.fields.challenge_id) === "6") {
       return {
         ...state,
         challenge06Instance: {
@@ -337,7 +337,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge07Type && content.fields.challenge_id === "7") {
+    if (content.type === challenge07Type && String(content.fields.challenge_id) === "7") {
       return {
         ...state,
         challenge07Instance: {
@@ -350,7 +350,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge08Type && content.fields.challenge_id === "8") {
+    if (content.type === challenge08Type && String(content.fields.challenge_id) === "8") {
       return {
         ...state,
         challenge08Instance: {
@@ -363,7 +363,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge09Type && content.fields.challenge_id === "9") {
+    if (content.type === challenge09Type && String(content.fields.challenge_id) === "9") {
       return {
         ...state,
         challenge09Instance: {
@@ -376,7 +376,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
       };
     }
 
-    if (content.type === challenge10Type && content.fields.challenge_id === "10") {
+    if (content.type === challenge10Type && String(content.fields.challenge_id) === "10") {
       return {
         ...state,
         challenge10Instance: {

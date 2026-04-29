@@ -36,13 +36,13 @@ sui move test
 当前 testnet package：
 
 ```text
-0xdbf7e00e86c32f9f985230f0f51dfbdee91e96d1168d033b84de3c738967b26e
+0xeb9229cefe033adf3ef3ac79768d24525f9413c443337360b2a444a13b6d4081
 ```
 
 当前 Challenge Registry：
 
 ```text
-0x1080d10372793d04363449566909b54b1e52c856af9067aa527b15ae8826ae46
+0xe5f959d224ef239ee522abe19c059e8f93230f1b984a9cc8ba5588b8b51834ca
 ```
 
 开发地址：
@@ -112,7 +112,7 @@ deployments/walrus-testnet.json
 当前 Walrus Site object：
 
 ```text
-0xd4beb8861856bb3a7654de6e8aea7c2ebe474659fd796af86dae9a708688d92a
+0x0187c85b9d044089b616316855887d4e29b29268f94f451e1240d3b753842b32
 ```
 
 CLI smoke 示例：
@@ -145,15 +145,15 @@ npm run dev
 make ci
 make audit
 scripts/smoke-chain.sh \
-  0xdbf7e00e86c32f9f985230f0f51dfbdee91e96d1168d033b84de3c738967b26e \
-  0x1080d10372793d04363449566909b54b1e52c856af9067aa527b15ae8826ae46
+  0xeb9229cefe033adf3ef3ac79768d24525f9413c443337360b2a444a13b6d4081 \
+  0xe5f959d224ef239ee522abe19c059e8f93230f1b984a9cc8ba5588b8b51834ca
 ```
 
 Walrus 更新：
 
 ```bash
 scripts/build-frontend.sh
-scripts/update-walrus-site.sh 0xd4beb8861856bb3a7654de6e8aea7c2ebe474659fd796af86dae9a708688d92a
+scripts/update-walrus-site.sh 0x0187c85b9d044089b616316855887d4e29b29268f94f451e1240d3b753842b32
 ```
 
 ## Phase 4 增强版状态

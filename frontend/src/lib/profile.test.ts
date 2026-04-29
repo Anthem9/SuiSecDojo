@@ -61,11 +61,11 @@ describe("profile summary", () => {
     });
 
     expect(summary.badgeCount).toBe(2);
-    expect(summary.badgeLabels).toEqual(["Object Security Beginner", "Capability Pattern Beginner"]);
+    expect(summary.badgeLabels).toEqual(["Object Security Beginner", "Authorization & Capability Beginner"]);
     expect(summary.badgeDetails[1]).toMatchObject({
       objectId: "0xbadge",
       issuedAtEpoch: "42",
-      requirement: "Complete Challenge 04 or Challenge 05.",
+      requirement: "Complete Challenge 03, Challenge 04, or Challenge 05.",
     });
   });
 

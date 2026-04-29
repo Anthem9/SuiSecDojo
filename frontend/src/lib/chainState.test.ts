@@ -235,6 +235,26 @@ describe("chain state adapter", () => {
 
     expect(parseChainChallengeState(objects, packageId)).toEqual({ badges: [] });
   });
+
+  it("should parse numeric Move ids returned by some wallet RPC paths", () => {
+    const state = parseChainChallengeState(
+      [
+        moveObject("0xinstance", getChallenge01InstanceType(packageId), {
+          challenge_id: 1,
+          minted_amount: 0,
+          solved: false,
+        }),
+      ],
+      packageId,
+    );
+
+    expect(state.challenge01Instance).toMatchObject({
+      objectId: "0xinstance",
+      challengeId: "1",
+      mintedAmount: "0",
+      solved: false,
+    });
+  });
 });
 
 function moveObject(objectId: string, type: string, fields: Record<string, unknown>): SuiObjectResponse {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { reportFilename, reportTemplates } from "./reportTemplates";
+import { copyMarkdownToClipboard, reportFilename, reportTemplates } from "./reportTemplates";
 
 describe("report templates", () => {
   it("should expose the three Phase 4 templates", () => {
@@ -8,5 +8,15 @@ describe("report templates", () => {
 
   it("should produce markdown filenames", () => {
     expect(reportFilename("Challenge Writeup")).toBe("challenge-writeup.md");
+  });
+
+  it("should report clipboard denial without throwing", async () => {
+    await expect(
+      copyMarkdownToClipboard("body", {
+        writeText: async () => {
+          throw new DOMException("denied", "NotAllowedError");
+        },
+      }),
+    ).resolves.toBe("denied");
   });
 });

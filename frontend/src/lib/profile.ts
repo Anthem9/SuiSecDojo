@@ -60,7 +60,7 @@ export function formatBadgeType(badgeType: string): string {
     case "2":
       return "Shared Object Beginner";
     case "3":
-      return "Capability Pattern Beginner";
+      return "Authorization & Capability Beginner";
     case "4":
       return "DeFi Logic Beginner";
     case "5":
@@ -77,7 +77,7 @@ export function badgeRequirement(badgeType: string): string {
     case "2":
       return "Complete Challenge 02.";
     case "3":
-      return "Complete Challenge 04 or Challenge 05.";
+      return "Complete Challenge 03, Challenge 04, or Challenge 05.";
     case "4":
       return "Complete Challenge 06 and Challenge 10.";
     case "5":
