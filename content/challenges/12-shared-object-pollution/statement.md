@@ -1,15 +1,24 @@
 # Challenge 12: Shared Object Pollution
 
-Status: coming soon.
+## Background
 
-This challenge is reserved for a future shared-object isolation module.
+Shared objects can be touched by many users. Any state that is not scoped to the intended actor can become polluted by unrelated calls.
 
-## Practice Goal
+## Vulnerability
 
-Find how one user's call can pollute shared state used by another user's instance.
+`vulnerable_pollute(instance)` increments shared-like state without proving that the mutation came from the intended source or actor.
 
-## Audit Questions
+## Goal
 
-- Is per-user state isolated?
-- Does shared state record the caller or an instance id?
-- Can one wallet influence another wallet's solve condition?
+Claim an instance, pollute the counter, then submit solve.
+
+## CLI / PTB Practice
+
+```bash
+sui client call --package <PACKAGE_ID> --module challenge_12_shared_object_pollution --function vulnerable_pollute --args <INSTANCE_ID>
+sui client call --package <PACKAGE_ID> --module challenge_12_shared_object_pollution --function solve --args <INSTANCE_ID> <PROGRESS_ID> <MODE_CODE> <ASSISTANCE_LEVEL>
+```
+
+## Security Lesson
+
+Shared-object state must be scoped by actor, capability, or a validated source object.

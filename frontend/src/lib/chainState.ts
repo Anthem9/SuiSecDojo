@@ -158,6 +158,59 @@ export type Challenge15InstanceObject = {
   solved: boolean;
 };
 
+export type Challenge16InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  trustedSigner: string;
+  intentAccepted: boolean;
+  solved: boolean;
+};
+
+export type Challenge17InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  trustedKey: string;
+  shadowKey: string;
+  shadowWritten: boolean;
+  solved: boolean;
+};
+
+export type Challenge18InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  lastEpoch: string;
+  rewards: string;
+  solved: boolean;
+};
+
+export type Challenge19InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  oldWitnessUsed: boolean;
+  solved: boolean;
+};
+
+export type Challenge19OldWitnessObject = {
+  objectId: string;
+  instanceId: string;
+  owner: string;
+};
+
+export type Challenge20InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  collateral: string;
+  debt: string;
+  health: string;
+  liquidated: boolean;
+  solved: boolean;
+};
+
 export type BadgeObject = {
   objectId: string;
   owner: string;
@@ -186,6 +239,12 @@ export type ChainChallengeState = {
   challenge13DelegatedCap?: Challenge13DelegatedCapObject;
   challenge14Instance?: Challenge14InstanceObject;
   challenge15Instance?: Challenge15InstanceObject;
+  challenge16Instance?: Challenge16InstanceObject;
+  challenge17Instance?: Challenge17InstanceObject;
+  challenge18Instance?: Challenge18InstanceObject;
+  challenge19Instance?: Challenge19InstanceObject;
+  challenge19OldWitness?: Challenge19OldWitnessObject;
+  challenge20Instance?: Challenge20InstanceObject;
   badges?: BadgeObject[];
 };
 
@@ -275,6 +334,30 @@ export function getChallenge15InstanceType(packageId: string): string {
   return `${packageId}::challenge_15_coin_accounting_mismatch::ChallengeInstance`;
 }
 
+export function getChallenge16InstanceType(packageId: string): string {
+  return `${packageId}::challenge_16_signer_confusion::ChallengeInstance`;
+}
+
+export function getChallenge17InstanceType(packageId: string): string {
+  return `${packageId}::challenge_17_dynamic_field_shadow::ChallengeInstance`;
+}
+
+export function getChallenge18InstanceType(packageId: string): string {
+  return `${packageId}::challenge_18_epoch_reward_drift::ChallengeInstance`;
+}
+
+export function getChallenge19InstanceType(packageId: string): string {
+  return `${packageId}::challenge_19_upgrade_witness_gap::ChallengeInstance`;
+}
+
+export function getChallenge19OldWitnessType(packageId: string): string {
+  return `${packageId}::challenge_19_upgrade_witness_gap::OldWitness`;
+}
+
+export function getChallenge20InstanceType(packageId: string): string {
+  return `${packageId}::challenge_20_liquidation_edge_case::ChallengeInstance`;
+}
+
 export function getBadgeType(packageId: string): string {
   return `${packageId}::badge::Badge`;
 }
@@ -299,6 +382,12 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
   const challenge13DelegatedCapType = getChallenge13DelegatedCapType(packageId);
   const challenge14Type = getChallenge14InstanceType(packageId);
   const challenge15Type = getChallenge15InstanceType(packageId);
+  const challenge16Type = getChallenge16InstanceType(packageId);
+  const challenge17Type = getChallenge17InstanceType(packageId);
+  const challenge18Type = getChallenge18InstanceType(packageId);
+  const challenge19Type = getChallenge19InstanceType(packageId);
+  const challenge19OldWitnessType = getChallenge19OldWitnessType(packageId);
+  const challenge20Type = getChallenge20InstanceType(packageId);
   const badgeType = getBadgeType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
@@ -551,6 +640,89 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
           owner: String(content.fields.owner),
           deposits: String(content.fields.deposits),
           credits: String(content.fields.credits),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge16Type && String(content.fields.challenge_id) === "16") {
+      return {
+        ...state,
+        challenge16Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          trustedSigner: String(content.fields.trusted_signer),
+          intentAccepted: content.fields.intent_accepted === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge17Type && String(content.fields.challenge_id) === "17") {
+      return {
+        ...state,
+        challenge17Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          trustedKey: String(content.fields.trusted_key),
+          shadowKey: String(content.fields.shadow_key),
+          shadowWritten: content.fields.shadow_written === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge18Type && String(content.fields.challenge_id) === "18") {
+      return {
+        ...state,
+        challenge18Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          lastEpoch: String(content.fields.last_epoch),
+          rewards: String(content.fields.rewards),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge19Type && String(content.fields.challenge_id) === "19") {
+      return {
+        ...state,
+        challenge19Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          oldWitnessUsed: content.fields.old_witness_used === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge19OldWitnessType) {
+      return {
+        ...state,
+        challenge19OldWitness: {
+          objectId: data.objectId,
+          instanceId: String(content.fields.instance_id),
+          owner: String(content.fields.owner),
+        },
+      };
+    }
+
+    if (content.type === challenge20Type && String(content.fields.challenge_id) === "20") {
+      return {
+        ...state,
+        challenge20Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          collateral: String(content.fields.collateral),
+          debt: String(content.fields.debt),
+          health: String(content.fields.health),
+          liquidated: content.fields.liquidated === true,
           solved: content.fields.solved === true,
         },
       };

@@ -23,12 +23,18 @@ import {
   exploitChallenge13Transaction,
   exploitChallenge14Transaction,
   exploitChallenge15Transaction,
+  exploitChallenge16Transaction,
+  exploitChallenge17Transaction,
+  exploitChallenge18Transaction,
+  exploitChallenge19Transaction,
+  exploitChallenge20Transaction,
   guidedSolveChallenge01Transaction,
   mintChallenge01Transaction,
   claimSimpleChallengeTransaction,
   setChallenge04AdminFlagTransaction,
   setChallenge05InitializedTransaction,
   setChallenge13PrivilegedFlagTransaction,
+  setChallenge19OldWitnessTransaction,
   solveChallenge01Transaction,
   solveChallenge02Transaction,
   solveChallenge03Transaction,
@@ -332,6 +338,108 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
           "challenge_15_coin_accounting_mismatch",
           chainState.progress!.objectId,
           chainState.challenge15Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge16: () =>
+      executeAndRefresh("Claim Signer Confusion", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_16_signer_confusion", chainState.progress!.objectId),
+      ),
+    exploitChallenge16: (claimedSigner?: string) =>
+      executeAndRefresh("Accept signer intent", () =>
+        exploitChallenge16Transaction(
+          packageId,
+          chainState.challenge16Instance!.objectId,
+          claimedSigner || chainState.challenge16Instance!.owner,
+        ),
+      ),
+    solveChallenge16: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Signer Confusion solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_16_signer_confusion",
+          chainState.progress!.objectId,
+          chainState.challenge16Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge17: () =>
+      executeAndRefresh("Claim Dynamic Field Shadow", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_17_dynamic_field_shadow", chainState.progress!.objectId),
+      ),
+    exploitChallenge17: (key = 7) =>
+      executeAndRefresh("Write shadow key", () =>
+        exploitChallenge17Transaction(packageId, chainState.challenge17Instance!.objectId, key),
+      ),
+    solveChallenge17: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Dynamic Field Shadow solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_17_dynamic_field_shadow",
+          chainState.progress!.objectId,
+          chainState.challenge17Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge18: () =>
+      executeAndRefresh("Claim Epoch Reward Drift", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_18_epoch_reward_drift", chainState.progress!.objectId),
+      ),
+    exploitChallenge18: (observedEpoch = 4, repeats = 6) =>
+      executeAndRefresh("Accrue repeated rewards", () =>
+        exploitChallenge18Transaction(packageId, chainState.challenge18Instance!.objectId, observedEpoch, repeats),
+      ),
+    solveChallenge18: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Epoch Reward Drift solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_18_epoch_reward_drift",
+          chainState.progress!.objectId,
+          chainState.challenge18Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge19: () =>
+      executeAndRefresh("Claim Upgrade Witness Gap", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_19_upgrade_witness_gap", chainState.progress!.objectId),
+      ),
+    exploitChallenge19: () =>
+      executeAndRefresh("Mint old witness", () =>
+        exploitChallenge19Transaction(packageId, chainState.challenge19Instance!.objectId),
+      ),
+    setChallenge19OldWitness: () =>
+      executeAndRefresh("Use old witness", () =>
+        setChallenge19OldWitnessTransaction(
+          packageId,
+          chainState.challenge19Instance!.objectId,
+          chainState.challenge19OldWitness!.objectId,
+        ),
+      ),
+    solveChallenge19: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Upgrade Witness Gap solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_19_upgrade_witness_gap",
+          chainState.progress!.objectId,
+          chainState.challenge19Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge20: () =>
+      executeAndRefresh("Claim Liquidation Edge Case", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_20_liquidation_edge_case", chainState.progress!.objectId),
+      ),
+    exploitChallenge20: (price = 24, threshold = 50) =>
+      executeAndRefresh("Run edge liquidation", () =>
+        exploitChallenge20Transaction(packageId, chainState.challenge20Instance!.objectId, price, threshold),
+      ),
+    solveChallenge20: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Liquidation Edge solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_20_liquidation_edge_case",
+          chainState.progress!.objectId,
+          chainState.challenge20Instance!.objectId,
           options,
         ),
       ),

@@ -68,6 +68,11 @@ export function ChallengeDetailPanel({
   const isChallenge13 = challenge.id === "13";
   const isChallenge14 = challenge.id === "14";
   const isChallenge15 = challenge.id === "15";
+  const isChallenge16 = challenge.id === "16";
+  const isChallenge17 = challenge.id === "17";
+  const isChallenge18 = challenge.id === "18";
+  const isChallenge19 = challenge.id === "19";
+  const isChallenge20 = challenge.id === "20";
   const selectedInstance = isChallenge02
     ? chainState.challenge02Instance
     : isChallenge03
@@ -96,7 +101,17 @@ export function ChallengeDetailPanel({
                             ? chainState.challenge14Instance
                             : isChallenge15
                               ? chainState.challenge15Instance
-          : chainState.challenge01Instance;
+                              : isChallenge16
+                                ? chainState.challenge16Instance
+                                : isChallenge17
+                                  ? chainState.challenge17Instance
+                                  : isChallenge18
+                                    ? chainState.challenge18Instance
+                                    : isChallenge19
+                                      ? chainState.challenge19Instance
+                                      : isChallenge20
+                                        ? chainState.challenge20Instance
+                                        : chainState.challenge01Instance;
   const isSolved =
     selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
   const cliTemplate = cliPracticeTemplate({ challenge, packageId, chainState, values: practiceInputs });
@@ -162,7 +177,12 @@ export function ChallengeDetailPanel({
             isChallenge12 ||
             isChallenge13 ||
             isChallenge14 ||
-            isChallenge15
+            isChallenge15 ||
+            isChallenge16 ||
+            isChallenge17 ||
+            isChallenge18 ||
+            isChallenge19 ||
+            isChallenge20
               ? selectedInstance?.objectId ?? "not claimed"
               : "not enabled yet"}
           </dd>
@@ -318,6 +338,78 @@ export function ChallengeDetailPanel({
             </div>
           </>
         ) : null}
+        {isChallenge16 ? (
+          <>
+            <div>
+              <dt>Trusted Signer</dt>
+              <dd>{chainState.challenge16Instance?.trustedSigner ?? "not set"}</dd>
+            </div>
+            <div>
+              <dt>Intent Accepted</dt>
+              <dd>{chainState.challenge16Instance?.intentAccepted === true ? "true" : "false"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge17 ? (
+          <>
+            <div>
+              <dt>Trusted / Shadow Key</dt>
+              <dd>
+                {chainState.challenge17Instance
+                  ? `${chainState.challenge17Instance.trustedKey} / ${chainState.challenge17Instance.shadowKey}`
+                  : "not claimed"}
+              </dd>
+            </div>
+            <div>
+              <dt>Shadow Written</dt>
+              <dd>{chainState.challenge17Instance?.shadowWritten === true ? "true" : "false"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge18 ? (
+          <>
+            <div>
+              <dt>Last Epoch</dt>
+              <dd>{chainState.challenge18Instance?.lastEpoch ?? "0"}</dd>
+            </div>
+            <div>
+              <dt>Rewards</dt>
+              <dd>{chainState.challenge18Instance?.rewards ?? "0"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge19 ? (
+          <>
+            <div>
+              <dt>Old Witness</dt>
+              <dd>{chainState.challenge19OldWitness?.objectId ?? "not minted"}</dd>
+            </div>
+            <div>
+              <dt>Old Witness Used</dt>
+              <dd>{chainState.challenge19Instance?.oldWitnessUsed === true ? "true" : "false"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge20 ? (
+          <>
+            <div>
+              <dt>Collateral / Debt</dt>
+              <dd>
+                {chainState.challenge20Instance
+                  ? `${chainState.challenge20Instance.collateral} / ${chainState.challenge20Instance.debt}`
+                  : "not claimed"}
+              </dd>
+            </div>
+            <div>
+              <dt>Health / Liquidated</dt>
+              <dd>
+                {chainState.challenge20Instance
+                  ? `${chainState.challenge20Instance.health} / ${chainState.challenge20Instance.liquidated ? "true" : "false"}`
+                  : "not claimed"}
+              </dd>
+            </div>
+          </>
+        ) : null}
         <div>
           <dt>Completion</dt>
           <dd>{isSolved ? "solved" : "not solved"}</dd>
@@ -344,7 +436,7 @@ export function ChallengeDetailPanel({
             inputs={practiceInputs}
             onChange={onPracticeInputChange}
             onRun={onRunPracticeAction}
-            owner={chainState.challenge03Instance?.owner}
+            owner={isChallenge16 ? chainState.challenge16Instance?.owner : chainState.challenge03Instance?.owner}
           />
           <pre>{cliTemplate}</pre>
         </section>
@@ -378,10 +470,25 @@ export function ChallengeDetailPanel({
         isChallenge12 ||
         isChallenge13 ||
         isChallenge14 ||
-        isChallenge15) ? (
+        isChallenge15 ||
+        isChallenge16 ||
+        isChallenge17 ||
+        isChallenge18 ||
+        isChallenge19 ||
+        isChallenge20) ? (
           <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
             {isChallenge10
               ? "Run AMM Swap"
+              : isChallenge20
+                ? "Run Edge Liquidation"
+                : isChallenge19
+                  ? "Mint Old Witness"
+                  : isChallenge18
+                    ? "Accrue Rewards"
+                    : isChallenge17
+                      ? "Write Shadow Key"
+                      : isChallenge16
+                        ? "Accept Intent"
               : isChallenge09
                 ? "Execute PTB"
                 : isChallenge15
@@ -409,9 +516,9 @@ export function ChallengeDetailPanel({
                     : "Run Withdraw Call"}
           </button>
         ) : null}
-        {isChallenge04 || isChallenge05 || isChallenge13 ? (
+        {isChallenge04 || isChallenge05 || isChallenge13 || isChallenge19 ? (
           <button type="button" disabled={!actionState.canUseCapability} title={actionState.useCapabilityReason} onClick={onUseCapability}>
-            {isChallenge13 ? "Use Delegated Cap" : isChallenge05 ? "Initialize State" : "Use Admin Cap"}
+            {isChallenge19 ? "Use Old Witness" : isChallenge13 ? "Use Delegated Cap" : isChallenge05 ? "Initialize State" : "Use Admin Cap"}
           </button>
         ) : null}
         {!isSolved ? (
@@ -535,6 +642,50 @@ function PracticeInputs({
           <input value={inputs.creditAmount} onChange={(event) => onChange("creditAmount", event.target.value)} inputMode="numeric" />
         </label>
       ) : null}
+      {challengeId === "16" ? (
+        <label>
+          claimed_signer
+          <input
+            value={inputs.claimedSigner || owner || ""}
+            onChange={(event) => onChange("claimedSigner", event.target.value)}
+            placeholder={owner ?? "0x..."}
+          />
+        </label>
+      ) : null}
+      {challengeId === "17" ? (
+        <label>
+          shadow_key
+          <input value={inputs.shadowKey} onChange={(event) => onChange("shadowKey", event.target.value)} inputMode="numeric" />
+        </label>
+      ) : null}
+      {challengeId === "18" ? (
+        <>
+          <label>
+            observed_epoch
+            <input value={inputs.rewardEpoch} onChange={(event) => onChange("rewardEpoch", event.target.value)} inputMode="numeric" />
+          </label>
+          <label>
+            repeats
+            <input value={inputs.rewardRepeats} onChange={(event) => onChange("rewardRepeats", event.target.value)} inputMode="numeric" />
+          </label>
+        </>
+      ) : null}
+      {challengeId === "20" ? (
+        <>
+          <label>
+            price
+            <input value={inputs.liquidationPrice} onChange={(event) => onChange("liquidationPrice", event.target.value)} inputMode="numeric" />
+          </label>
+          <label>
+            threshold
+            <input
+              value={inputs.liquidationThreshold}
+              onChange={(event) => onChange("liquidationThreshold", event.target.value)}
+              inputMode="numeric"
+            />
+          </label>
+        </>
+      ) : null}
       <button type="button" disabled={!canRunPractice} title={challengeId === "1" ? actionState.solveReason : actionState.exploitReason} onClick={onRun}>
         {runLabel}
       </button>
@@ -564,6 +715,16 @@ function practiceRunLabel(challengeId: string): string {
       return "Use Stale Price";
     case "15":
       return "Create Mismatch";
+    case "16":
+      return "Accept Intent";
+    case "17":
+      return "Write Shadow Key";
+    case "18":
+      return "Accrue Rewards";
+    case "19":
+      return "Mint Old Witness";
+    case "20":
+      return "Run Edge Liquidation";
     default:
       return "Run Practice Call";
   }

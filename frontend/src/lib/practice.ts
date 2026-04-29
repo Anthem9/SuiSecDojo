@@ -13,6 +13,12 @@ export type PracticeDefaults = {
   checkedEpoch: string;
   priceEpoch: string;
   creditAmount: string;
+  claimedSigner: string;
+  shadowKey: string;
+  rewardEpoch: string;
+  rewardRepeats: string;
+  liquidationPrice: string;
+  liquidationThreshold: string;
 };
 
 export const defaultPracticeInputs: PracticeDefaults = {
@@ -27,6 +33,12 @@ export const defaultPracticeInputs: PracticeDefaults = {
   checkedEpoch: "10",
   priceEpoch: "1",
   creditAmount: "1",
+  claimedSigner: "",
+  shadowKey: "7",
+  rewardEpoch: "4",
+  rewardRepeats: "6",
+  liquidationPrice: "24",
+  liquidationThreshold: "50",
 };
 
 export function cliPracticeTemplate(input: {
@@ -122,6 +134,32 @@ export function cliPracticeTemplate(input: {
         `sui client call --package ${packageId} --module ${moduleName} --function vulnerable_credit_without_coin --args ${instanceId} ${input.values.creditAmount}`,
         `sui client call --package ${packageId} --module ${moduleName} --function solve --args ${solveArgs}`,
       ].join("\n");
+    case "16":
+      return [
+        `sui client call --package ${packageId} --module ${moduleName} --function vulnerable_accept_intent --args ${instanceId} ${input.values.claimedSigner || "<CLAIMED_SIGNER>"}`,
+        `sui client call --package ${packageId} --module ${moduleName} --function solve --args ${solveArgs}`,
+      ].join("\n");
+    case "17":
+      return [
+        `sui client call --package ${packageId} --module ${moduleName} --function vulnerable_write_shadow --args ${instanceId} ${input.values.shadowKey}`,
+        `sui client call --package ${packageId} --module ${moduleName} --function solve --args ${solveArgs}`,
+      ].join("\n");
+    case "18":
+      return [
+        `sui client call --package ${packageId} --module ${moduleName} --function vulnerable_accrue --args ${instanceId} ${input.values.rewardEpoch} ${input.values.rewardRepeats}`,
+        `sui client call --package ${packageId} --module ${moduleName} --function solve --args ${solveArgs}`,
+      ].join("\n");
+    case "19":
+      return [
+        `sui client call --package ${packageId} --module ${moduleName} --function vulnerable_mint_old_witness --args ${instanceId}`,
+        `sui client call --package ${packageId} --module ${moduleName} --function old_admin_path --args ${instanceId} <OLD_WITNESS_ID>`,
+        `sui client call --package ${packageId} --module ${moduleName} --function solve --args ${solveArgs}`,
+      ].join("\n");
+    case "20":
+      return [
+        `sui client call --package ${packageId} --module ${moduleName} --function vulnerable_liquidate --args ${instanceId} ${input.values.liquidationPrice} ${input.values.liquidationThreshold}`,
+        `sui client call --package ${packageId} --module ${moduleName} --function solve --args ${solveArgs}`,
+      ].join("\n");
     default:
       return `sui client call --package ${packageId} --module ${moduleName} --function solve --args ${solveArgs}`;
   }
@@ -157,6 +195,16 @@ function instanceIdForChallenge(challengeId: string, chainState: ChainChallengeS
       return chainState.challenge14Instance?.objectId ?? "<INSTANCE_ID>";
     case "15":
       return chainState.challenge15Instance?.objectId ?? "<INSTANCE_ID>";
+    case "16":
+      return chainState.challenge16Instance?.objectId ?? "<INSTANCE_ID>";
+    case "17":
+      return chainState.challenge17Instance?.objectId ?? "<INSTANCE_ID>";
+    case "18":
+      return chainState.challenge18Instance?.objectId ?? "<INSTANCE_ID>";
+    case "19":
+      return chainState.challenge19Instance?.objectId ?? "<INSTANCE_ID>";
+    case "20":
+      return chainState.challenge20Instance?.objectId ?? "<INSTANCE_ID>";
     default:
       return chainState.challenge01Instance?.objectId ?? "<INSTANCE_ID>";
   }

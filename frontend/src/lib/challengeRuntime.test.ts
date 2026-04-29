@@ -547,4 +547,77 @@ describe("challenge runtime state", () => {
     expect(state.canSolve).toBe(false);
     expect(state.solveReason).toBe("Use the delegated capability before solving.");
   });
+
+  it("should enable Challenge 16 solve after signer intent is accepted", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "16",
+      chainState: {
+        progress: { objectId: "0xprogress", claimedChallengeIds: ["16"], completedChallengeIds: [], badgeIds: [] },
+        challenge16Instance: {
+          objectId: "0xinstance16",
+          challengeId: "16",
+          owner: "0xalice",
+          trustedSigner: "0xalice",
+          intentAccepted: true,
+          solved: false,
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to solve Signer Confusion.");
+  });
+
+  it("should require using Challenge 19 old witness before solve", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "19",
+      chainState: {
+        progress: { objectId: "0xprogress", claimedChallengeIds: ["19"], completedChallengeIds: [], badgeIds: [] },
+        challenge19Instance: {
+          objectId: "0xinstance19",
+          challengeId: "19",
+          owner: "0xalice",
+          oldWitnessUsed: false,
+          solved: false,
+        },
+        challenge19OldWitness: { objectId: "0xwitness19", instanceId: "0xinstance19", owner: "0xalice" },
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canUseCapability).toBe(true);
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Use the old witness path before solving.");
+  });
+
+  it("should enable Challenge 20 solve after edge liquidation", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "20",
+      chainState: {
+        progress: { objectId: "0xprogress", claimedChallengeIds: ["20"], completedChallengeIds: [], badgeIds: [] },
+        challenge20Instance: {
+          objectId: "0xinstance20",
+          challengeId: "20",
+          owner: "0xalice",
+          collateral: "100",
+          debt: "50",
+          health: "48",
+          liquidated: true,
+          solved: false,
+        },
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canExploit).toBe(false);
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to solve Liquidation Edge Case.");
+  });
 });

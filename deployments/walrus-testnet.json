@@ -6,12 +6,18 @@
   "epochs": 5,
   "walrusVersion": "walrus 1.47.0-15e070d60189",
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
-  "packageId": "0x8a8e5840bc59e24265857097301ea59a245af0b762470e0b306e032cbb6cc044",
-  "challengeRegistryId": "0xf50321b9ad6ead5a79b4a93412c3886da3bc9e874ff7f1615a38c8c1e3a68eb2",
-  "deployedAt": "2026-04-29T03:29:03.388Z",
-  "note": "Existing testnet site object updated with routed frontend, incident library, About donation panel, and warning-free Challenge 01-15 package.",
+  "packageId": "0x84f5e4308892eea91c4e5cc0492e076274d55db8bf0b410369ffd732071b6e46",
+  "challengeRegistryId": "0x72af7af44a79679d73f8afeddbf662e3e0c9474bdf8cb88eca2d222d2e5fd180",
+  "deployedAt": "2026-04-29T05:30:15.866Z",
+  "note": "Existing testnet site object updated with Challenge 01-20 live set, full 11-20 docs, tutor content, and latest testnet package.",
   "challengeModeScoring": true,
-  "lastUpdatedDigest": "YLuF8OFjv-7yMPiY1sA3-g0a3-VxvyO6_ob1lSIi-OABjAKNAg",
-  "liveChallenges": 15,
-  "incidentDocs": 9
+  "lastUpdatedDigest": "PkWz2rWu8v0-vUmqVyQgK2aVhnW8ZJljeAOT5tkK1EAB9wH4AQ",
+  "liveChallenges": 20,
+  "incidentDocs": 9,
+  "roadmapChallenges": [],
+  "lastIndexPatchId": "PkWz2rWu8v0-vUmqVyQgK2aVhnW8ZJljeAOT5tkK1EAB9wH4AQ",
+  "lastAsset": {
+    "path": "/assets/index-CaGESTVD.js",
+    "patchId": "PkWz2rWu8v0-vUmqVyQgK2aVhnW8ZJljeAOT5tkK1EABAgC7AQ"
+  }
 }

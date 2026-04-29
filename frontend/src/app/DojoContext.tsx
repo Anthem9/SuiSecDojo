@@ -81,6 +81,27 @@ function useDojoState() {
 
   function runPracticeAction(challenge: ChallengeMetadata) {
     switch (challenge.id) {
+      case "20":
+        challengeActions.exploitChallenge20(
+          asPositiveInt(practiceInputs.liquidationPrice, 24),
+          asPositiveInt(practiceInputs.liquidationThreshold, 50),
+        );
+        return;
+      case "19":
+        challengeActions.exploitChallenge19();
+        return;
+      case "18":
+        challengeActions.exploitChallenge18(
+          asPositiveInt(practiceInputs.rewardEpoch, 4),
+          asPositiveInt(practiceInputs.rewardRepeats, 6),
+        );
+        return;
+      case "17":
+        challengeActions.exploitChallenge17(asPositiveInt(practiceInputs.shadowKey, 7));
+        return;
+      case "16":
+        challengeActions.exploitChallenge16(practiceInputs.claimedSigner || chainState.challenge16Instance?.owner);
+        return;
       case "15":
         challengeActions.exploitChallenge15(asPositiveInt(practiceInputs.creditAmount, 1));
         return;
@@ -134,6 +155,21 @@ function useDojoState() {
   function solveChallenge(challenge: ChallengeMetadata) {
     const solveOptions = { mode: trainingMode, assistanceLevel };
     switch (challenge.id) {
+      case "20":
+        challengeActions.solveChallenge20(solveOptions);
+        return;
+      case "19":
+        challengeActions.solveChallenge19(solveOptions);
+        return;
+      case "18":
+        challengeActions.solveChallenge18(solveOptions);
+        return;
+      case "17":
+        challengeActions.solveChallenge17(solveOptions);
+        return;
+      case "16":
+        challengeActions.solveChallenge16(solveOptions);
+        return;
       case "15":
         challengeActions.solveChallenge15(solveOptions);
         return;
@@ -186,6 +222,21 @@ function useDojoState() {
 
   function claimChallenge(challenge: ChallengeMetadata) {
     switch (challenge.id) {
+      case "20":
+        challengeActions.claimChallenge20();
+        return;
+      case "19":
+        challengeActions.claimChallenge19();
+        return;
+      case "18":
+        challengeActions.claimChallenge18();
+        return;
+      case "17":
+        challengeActions.claimChallenge17();
+        return;
+      case "16":
+        challengeActions.claimChallenge16();
+        return;
       case "15":
         challengeActions.claimChallenge15();
         return;
@@ -237,6 +288,10 @@ function useDojoState() {
   }
 
   function useCapability(challenge: ChallengeMetadata) {
+    if (challenge.id === "19") {
+      challengeActions.setChallenge19OldWitness();
+      return;
+    }
     if (challenge.id === "5") {
       challengeActions.setChallenge05Initialized();
       return;

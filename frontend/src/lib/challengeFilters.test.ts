@@ -21,8 +21,9 @@ describe("challenge filters", () => {
     expect(getChallengeBySlug(challenges, "fake-owner")?.title).toBe("Fake Owner");
   });
 
-  it("should mark roadmap challenges as coming soon", () => {
-    expect(getChallengeBySlug(challenges, "signer-confusion")?.status).toBe("coming-soon");
+  it("should mark the expanded challenge set as live", () => {
+    expect(getChallengeBySlug(challenges, "signer-confusion")?.status).toBe("live");
+    expect(getChallengeBySlug(challenges, "liquidation-edge-case")?.status).toBe("live");
     expect(getChallengeBySlug(challenges, "object-transfer-trap")?.status).toBe("live");
     expect(getChallengeBySlug(challenges, "anyone-can-mint")?.status).toBe("live");
   });

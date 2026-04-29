@@ -324,6 +324,60 @@ export function exploitChallenge15Transaction(packageId: string, instanceId: str
   return tx;
 }
 
+export function exploitChallenge16Transaction(packageId: string, instanceId: string, claimedSigner: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_16_signer_confusion::vulnerable_accept_intent`,
+    arguments: [tx.object(instanceId), tx.pure.address(claimedSigner)],
+  });
+  return tx;
+}
+
+export function exploitChallenge17Transaction(packageId: string, instanceId: string, key = 7): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_17_dynamic_field_shadow::vulnerable_write_shadow`,
+    arguments: [tx.object(instanceId), tx.pure.u64(key)],
+  });
+  return tx;
+}
+
+export function exploitChallenge18Transaction(packageId: string, instanceId: string, observedEpoch = 4, repeats = 6): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_18_epoch_reward_drift::vulnerable_accrue`,
+    arguments: [tx.object(instanceId), tx.pure.u64(observedEpoch), tx.pure.u64(repeats)],
+  });
+  return tx;
+}
+
+export function exploitChallenge19Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_19_upgrade_witness_gap::vulnerable_mint_old_witness`,
+    arguments: [tx.object(instanceId)],
+  });
+  return tx;
+}
+
+export function setChallenge19OldWitnessTransaction(packageId: string, instanceId: string, witnessId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_19_upgrade_witness_gap::old_admin_path`,
+    arguments: [tx.object(instanceId), tx.object(witnessId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge20Transaction(packageId: string, instanceId: string, price = 24, threshold = 50): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_20_liquidation_edge_case::vulnerable_liquidate`,
+    arguments: [tx.object(instanceId), tx.pure.u64(price), tx.pure.u64(threshold)],
+  });
+  return tx;
+}
+
 export function solveSimpleChallengeTransaction(
   packageId: string,
   moduleName: string,
