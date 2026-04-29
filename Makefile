@@ -1,4 +1,4 @@
-.PHONY: audit build check check-env ci deploy-walrus-testnet dev smoke smoke-chain test test-contracts test-frontend
+.PHONY: audit build check check-env ci deploy-walrus-mainnet deploy-walrus-testnet dev mainnet-dry-run smoke smoke-chain test test-contracts test-contracts-mainnet test-frontend
 
 check:
 	cd frontend && npm run typecheck
@@ -12,6 +12,9 @@ test-frontend:
 
 test-contracts:
 	cd contracts && sui move test
+
+test-contracts-mainnet:
+	cd contracts-mainnet && sui move test
 
 ci:
 	cd frontend && npm run typecheck
@@ -31,6 +34,13 @@ check-env:
 deploy-walrus-testnet:
 	./scripts/build-frontend.sh
 	./scripts/deploy-walrus-site.sh
+
+deploy-walrus-mainnet:
+	./scripts/build-frontend.sh
+	./scripts/deploy-walrus-mainnet-site.sh
+
+mainnet-dry-run:
+	./scripts/publish-dojo-pass-mainnet.sh
 
 audit:
 	cd frontend && npm audit --omit=dev

@@ -64,6 +64,7 @@ export function ChallengeDetailRoute() {
         assistanceLevel={dojo.assistanceLevel}
         challenge={challenge}
         dojoPass={dojo.chainState.dojoPass}
+        dojoPassNetworkMessage={dojo.dojoPassNetworkMessage}
         locale={dojo.locale}
         onAssistanceLevelChange={dojo.setAssistanceLevel}
         onMintDojoPass={dojo.challengeActions.mintDojoPass}

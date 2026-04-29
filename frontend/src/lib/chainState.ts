@@ -376,9 +376,9 @@ export function getDojoPassType(packageId: string): string {
   return `${packageId}::dojo_pass::DojoPass`;
 }
 
-export function parseChainChallengeState(objects: SuiObjectResponse[], packageId: string): ChainChallengeState {
+export function parseChainChallengeState(objects: SuiObjectResponse[], packageId: string, dojoPassPackageId = packageId): ChainChallengeState {
   const progressType = getUserProgressType(packageId);
-  const dojoPassType = getDojoPassType(packageId);
+  const dojoPassType = getDojoPassType(dojoPassPackageId);
   const challenge01Type = getChallenge01InstanceType(packageId);
   const challenge02Type = getChallenge02InstanceType(packageId);
   const challenge03Type = getChallenge03InstanceType(packageId);
@@ -403,7 +403,7 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
   const challenge19Type = getChallenge19InstanceType(packageId);
   const challenge19OldWitnessType = getChallenge19OldWitnessType(packageId);
   const challenge20Type = getChallenge20InstanceType(packageId);
-  const badgeType = getBadgeType(packageId);
+  const badgeType = getBadgeType(dojoPassPackageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
     const data = object.data;

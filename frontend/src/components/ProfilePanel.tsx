@@ -4,11 +4,12 @@ import { useDojo } from "../app/DojoContext";
 import type { ProfileSummary } from "../lib/profile";
 
 type ProfilePanelProps = {
+  dojoPassNetworkMessage?: string;
   onMintBadge?: (badgeType: string) => void;
   summary: ProfileSummary;
 };
 
-export function ProfilePanel({ onMintBadge, summary }: ProfilePanelProps) {
+export function ProfilePanel({ dojoPassNetworkMessage, onMintBadge, summary }: ProfilePanelProps) {
   const { locale, t } = useDojo();
 
   return (
@@ -95,6 +96,7 @@ export function ProfilePanel({ onMintBadge, summary }: ProfilePanelProps) {
           <Award aria-hidden="true" />
           <span>{locale === "zh" ? "徽章铸造" : "Badge Minting"}</span>
         </div>
+        {dojoPassNetworkMessage ? <p className="empty-state">{dojoPassNetworkMessage}</p> : null}
         <div className="badge-list">
           {["1", "2", "3", "4", "5"].map((badgeType) => {
             const minted = summary.mintedBadgeIds.includes(badgeType);
@@ -102,7 +104,11 @@ export function ProfilePanel({ onMintBadge, summary }: ProfilePanelProps) {
               <article className="badge-card" key={badgeType}>
                 <strong>{formatBadgeName(badgeType, locale)}</strong>
                 <small>{formatBadgeRequirement(badgeType, locale)}</small>
-                <button type="button" disabled={!summary.hasDojoPass || minted || !onMintBadge} onClick={() => onMintBadge?.(badgeType)}>
+                <button
+                  type="button"
+                  disabled={!summary.hasDojoPass || minted || !onMintBadge || Boolean(dojoPassNetworkMessage)}
+                  onClick={() => onMintBadge?.(badgeType)}
+                >
                   {minted ? (locale === "zh" ? "已铸造" : "Minted") : locale === "zh" ? "铸造徽章" : "Mint Badge"}
                 </button>
               </article>

@@ -5,10 +5,10 @@ import { ReportPanel } from "../components/ReportPanel";
 import { useDojo } from "../app/DojoContext";
 
 export function ProfileRoute() {
-  const { mintBadge, profile } = useDojo();
+  const { dojoPassNetworkMessage, mintBadge, profile } = useDojo();
   return (
     <section className="page-section profile-passport-page">
-      <ProfilePanel onMintBadge={mintBadge} summary={profile} />
+      <ProfilePanel dojoPassNetworkMessage={dojoPassNetworkMessage} onMintBadge={mintBadge} summary={profile} />
       <PassportPanel profile={profile} />
     </section>
   );
@@ -30,10 +30,10 @@ export function LeaderboardRoute() {
 }
 
 export function PassportRoute() {
-  const { mintBadge, profile } = useDojo();
+  const { dojoPassNetworkMessage, mintBadge, profile } = useDojo();
   return (
     <section className="page-section profile-passport-page">
-      <ProfilePanel onMintBadge={mintBadge} summary={profile} />
+      <ProfilePanel dojoPassNetworkMessage={dojoPassNetworkMessage} onMintBadge={mintBadge} summary={profile} />
       <PassportPanel profile={profile} />
     </section>
   );

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dojoPassConfigFromEnv, hasUnlockedAnswer, mistPriceLabel } from "./dojoPass";
+import { dojoPassConfigFromEnv, hasUnlockedAnswer, mistPriceLabel, requiredNetworkMessage } from "./dojoPass";
 
 describe("dojo pass config", () => {
   it("should disable pass actions when config is missing", () => {
@@ -27,5 +27,10 @@ describe("dojo pass config", () => {
     expect(mistPriceLabel("50000000")).toBe("0.05 SUI");
     expect(hasUnlockedAnswer(["1", "3"], "3")).toBe(true);
     expect(hasUnlockedAnswer(["1", "3"], "2")).toBe(false);
+  });
+
+  it("should explain required wallet network switches", () => {
+    expect(requiredNetworkMessage("testnet", "mainnet", "zh")).toContain("切换到 mainnet");
+    expect(requiredNetworkMessage("mainnet", "mainnet", "en")).toBeUndefined();
   });
 });

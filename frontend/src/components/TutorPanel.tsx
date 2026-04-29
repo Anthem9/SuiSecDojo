@@ -12,6 +12,7 @@ type TutorPanelProps = {
   assistanceLevel: AssistanceLevel;
   challenge: ChallengeMetadata;
   dojoPass?: DojoPassObject;
+  dojoPassNetworkMessage?: string;
   locale: Locale;
   onAssistanceLevelChange: (level: AssistanceLevel) => void;
   onMintDojoPass: () => void;
@@ -24,6 +25,7 @@ export function TutorPanel({
   assistanceLevel,
   challenge,
   dojoPass,
+  dojoPassNetworkMessage,
   locale,
   onAssistanceLevelChange,
   onMintDojoPass,
@@ -80,7 +82,8 @@ export function TutorPanel({
                 ? "先领取灵魂绑定 Dojo Pass。它会记录你已经解锁的题目答案，后续也可扩展会员权益。"
                 : "Mint your soulbound Dojo Pass first. It records unlocked answers and can support membership features later."}
             </p>
-            <button type="button" disabled={!passConfigured} onClick={onMintDojoPass}>
+            {dojoPassNetworkMessage ? <p className="empty-state">{dojoPassNetworkMessage}</p> : null}
+            <button type="button" disabled={!passConfigured || Boolean(dojoPassNetworkMessage)} onClick={onMintDojoPass}>
               {locale === "zh" ? "领取 Dojo Pass" : "Mint Dojo Pass"}
             </button>
           </>
@@ -102,7 +105,8 @@ export function TutorPanel({
                 ? `解锁后会写入你的 Dojo Pass。价格：${mistPriceLabel(DOJO_PASS.ANSWER_PRICE_MIST)}。`
                 : `Unlocking records this challenge in your Dojo Pass. Price: ${mistPriceLabel(DOJO_PASS.ANSWER_PRICE_MIST)}.`}
             </p>
-            <button type="button" disabled={!passConfigured} onClick={onUnlockAnswer}>
+            {dojoPassNetworkMessage ? <p className="empty-state">{dojoPassNetworkMessage}</p> : null}
+            <button type="button" disabled={!passConfigured || Boolean(dojoPassNetworkMessage)} onClick={onUnlockAnswer}>
               {locale === "zh" ? "解锁答案" : "Unlock Answer"}
             </button>
           </>

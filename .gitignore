@@ -12,3 +12,6 @@ frontend/public/content/
 build/
 target/
 Move.lock
+content-private/answers/*
+!content-private/README.md
+encrypted-answers/

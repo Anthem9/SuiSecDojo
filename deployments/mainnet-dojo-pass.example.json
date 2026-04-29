@@ -1,0 +1,14 @@
+{
+  "network": "mainnet",
+  "deployer": "<MAINNET_OPERATOR_ADDRESS>",
+  "packageId": "<MAINNET_DOJO_PASS_PACKAGE_ID>",
+  "upgradeCapId": "<MAINNET_UPGRADE_CAP_ID>",
+  "publishDigest": "<PUBLISH_DIGEST>",
+  "dojoPassConfigId": "<DOJO_PASS_CONFIG_ID>",
+  "recipient": "<REVENUE_RECIPIENT_ADDRESS>",
+  "answerPriceMist": "100000000",
+  "badgePriceMist": "1000000000",
+  "proofPublicKey": "<ED25519_PROOF_PUBLIC_KEY_HEX>",
+  "createConfigDigest": "<CREATE_CONFIG_DIGEST>",
+  "createdAt": "<ISO_8601_UTC>"
+}

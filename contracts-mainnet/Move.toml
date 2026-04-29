@@ -1,0 +1,8 @@
+[package]
+name = "suisec_dojo_mainnet"
+edition = "2024"
+
+[dependencies]
+
+[addresses]
+suisec_dojo = "0x0"

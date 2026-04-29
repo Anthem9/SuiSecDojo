@@ -5,7 +5,8 @@ import { useChallenge01Actions } from "../hooks/useChallenge01Actions";
 import { useDojoObjects } from "../hooks/useDojoObjects";
 import { useLeaderboardEvents } from "../hooks/useLeaderboardEvents";
 import { getChallenge01ActionState } from "../lib/challengeRuntime";
-import { CONTRACTS, DOJO_PASS } from "../lib/constants";
+import { CONTRACTS, DOJO_PASS, SUI_NETWORK } from "../lib/constants";
+import { requiredNetworkMessage } from "../lib/dojoPass";
 import { dictionaries, type Locale } from "../lib/i18n";
 import { defaultPracticeInputs, type PracticeDefaults } from "../lib/practice";
 import { summarizeProfile } from "../lib/profile";
@@ -39,8 +40,8 @@ function useDojoState() {
   const [assistanceLevel, setAssistanceLevel] = useState<AssistanceLevel>(0);
   const [practiceInputs, setPracticeInputs] = useState<PracticeDefaults>(defaultPracticeInputs);
   const { chainState, chainProgress, isSolved, ownedObjectsQuery, challenge02VaultQuery, suiBalanceMist, refetchObjects } =
-    useDojoObjects(account?.address, packageId);
-  const challengeActions = useChallenge01Actions(packageId, chainState, refetchObjects);
+    useDojoObjects(account?.address, packageId, DOJO_PASS.PACKAGE_ID || packageId);
+  const challengeActions = useChallenge01Actions(packageId, chainState, refetchObjects, network);
   const leaderboardQuery = useLeaderboardEvents(packageId, account?.address);
   const progress = summarizeProgress(challenges, chainProgress);
   const profile = summarizeProfile({
@@ -51,20 +52,37 @@ function useDojoState() {
     badges: chainState.badges ?? [],
     leaderboardEntry: leaderboardQuery.leaderboard.currentEntry,
   });
+  const challengeNetworkMessage = requiredNetworkMessage(network, SUI_NETWORK, locale);
+  const dojoPassNetworkMessage = requiredNetworkMessage(network, DOJO_PASS.NETWORK, locale);
   const warnings = [
-    network !== "testnet" ? dictionaries[locale].challengeNetworkWarning : undefined,
+    challengeNetworkMessage,
+    DOJO_PASS.CONFIG_ID ? dojoPassNetworkMessage : undefined,
     account?.address && suiBalanceMist === "0" ? "Wallet has no SUI available for gas. Fund it from the Sui testnet faucet." : undefined,
   ].filter((message): message is string => Boolean(message));
   const t = dictionaries[locale];
 
   function actionStateFor(challenge: ChallengeMetadata) {
-    return getChallenge01ActionState({
+    const state = getChallenge01ActionState({
       accountAddress: account?.address,
       packageId,
       selectedChallengeId: challenge.id,
       chainState,
       actionBusy: challengeActions.isPending || ownedObjectsQuery.isFetching || challenge02VaultQuery.isFetching,
     });
+    if (!challengeNetworkMessage) return state;
+    return {
+      ...state,
+      canCreateProgress: false,
+      createProgressReason: challengeNetworkMessage,
+      canClaim: false,
+      claimReason: challengeNetworkMessage,
+      canExploit: false,
+      exploitReason: challengeNetworkMessage,
+      canUseCapability: false,
+      useCapabilityReason: challengeNetworkMessage,
+      canSolve: false,
+      solveReason: challengeNetworkMessage,
+    };
   }
 
   function scorePreviewFor(challenge: ChallengeMetadata) {
@@ -305,7 +323,7 @@ function useDojoState() {
   }
 
   async function mintBadge(badgeType: string) {
-    if (!DOJO_PASS.BADGE_PROOF_API_URL || !account?.address || !chainState.progress?.objectId) return;
+    if (dojoPassNetworkMessage || !DOJO_PASS.BADGE_PROOF_API_URL || !account?.address || !chainState.progress?.objectId) return;
     const response = await fetch(DOJO_PASS.BADGE_PROOF_API_URL, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -332,7 +350,9 @@ function useDojoState() {
       chainState,
       challengeActions,
       challenge02VaultQuery,
+      challengeNetworkMessage,
       claimChallenge,
+      dojoPassNetworkMessage,
       isSolved,
       leaderboardQuery,
       locale,
@@ -362,6 +382,8 @@ function useDojoState() {
       chainState,
       challengeActions,
       challenge02VaultQuery,
+      challengeNetworkMessage,
+      dojoPassNetworkMessage,
       isSolved,
       leaderboardQuery,
       locale,

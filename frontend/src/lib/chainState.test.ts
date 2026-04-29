@@ -35,6 +35,7 @@ import {
 } from "./chainState";
 
 const packageId = "0xabc";
+const dojoPassPackageId = "0xpasspkg";
 
 describe("chain state adapter", () => {
   it("should detect missing deployment config", () => {
@@ -404,6 +405,36 @@ describe("chain state adapter", () => {
         solved: false,
       },
       badges: [{ objectId: "0xbadge", owner: "0xalice", badgeType: "1", issuedAtEpoch: "12" }],
+    });
+  });
+
+  it("should parse Dojo Pass and badge objects from a separate package id", () => {
+    const objects: SuiObjectResponse[] = [
+      moveObject("0xbadge", getBadgeType(dojoPassPackageId), {
+        owner: "0xalice",
+        badge_type: "2",
+        issued_at_epoch: "12",
+      }),
+      moveObject("0xpass", getDojoPassType(dojoPassPackageId), {
+        owner: "0xalice",
+        unlocked_challenges: ["1"],
+        minted_badges: ["2"],
+        membership_tier: "0",
+        created_epoch: "9",
+      }),
+    ];
+
+    expect(parseChainChallengeState(objects, packageId, dojoPassPackageId)).toMatchObject({
+      dojoPass: {
+        objectId: "0xpass",
+        mintedBadgeIds: ["2"],
+      },
+      badges: [
+        {
+          objectId: "0xbadge",
+          badgeType: "2",
+        },
+      ],
     });
   });
 

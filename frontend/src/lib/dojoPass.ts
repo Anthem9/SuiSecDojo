@@ -37,6 +37,14 @@ export function hasUnlockedAnswer(unlockedChallengeIds: string[] | undefined, ch
   return unlockedChallengeIds?.includes(challengeId) === true;
 }
 
+export function requiredNetworkMessage(currentNetwork: string, requiredNetwork: string, locale: "en" | "zh"): string | undefined {
+  if (currentNetwork === requiredNetwork) return undefined;
+  if (locale === "zh") {
+    return `请在钱包插件中切换到 ${requiredNetwork} 后再继续。当前网络：${currentNetwork}。`;
+  }
+  return `Switch your wallet to ${requiredNetwork} before continuing. Current network: ${currentNetwork}.`;
+}
+
 function normalize(value: string | undefined): string | undefined {
   const trimmed = value?.trim();
   return trimmed || undefined;

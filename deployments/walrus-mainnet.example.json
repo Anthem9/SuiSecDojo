@@ -1,0 +1,13 @@
+{
+  "network": "mainnet",
+  "siteObjectId": "<WALRUS_SITE_OBJECT_ID>",
+  "siteBase36": "<BASE36_SITE_ID>",
+  "walAppUrl": "https://<SUI_NS_NAME>.wal.app",
+  "epochs": 5,
+  "walrusVersion": "<WALRUS_VERSION>",
+  "siteBuilderVersion": "<SITE_BUILDER_VERSION>",
+  "testnetChallengePackageId": "<TESTNET_CHALLENGE_PACKAGE_ID>",
+  "mainnetDojoPassPackageId": "<MAINNET_DOJO_PASS_PACKAGE_ID>",
+  "mainnetDojoPassConfigId": "<MAINNET_DOJO_PASS_CONFIG_ID>",
+  "deployedAt": "<ISO_8601_UTC>"
+}

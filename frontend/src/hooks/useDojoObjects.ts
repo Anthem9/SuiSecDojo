@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { parseChallenge02VaultObject, parseChainChallengeState } from "../lib/chainState";
 import type { ChallengeProgress } from "../types";
 
-export function useDojoObjects(accountAddress: string | undefined, packageId: string) {
+export function useDojoObjects(accountAddress: string | undefined, packageId: string, dojoPassPackageId = packageId) {
   const ownedObjectsQuery = useSuiClientQuery(
     "getOwnedObjects",
     {
@@ -35,8 +35,8 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
           { StructType: `${packageId}::challenge_19_upgrade_witness_gap::ChallengeInstance` },
           { StructType: `${packageId}::challenge_19_upgrade_witness_gap::OldWitness` },
           { StructType: `${packageId}::challenge_20_liquidation_edge_case::ChallengeInstance` },
-          { StructType: `${packageId}::dojo_pass::DojoPass` },
-          { StructType: `${packageId}::badge::Badge` },
+          { StructType: `${dojoPassPackageId}::dojo_pass::DojoPass` },
+          { StructType: `${dojoPassPackageId}::badge::Badge` },
         ],
       },
       options: {
@@ -47,7 +47,7 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
       limit: 50,
     },
     {
-      enabled: Boolean(accountAddress && packageId),
+      enabled: Boolean(accountAddress && packageId && dojoPassPackageId),
     },
   );
 
@@ -62,8 +62,8 @@ export function useDojoObjects(accountAddress: string | undefined, packageId: st
   );
 
   const chainState = useMemo(
-    () => parseChainChallengeState(ownedObjectsQuery.data?.data ?? [], packageId),
-    [ownedObjectsQuery.data?.data, packageId],
+    () => parseChainChallengeState(ownedObjectsQuery.data?.data ?? [], packageId, dojoPassPackageId),
+    [ownedObjectsQuery.data?.data, packageId, dojoPassPackageId],
   );
 
   const challenge02VaultQuery = useSuiClientQuery(
