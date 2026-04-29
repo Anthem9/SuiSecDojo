@@ -1,6 +1,6 @@
 import { ConnectModal, useCurrentAccount, useDisconnectWallet } from "@mysten/dapp-kit";
 import { ChevronDown, LogOut, Wallet } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
 import { useDojo } from "../app/DojoContext";
 import { shortAddress } from "../lib/profile";
 
@@ -50,11 +50,18 @@ export function WalletMenu() {
   );
 }
 
-function ConnectTrigger({ label }: { label: string }) {
+type ConnectTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  label: string;
+};
+
+export const ConnectTrigger = forwardRef<HTMLButtonElement, ConnectTriggerProps>(function ConnectTrigger(
+  { className, label, type = "button", ...buttonProps },
+  ref,
+) {
   return (
-    <button className="wallet-button" type="button">
+    <button ref={ref} className={["wallet-button", className].filter(Boolean).join(" ")} type={type} {...buttonProps}>
       <Wallet aria-hidden="true" />
       {label}
     </button>
   );
-}
+});
