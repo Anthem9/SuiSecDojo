@@ -35,13 +35,14 @@ export function summarizeProfile(input: {
   badges: BadgeObject[];
   leaderboardEntry?: LeaderboardEntry;
 }): ProfileSummary {
+  const liveChallenges = input.challenges.filter((challenge) => challenge.status !== "coming-soon");
   const claimedIds = new Set(input.chainState.progress?.claimedChallengeIds ?? []);
   const completedIds = new Set(input.chainState.progress?.completedChallengeIds ?? []);
-  const total = input.challenges.length;
-  const completed = input.challenges.filter((challenge) => completedIds.has(challenge.id)).length;
-  const claimed = input.challenges.filter((challenge) => claimedIds.has(challenge.id)).length;
+  const total = liveChallenges.length;
+  const completed = liveChallenges.filter((challenge) => completedIds.has(challenge.id)).length;
+  const claimed = liveChallenges.filter((challenge) => claimedIds.has(challenge.id)).length;
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-  const nextChallenge = input.challenges.find((challenge) => !completedIds.has(challenge.id));
+  const nextChallenge = liveChallenges.find((challenge) => !completedIds.has(challenge.id));
   const badgeDetails = mergeBadgeDetails(input.chainState.progress?.badgeIds ?? [], input.badges);
   const badgeLabels = badgeDetails.map((badge) => badge.label);
 

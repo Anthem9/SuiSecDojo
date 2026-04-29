@@ -505,4 +505,46 @@ describe("challenge runtime state", () => {
     expect(state.canSolve).toBe(true);
     expect(state.solveReason).toBe("Ready to solve Price Rounding.");
   });
+
+  it("should enable Challenge 11 solve after custody is accepted", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "11",
+      chainState: {
+        progress: { objectId: "0xprogress", claimedChallengeIds: ["11"], completedChallengeIds: [], badgeIds: [] },
+        challenge11Instance: { objectId: "0xinstance11", challengeId: "11", owner: "0xalice", custodian: "0xalice", solved: false },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("ready-to-solve");
+    expect(state.canSolve).toBe(true);
+    expect(state.solveReason).toBe("Ready to solve Object Transfer Trap.");
+  });
+
+  it("should require using Challenge 13 delegated capability before solve", () => {
+    const state = getChallenge01ActionState({
+      accountAddress: "0xalice",
+      packageId: "0xpackage",
+      selectedChallengeId: "13",
+      chainState: {
+        progress: { objectId: "0xprogress", claimedChallengeIds: ["13"], completedChallengeIds: [], badgeIds: [] },
+        challenge13Instance: {
+          objectId: "0xinstance13",
+          challengeId: "13",
+          owner: "0xalice",
+          privilegedFlag: false,
+          solved: false,
+        },
+        challenge13DelegatedCap: { objectId: "0xcap13", instanceId: "0xinstance13", owner: "0xalice", scope: "0" },
+        badges: [],
+      },
+    });
+
+    expect(state.runtimeState).toBe("claimed");
+    expect(state.canUseCapability).toBe(true);
+    expect(state.canSolve).toBe(false);
+    expect(state.solveReason).toBe("Use the delegated capability before solving.");
+  });
 });

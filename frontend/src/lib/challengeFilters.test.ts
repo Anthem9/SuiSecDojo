@@ -20,5 +20,10 @@ describe("challenge filters", () => {
   it("should return a challenge by slug", () => {
     expect(getChallengeBySlug(challenges, "fake-owner")?.title).toBe("Fake Owner");
   });
-});
 
+  it("should mark roadmap challenges as coming soon", () => {
+    expect(getChallengeBySlug(challenges, "signer-confusion")?.status).toBe("coming-soon");
+    expect(getChallengeBySlug(challenges, "object-transfer-trap")?.status).toBe("live");
+    expect(getChallengeBySlug(challenges, "anyone-can-mint")?.status).toBe("live");
+  });
+});

@@ -11,11 +11,12 @@ export function summarizeProgress(
   challenges: ChallengeMetadata[],
   progress: ChallengeProgress,
 ): ProgressSummary {
+  const liveChallenges = challenges.filter((challenge) => challenge.status !== "coming-soon");
   const completedIds = new Set(progress.completedChallengeIds);
-  const completed = challenges.filter((challenge) => completedIds.has(challenge.id)).length;
-  const total = challenges.length;
+  const completed = liveChallenges.filter((challenge) => completedIds.has(challenge.id)).length;
+  const total = liveChallenges.length;
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-  const nextChallenge = challenges.find((challenge) => !completedIds.has(challenge.id));
+  const nextChallenge = liveChallenges.find((challenge) => !completedIds.has(challenge.id));
 
   return { completed, total, percent, nextChallenge };
 }
@@ -23,4 +24,3 @@ export function summarizeProgress(
 export function isChallengeCompleted(progress: ChallengeProgress, challengeId: string): boolean {
   return progress.completedChallengeIds.includes(challengeId);
 }
-

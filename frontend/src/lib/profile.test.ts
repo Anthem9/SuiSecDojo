@@ -38,7 +38,7 @@ describe("profile summary", () => {
     expect(summary.walletLabel).toBe("0xda68...d0a7");
     expect(summary.claimed).toBe(1);
     expect(summary.completed).toBe(1);
-    expect(summary.percent).toBe(Math.round((1 / challenges.length) * 100));
+    expect(summary.percent).toBe(7);
     expect(summary.badgeLabels).toEqual(["Object Security Beginner"]);
     expect(summary.badgeDetails[0]).toMatchObject({
       badgeType: "1",

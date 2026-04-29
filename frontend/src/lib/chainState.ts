@@ -109,6 +109,55 @@ export type Challenge10InstanceObject = {
   solved: boolean;
 };
 
+export type Challenge11InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  custodian: string;
+  solved: boolean;
+};
+
+export type Challenge12InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  pollutionCount: string;
+  solved: boolean;
+};
+
+export type Challenge13InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  privilegedFlag: boolean;
+  solved: boolean;
+};
+
+export type Challenge13DelegatedCapObject = {
+  objectId: string;
+  instanceId: string;
+  owner: string;
+  scope: string;
+};
+
+export type Challenge14InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  stalePriceUsed: boolean;
+  observedEpoch: string;
+  solved: boolean;
+};
+
+export type Challenge15InstanceObject = {
+  objectId: string;
+  challengeId: string;
+  owner: string;
+  deposits: string;
+  credits: string;
+  solved: boolean;
+};
+
 export type BadgeObject = {
   objectId: string;
   owner: string;
@@ -131,6 +180,12 @@ export type ChainChallengeState = {
   challenge08Instance?: Challenge08InstanceObject;
   challenge09Instance?: Challenge09InstanceObject;
   challenge10Instance?: Challenge10InstanceObject;
+  challenge11Instance?: Challenge11InstanceObject;
+  challenge12Instance?: Challenge12InstanceObject;
+  challenge13Instance?: Challenge13InstanceObject;
+  challenge13DelegatedCap?: Challenge13DelegatedCapObject;
+  challenge14Instance?: Challenge14InstanceObject;
+  challenge15Instance?: Challenge15InstanceObject;
   badges?: BadgeObject[];
 };
 
@@ -196,6 +251,30 @@ export function getChallenge10InstanceType(packageId: string): string {
   return `${packageId}::challenge_10_mini_amm_incident::ChallengeInstance`;
 }
 
+export function getChallenge11InstanceType(packageId: string): string {
+  return `${packageId}::challenge_11_object_transfer_trap::ChallengeInstance`;
+}
+
+export function getChallenge12InstanceType(packageId: string): string {
+  return `${packageId}::challenge_12_shared_object_pollution::ChallengeInstance`;
+}
+
+export function getChallenge13InstanceType(packageId: string): string {
+  return `${packageId}::challenge_13_delegated_capability_abuse::ChallengeInstance`;
+}
+
+export function getChallenge13DelegatedCapType(packageId: string): string {
+  return `${packageId}::challenge_13_delegated_capability_abuse::DelegatedCap`;
+}
+
+export function getChallenge14InstanceType(packageId: string): string {
+  return `${packageId}::challenge_14_oracle_staleness::ChallengeInstance`;
+}
+
+export function getChallenge15InstanceType(packageId: string): string {
+  return `${packageId}::challenge_15_coin_accounting_mismatch::ChallengeInstance`;
+}
+
 export function getBadgeType(packageId: string): string {
   return `${packageId}::badge::Badge`;
 }
@@ -214,6 +293,12 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
   const challenge08Type = getChallenge08InstanceType(packageId);
   const challenge09Type = getChallenge09InstanceType(packageId);
   const challenge10Type = getChallenge10InstanceType(packageId);
+  const challenge11Type = getChallenge11InstanceType(packageId);
+  const challenge12Type = getChallenge12InstanceType(packageId);
+  const challenge13Type = getChallenge13InstanceType(packageId);
+  const challenge13DelegatedCapType = getChallenge13DelegatedCapType(packageId);
+  const challenge14Type = getChallenge14InstanceType(packageId);
+  const challenge15Type = getChallenge15InstanceType(packageId);
   const badgeType = getBadgeType(packageId);
 
   return objects.reduce<ChainChallengeState>((state, object) => {
@@ -387,6 +472,85 @@ export function parseChainChallengeState(objects: SuiObjectResponse[], packageId
           reserveY: String(content.fields.reserve_y),
           attackerProfit: String(content.fields.attacker_profit),
           invariantBroken: content.fields.invariant_broken === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge11Type && String(content.fields.challenge_id) === "11") {
+      return {
+        ...state,
+        challenge11Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          custodian: String(content.fields.custodian),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge12Type && String(content.fields.challenge_id) === "12") {
+      return {
+        ...state,
+        challenge12Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          pollutionCount: String(content.fields.pollution_count),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge13Type && String(content.fields.challenge_id) === "13") {
+      return {
+        ...state,
+        challenge13Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          privilegedFlag: content.fields.privileged_flag === true,
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge13DelegatedCapType) {
+      return {
+        ...state,
+        challenge13DelegatedCap: {
+          objectId: data.objectId,
+          instanceId: String(content.fields.instance_id),
+          owner: String(content.fields.owner),
+          scope: String(content.fields.scope),
+        },
+      };
+    }
+
+    if (content.type === challenge14Type && String(content.fields.challenge_id) === "14") {
+      return {
+        ...state,
+        challenge14Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          stalePriceUsed: content.fields.stale_price_used === true,
+          observedEpoch: String(content.fields.observed_epoch),
+          solved: content.fields.solved === true,
+        },
+      };
+    }
+
+    if (content.type === challenge15Type && String(content.fields.challenge_id) === "15") {
+      return {
+        ...state,
+        challenge15Instance: {
+          objectId: data.objectId,
+          challengeId: String(content.fields.challenge_id),
+          owner: String(content.fields.owner),
+          deposits: String(content.fields.deposits),
+          credits: String(content.fields.credits),
           solved: content.fields.solved === true,
         },
       };

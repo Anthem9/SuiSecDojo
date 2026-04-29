@@ -1,4 +1,5 @@
 export type ChallengeDifficulty = "beginner" | "easy" | "medium" | "hard";
+export type ChallengeStatus = "live" | "coming-soon";
 
 export type ChallengeMetadata = {
   id: string;
@@ -12,10 +13,12 @@ export type ChallengeMetadata = {
   moduleName?: string;
   walrusBlobId?: string;
   sourceUrl?: string;
+  status?: ChallengeStatus;
+  relatedIncidentSlugs?: string[];
+  cliTemplateUrl?: string;
 };
 
 export type ChallengeProgress = {
   completedChallengeIds: string[];
   badgeIds: string[];
 };
-

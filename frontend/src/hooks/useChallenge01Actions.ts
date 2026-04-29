@@ -18,11 +18,17 @@ import {
   exploitChallenge08Transaction,
   exploitChallenge09Transaction,
   exploitChallenge10Transaction,
+  exploitChallenge11Transaction,
+  exploitChallenge12Transaction,
+  exploitChallenge13Transaction,
+  exploitChallenge14Transaction,
+  exploitChallenge15Transaction,
   guidedSolveChallenge01Transaction,
   mintChallenge01Transaction,
   claimSimpleChallengeTransaction,
   setChallenge04AdminFlagTransaction,
   setChallenge05InitializedTransaction,
+  setChallenge13PrivilegedFlagTransaction,
   solveChallenge01Transaction,
   solveChallenge02Transaction,
   solveChallenge03Transaction,
@@ -228,6 +234,104 @@ export function useChallenge01Actions(packageId: string, chainState: ChainChalle
           "challenge_10_mini_amm_incident",
           chainState.progress!.objectId,
           chainState.challenge10Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge11: () =>
+      executeAndRefresh("Claim Object Transfer Trap", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_11_object_transfer_trap", chainState.progress!.objectId),
+      ),
+    exploitChallenge11: () =>
+      executeAndRefresh("Accept custody", () =>
+        exploitChallenge11Transaction(packageId, chainState.challenge11Instance!.objectId),
+      ),
+    solveChallenge11: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Object Transfer Trap solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_11_object_transfer_trap",
+          chainState.progress!.objectId,
+          chainState.challenge11Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge12: () =>
+      executeAndRefresh("Claim Shared Object Pollution", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_12_shared_object_pollution", chainState.progress!.objectId),
+      ),
+    exploitChallenge12: () =>
+      executeAndRefresh("Pollute shared state", () =>
+        exploitChallenge12Transaction(packageId, chainState.challenge12Instance!.objectId),
+      ),
+    solveChallenge12: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Shared Object Pollution solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_12_shared_object_pollution",
+          chainState.progress!.objectId,
+          chainState.challenge12Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge13: () =>
+      executeAndRefresh("Claim Delegated Capability Abuse", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_13_delegated_capability_abuse", chainState.progress!.objectId),
+      ),
+    exploitChallenge13: () =>
+      executeAndRefresh("Delegate capability", () =>
+        exploitChallenge13Transaction(packageId, chainState.challenge13Instance!.objectId),
+      ),
+    setChallenge13PrivilegedFlag: () =>
+      executeAndRefresh("Use delegated capability", () =>
+        setChallenge13PrivilegedFlagTransaction(
+          packageId,
+          chainState.challenge13Instance!.objectId,
+          chainState.challenge13DelegatedCap!.objectId,
+        ),
+      ),
+    solveChallenge13: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Delegated Capability solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_13_delegated_capability_abuse",
+          chainState.progress!.objectId,
+          chainState.challenge13Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge14: () =>
+      executeAndRefresh("Claim Oracle Staleness", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_14_oracle_staleness", chainState.progress!.objectId),
+      ),
+    exploitChallenge14: (checkedEpoch = 10, priceEpoch = 1) =>
+      executeAndRefresh("Use stale oracle price", () =>
+        exploitChallenge14Transaction(packageId, chainState.challenge14Instance!.objectId, checkedEpoch, priceEpoch),
+      ),
+    solveChallenge14: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Oracle Staleness solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_14_oracle_staleness",
+          chainState.progress!.objectId,
+          chainState.challenge14Instance!.objectId,
+          options,
+        ),
+      ),
+    claimChallenge15: () =>
+      executeAndRefresh("Claim Coin Accounting Mismatch", () =>
+        claimSimpleChallengeTransaction(packageId, "challenge_15_coin_accounting_mismatch", chainState.progress!.objectId),
+      ),
+    exploitChallenge15: (amount = 1) =>
+      executeAndRefresh("Create accounting mismatch", () =>
+        exploitChallenge15Transaction(packageId, chainState.challenge15Instance!.objectId, amount),
+      ),
+    solveChallenge15: (options: SolveOptions = defaultSolveOptions) =>
+      executeAndRefresh("Submit Coin Accounting solve", () =>
+        solveSimpleChallengeTransaction(
+          packageId,
+          "challenge_15_coin_accounting_mismatch",
+          chainState.progress!.objectId,
+          chainState.challenge15Instance!.objectId,
           options,
         ),
       ),

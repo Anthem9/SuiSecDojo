@@ -6,10 +6,12 @@
   "epochs": 5,
   "walrusVersion": "walrus 1.47.0-15e070d60189",
   "siteBuilderVersion": "site-builder 2.9.0-42bad504afef",
-  "packageId": "0xac18fc022854b016c5492fb65209f70bdf7b56986fd9d9ed0a1acc4edf82b580",
-  "challengeRegistryId": "0x21a7db45e9f1e58af4c3c3f6221fa94566928117b48a452d70b57d5d756499a5",
-  "deployedAt": "2026-04-29T01:59:08Z",
-  "note": "Existing testnet site object updated with Statement-before-practice layout.",
+  "packageId": "0x8a8e5840bc59e24265857097301ea59a245af0b762470e0b306e032cbb6cc044",
+  "challengeRegistryId": "0xf50321b9ad6ead5a79b4a93412c3886da3bc9e874ff7f1615a38c8c1e3a68eb2",
+  "deployedAt": "2026-04-29T03:29:03.388Z",
+  "note": "Existing testnet site object updated with routed frontend, incident library, About donation panel, and warning-free Challenge 01-15 package.",
   "challengeModeScoring": true,
-  "lastUpdatedDigest": "kuzXxJkE2bJYs3eY9A2oc2xSbVsiZT1stZgc1elE2ycBXAJdAg"
+  "lastUpdatedDigest": "YLuF8OFjv-7yMPiY1sA3-g0a3-VxvyO6_ob1lSIi-OABjAKNAg",
+  "liveChallenges": 15,
+  "incidentDocs": 9
 }

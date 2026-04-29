@@ -45,6 +45,11 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const isChallenge08Selected = input.selectedChallengeId === "8";
   const isChallenge09Selected = input.selectedChallengeId === "9";
   const isChallenge10Selected = input.selectedChallengeId === "10";
+  const isChallenge11Selected = input.selectedChallengeId === "11";
+  const isChallenge12Selected = input.selectedChallengeId === "12";
+  const isChallenge13Selected = input.selectedChallengeId === "13";
+  const isChallenge14Selected = input.selectedChallengeId === "14";
+  const isChallenge15Selected = input.selectedChallengeId === "15";
   const selectedInstance = isChallenge02Selected
     ? input.chainState.challenge02Instance
     : isChallenge03Selected
@@ -61,8 +66,18 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
                 ? input.chainState.challenge08Instance
                 : isChallenge09Selected
                   ? input.chainState.challenge09Instance
-                  : isChallenge10Selected
-                    ? input.chainState.challenge10Instance
+                : isChallenge10Selected
+                  ? input.chainState.challenge10Instance
+                  : isChallenge11Selected
+                    ? input.chainState.challenge11Instance
+                    : isChallenge12Selected
+                      ? input.chainState.challenge12Instance
+                      : isChallenge13Selected
+                        ? input.chainState.challenge13Instance
+                        : isChallenge14Selected
+                          ? input.chainState.challenge14Instance
+                          : isChallenge15Selected
+                            ? input.chainState.challenge15Instance
                     : input.chainState.challenge01Instance;
   const hasInstance = Boolean(selectedInstance);
   const hasVault = Boolean(input.chainState.challenge02Vault);
@@ -79,6 +94,15 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
   const isChallenge08Ready = input.chainState.challenge08Instance?.legacyFlag === true;
   const isChallenge09Ready = input.chainState.challenge09Instance?.comboReady === true;
   const isChallenge10Ready = input.chainState.challenge10Instance?.invariantBroken === true;
+  const isChallenge11Ready =
+    Boolean(input.chainState.challenge11Instance) &&
+    input.chainState.challenge11Instance?.custodian === input.chainState.challenge11Instance?.owner;
+  const isChallenge12Ready = Number(input.chainState.challenge12Instance?.pollutionCount ?? "0") > 0;
+  const isChallenge13Ready = input.chainState.challenge13Instance?.privilegedFlag === true;
+  const hasChallenge13Cap = Boolean(input.chainState.challenge13DelegatedCap);
+  const isChallenge14Ready = input.chainState.challenge14Instance?.stalePriceUsed === true;
+  const isChallenge15Ready =
+    Number(input.chainState.challenge15Instance?.credits ?? "0") > Number(input.chainState.challenge15Instance?.deposits ?? "0");
   const isSolved =
     selectedInstance?.solved === true || input.chainState.progress?.completedChallengeIds.includes(input.selectedChallengeId) === true;
   const actionBusy = input.actionBusy === true;
@@ -99,7 +123,12 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       (isChallenge07Selected && isChallenge07Ready) ||
       (isChallenge08Selected && isChallenge08Ready) ||
       (isChallenge09Selected && isChallenge09Ready) ||
-      (isChallenge10Selected && isChallenge10Ready),
+      (isChallenge10Selected && isChallenge10Ready) ||
+      (isChallenge11Selected && isChallenge11Ready) ||
+      (isChallenge12Selected && isChallenge12Ready) ||
+      (isChallenge13Selected && isChallenge13Ready) ||
+      (isChallenge14Selected && isChallenge14Ready) ||
+      (isChallenge15Selected && isChallenge15Ready),
   });
   const supportsOnChain =
     isChallenge01Selected ||
@@ -111,7 +140,12 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
     isChallenge07Selected ||
     isChallenge08Selected ||
     isChallenge09Selected ||
-    isChallenge10Selected;
+    isChallenge10Selected ||
+    isChallenge11Selected ||
+    isChallenge12Selected ||
+    isChallenge13Selected ||
+    isChallenge14Selected ||
+    isChallenge15Selected;
 
   return {
     runtimeState,
@@ -136,7 +170,12 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
         (isChallenge07Selected && !isChallenge07Ready) ||
         (isChallenge08Selected && !isChallenge08Ready) ||
         (isChallenge09Selected && !isChallenge09Ready) ||
-        (isChallenge10Selected && !isChallenge10Ready)) &&
+        (isChallenge10Selected && !isChallenge10Ready) ||
+        (isChallenge11Selected && !isChallenge11Ready) ||
+        (isChallenge12Selected && !isChallenge12Ready) ||
+        (isChallenge13Selected && !hasChallenge13Cap) ||
+        (isChallenge14Selected && !isChallenge14Ready) ||
+        (isChallenge15Selected && !isChallenge15Ready)) &&
       !isSolved &&
       !actionBusy,
     exploitReason: actionBusy
@@ -166,6 +205,16 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge09Ready,
           isChallenge10Selected,
           isChallenge10Ready,
+          isChallenge11Selected,
+          isChallenge11Ready,
+          isChallenge12Selected,
+          isChallenge12Ready,
+          isChallenge13Selected,
+          hasChallenge13Cap,
+          isChallenge14Selected,
+          isChallenge14Ready,
+          isChallenge15Selected,
+          isChallenge15Ready,
           isSolved,
         ),
     canUseCapability:
@@ -174,7 +223,8 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
       hasProgress &&
       hasInstance &&
       ((isChallenge04Selected && hasChallenge04Cap && !isChallenge04AdminFlagSet) ||
-        (isChallenge05Selected && hasChallenge05Cap && !isChallenge05Initialized)) &&
+        (isChallenge05Selected && hasChallenge05Cap && !isChallenge05Initialized) ||
+        (isChallenge13Selected && hasChallenge13Cap && !isChallenge13Ready)) &&
       !isSolved &&
       !actionBusy,
     useCapabilityReason: actionBusy
@@ -190,6 +240,9 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge05Selected,
           hasChallenge05Cap,
           isChallenge05Initialized,
+          isChallenge13Selected,
+          hasChallenge13Cap,
+          isChallenge13Ready,
           isSolved,
         ),
     canSolve:
@@ -208,7 +261,12 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
         isChallenge07Ready ||
         isChallenge08Ready ||
         isChallenge09Ready ||
-        isChallenge10Ready) &&
+        isChallenge10Ready ||
+        isChallenge11Ready ||
+        isChallenge12Ready ||
+        isChallenge13Ready ||
+        isChallenge14Ready ||
+        isChallenge15Ready) &&
       !actionBusy,
     solveReason: actionBusy
       ? "Transaction or chain refresh pending."
@@ -243,6 +301,17 @@ export function getChallenge01ActionState(input: Challenge01ActionInput): Challe
           isChallenge09Ready,
           isChallenge10Selected,
           isChallenge10Ready,
+          isChallenge11Selected,
+          isChallenge11Ready,
+          isChallenge12Selected,
+          isChallenge12Ready,
+          isChallenge13Selected,
+          hasChallenge13Cap,
+          isChallenge13Ready,
+          isChallenge14Selected,
+          isChallenge14Ready,
+          isChallenge15Selected,
+          isChallenge15Ready,
         ),
   };
 }
@@ -258,18 +327,25 @@ function reasonForUseCapability(
   isChallenge05Selected: boolean,
   hasChallenge05Cap: boolean,
   isChallenge05Initialized: boolean,
+  isChallenge13Selected: boolean,
+  hasChallenge13Cap: boolean,
+  isChallenge13Ready: boolean,
   isSolved: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before using the capability.";
-  if (!isChallenge04Selected && !isChallenge05Selected) return "Capability action is enabled for Challenge 04 and 05 only.";
+  if (!isChallenge04Selected && !isChallenge05Selected && !isChallenge13Selected)
+    return "Capability action is enabled for Challenge 04, 05, and 13 only.";
   if (!hasProgress) return "Create a progress object first.";
   if (!hasInstance) return "Claim an instance first.";
-  if (isSolved) return isChallenge05Selected ? "Challenge 05 already completed." : "Challenge 04 already completed.";
+  if (isSolved) return `Challenge ${isChallenge13Selected ? "13" : isChallenge05Selected ? "05" : "04"} already completed.`;
   if (isChallenge04Selected && !hasChallenge04Cap) return "Claim the leaked admin capability first.";
   if (isChallenge04Selected && isChallenge04AdminFlagSet) return "Admin flag already set; solve the challenge.";
   if (isChallenge05Selected && !hasChallenge05Cap) return "Create the bad init admin capability first.";
   if (isChallenge05Selected && isChallenge05Initialized) return "Initialized state already set; solve the challenge.";
+  if (isChallenge13Selected && !hasChallenge13Cap) return "Delegate the capability first.";
+  if (isChallenge13Selected && isChallenge13Ready) return "Privileged flag already set; solve the challenge.";
+  if (isChallenge13Selected) return "Ready to use the delegated capability.";
   if (isChallenge05Selected) return "Ready to use the bad init admin capability.";
   return "Ready to use the leaked admin capability.";
 }
@@ -339,6 +415,16 @@ function reasonForExploit(
   isChallenge09Ready: boolean,
   isChallenge10Selected: boolean,
   isChallenge10Ready: boolean,
+  isChallenge11Selected: boolean,
+  isChallenge11Ready: boolean,
+  isChallenge12Selected: boolean,
+  isChallenge12Ready: boolean,
+  isChallenge13Selected: boolean,
+  hasChallenge13Cap: boolean,
+  isChallenge14Selected: boolean,
+  isChallenge14Ready: boolean,
+  isChallenge15Selected: boolean,
+  isChallenge15Ready: boolean,
   isSolved: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
@@ -352,7 +438,12 @@ function reasonForExploit(
     !isChallenge07Selected &&
     !isChallenge08Selected &&
     !isChallenge09Selected &&
-    !isChallenge10Selected
+    !isChallenge10Selected &&
+    !isChallenge11Selected &&
+    !isChallenge12Selected &&
+    !isChallenge13Selected &&
+    !isChallenge14Selected &&
+    !isChallenge15Selected
   ) {
     return `Exploit action is not enabled for Challenge ${formatChallengeId(selectedChallengeId)}.`;
   }
@@ -377,6 +468,16 @@ function reasonForExploit(
   if (isChallenge09Selected) return "Ready to run the PTB combo.";
   if (isChallenge10Selected && isChallenge10Ready) return "AMM invariant is broken; solve the challenge.";
   if (isChallenge10Selected) return "Ready to break the AMM invariant.";
+  if (isChallenge11Selected && isChallenge11Ready) return "Custody is assigned; solve the challenge.";
+  if (isChallenge11Selected) return "Ready to accept object custody.";
+  if (isChallenge12Selected && isChallenge12Ready) return "Pollution counter changed; solve the challenge.";
+  if (isChallenge12Selected) return "Ready to pollute shared state.";
+  if (isChallenge13Selected && hasChallenge13Cap) return "Delegated capability exists; use it to set the flag.";
+  if (isChallenge13Selected) return "Ready to delegate the broad capability.";
+  if (isChallenge14Selected && isChallenge14Ready) return "Stale price was consumed; solve the challenge.";
+  if (isChallenge14Selected) return "Ready to use the stale oracle price.";
+  if (isChallenge15Selected && isChallenge15Ready) return "Accounting mismatch exists; solve the challenge.";
+  if (isChallenge15Selected) return "Ready to create the accounting mismatch.";
   return "Ready to exploit the missing withdraw authorization.";
 }
 
@@ -411,6 +512,17 @@ function reasonForSolve(
   isChallenge09Ready: boolean,
   isChallenge10Selected: boolean,
   isChallenge10Ready: boolean,
+  isChallenge11Selected: boolean,
+  isChallenge11Ready: boolean,
+  isChallenge12Selected: boolean,
+  isChallenge12Ready: boolean,
+  isChallenge13Selected: boolean,
+  hasChallenge13Cap: boolean,
+  isChallenge13Ready: boolean,
+  isChallenge14Selected: boolean,
+  isChallenge14Ready: boolean,
+  isChallenge15Selected: boolean,
+  isChallenge15Ready: boolean,
 ): string {
   if (!isConnected) return "Connect a wallet first.";
   if (!hasPackage) return "Set VITE_PACKAGE_ID before solving.";
@@ -441,6 +553,17 @@ function reasonForSolve(
   if (isChallenge09Selected) return "Ready to solve PTB Combo.";
   if (isChallenge10Selected && !isChallenge10Ready) return "Break the AMM invariant first.";
   if (isChallenge10Selected) return "Ready to solve Mini AMM Incident.";
+  if (isChallenge11Selected && !isChallenge11Ready) return "Accept custody before solving.";
+  if (isChallenge11Selected) return "Ready to solve Object Transfer Trap.";
+  if (isChallenge12Selected && !isChallenge12Ready) return "Pollute the shared state before solving.";
+  if (isChallenge12Selected) return "Ready to solve Shared Object Pollution.";
+  if (isChallenge13Selected && !hasChallenge13Cap) return "Delegate the capability first.";
+  if (isChallenge13Selected && !isChallenge13Ready) return "Use the delegated capability before solving.";
+  if (isChallenge13Selected) return "Ready to solve Delegated Capability Abuse.";
+  if (isChallenge14Selected && !isChallenge14Ready) return "Use the stale oracle price before solving.";
+  if (isChallenge14Selected) return "Ready to solve Oracle Staleness.";
+  if (isChallenge15Selected && !isChallenge15Ready) return "Create the accounting mismatch before solving.";
+  if (isChallenge15Selected) return "Ready to solve Coin Accounting Mismatch.";
   return "Ready to submit solve.";
 }
 

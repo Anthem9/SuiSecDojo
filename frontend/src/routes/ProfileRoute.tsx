@@ -1,0 +1,46 @@
+import { LeaderboardPanel } from "../components/LeaderboardPanel";
+import { PassportPanel } from "../components/PassportPanel";
+import { ProfilePanel } from "../components/ProfilePanel";
+import { ReportPanel } from "../components/ReportPanel";
+import { useDojo } from "../app/DojoContext";
+
+export function ProfileRoute() {
+  const { profile } = useDojo();
+  return (
+    <section className="page-section">
+      <ProfilePanel summary={profile} />
+    </section>
+  );
+}
+
+export function LeaderboardRoute() {
+  const { leaderboardQuery } = useDojo();
+  return (
+    <section className="page-section">
+      <LeaderboardPanel
+        currentRank={leaderboardQuery.leaderboard.currentRank}
+        entries={leaderboardQuery.leaderboard.entries}
+        error={leaderboardQuery.query.error}
+        isLoading={leaderboardQuery.query.isFetching}
+        recent={leaderboardQuery.leaderboard.recent}
+      />
+    </section>
+  );
+}
+
+export function PassportRoute() {
+  const { profile } = useDojo();
+  return (
+    <section className="page-section">
+      <PassportPanel profile={profile} />
+    </section>
+  );
+}
+
+export function ReportsRoute() {
+  return (
+    <section className="page-section">
+      <ReportPanel />
+    </section>
+  );
+}

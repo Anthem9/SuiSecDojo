@@ -270,6 +270,60 @@ export function exploitChallenge10Transaction(packageId: string, instanceId: str
   return tx;
 }
 
+export function exploitChallenge11Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_11_object_transfer_trap::vulnerable_accept_custody`,
+    arguments: [tx.object(instanceId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge12Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_12_shared_object_pollution::vulnerable_pollute`,
+    arguments: [tx.object(instanceId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge13Transaction(packageId: string, instanceId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_13_delegated_capability_abuse::vulnerable_delegate_cap`,
+    arguments: [tx.object(instanceId)],
+  });
+  return tx;
+}
+
+export function setChallenge13PrivilegedFlagTransaction(packageId: string, instanceId: string, capId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_13_delegated_capability_abuse::privileged_set_flag`,
+    arguments: [tx.object(instanceId), tx.object(capId)],
+  });
+  return tx;
+}
+
+export function exploitChallenge14Transaction(packageId: string, instanceId: string, checkedEpoch = 10, priceEpoch = 1): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_14_oracle_staleness::vulnerable_use_price`,
+    arguments: [tx.object(instanceId), tx.pure.u64(checkedEpoch), tx.pure.u64(priceEpoch)],
+  });
+  return tx;
+}
+
+export function exploitChallenge15Transaction(packageId: string, instanceId: string, amount = 1): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${packageId}::challenge_15_coin_accounting_mismatch::vulnerable_credit_without_coin`,
+    arguments: [tx.object(instanceId), tx.pure.u64(amount)],
+  });
+  return tx;
+}
+
 export function solveSimpleChallengeTransaction(
   packageId: string,
   moduleName: string,

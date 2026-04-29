@@ -63,6 +63,11 @@ export function ChallengeDetailPanel({
   const isChallenge08 = challenge.id === "8";
   const isChallenge09 = challenge.id === "9";
   const isChallenge10 = challenge.id === "10";
+  const isChallenge11 = challenge.id === "11";
+  const isChallenge12 = challenge.id === "12";
+  const isChallenge13 = challenge.id === "13";
+  const isChallenge14 = challenge.id === "14";
+  const isChallenge15 = challenge.id === "15";
   const selectedInstance = isChallenge02
     ? chainState.challenge02Instance
     : isChallenge03
@@ -81,6 +86,16 @@ export function ChallengeDetailPanel({
                   ? chainState.challenge09Instance
                   : isChallenge10
                     ? chainState.challenge10Instance
+                    : isChallenge11
+                      ? chainState.challenge11Instance
+                      : isChallenge12
+                        ? chainState.challenge12Instance
+                        : isChallenge13
+                          ? chainState.challenge13Instance
+                          : isChallenge14
+                            ? chainState.challenge14Instance
+                            : isChallenge15
+                              ? chainState.challenge15Instance
           : chainState.challenge01Instance;
   const isSolved =
     selectedInstance?.solved === true || chainState.progress?.completedChallengeIds.includes(challenge.id) === true;
@@ -142,7 +157,12 @@ export function ChallengeDetailPanel({
             isChallenge07 ||
             isChallenge08 ||
             isChallenge09 ||
-            isChallenge10
+            isChallenge10 ||
+            isChallenge11 ||
+            isChallenge12 ||
+            isChallenge13 ||
+            isChallenge14 ||
+            isChallenge15
               ? selectedInstance?.objectId ?? "not claimed"
               : "not enabled yet"}
           </dd>
@@ -250,6 +270,54 @@ export function ChallengeDetailPanel({
             </div>
           </>
         ) : null}
+        {isChallenge11 ? (
+          <div>
+            <dt>Custodian</dt>
+            <dd>{chainState.challenge11Instance?.custodian ?? "not assigned"}</dd>
+          </div>
+        ) : null}
+        {isChallenge12 ? (
+          <div>
+            <dt>Pollution Count</dt>
+            <dd>{chainState.challenge12Instance?.pollutionCount ?? "0"}</dd>
+          </div>
+        ) : null}
+        {isChallenge13 ? (
+          <>
+            <div>
+              <dt>Delegated Cap</dt>
+              <dd>{chainState.challenge13DelegatedCap?.objectId ?? "not delegated"}</dd>
+            </div>
+            <div>
+              <dt>Privileged Flag</dt>
+              <dd>{chainState.challenge13Instance?.privilegedFlag === true ? "true" : "false"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge14 ? (
+          <>
+            <div>
+              <dt>Observed Epoch</dt>
+              <dd>{chainState.challenge14Instance?.observedEpoch ?? "not used"}</dd>
+            </div>
+            <div>
+              <dt>Stale Price Used</dt>
+              <dd>{chainState.challenge14Instance?.stalePriceUsed === true ? "true" : "false"}</dd>
+            </div>
+          </>
+        ) : null}
+        {isChallenge15 ? (
+          <>
+            <div>
+              <dt>Deposits</dt>
+              <dd>{chainState.challenge15Instance?.deposits ?? "0"}</dd>
+            </div>
+            <div>
+              <dt>Credits</dt>
+              <dd>{chainState.challenge15Instance?.credits ?? "0"}</dd>
+            </div>
+          </>
+        ) : null}
         <div>
           <dt>Completion</dt>
           <dd>{isSolved ? "solved" : "not solved"}</dd>
@@ -305,12 +373,27 @@ export function ChallengeDetailPanel({
         isChallenge07 ||
         isChallenge08 ||
         isChallenge09 ||
-        isChallenge10) ? (
+        isChallenge10 ||
+        isChallenge11 ||
+        isChallenge12 ||
+        isChallenge13 ||
+        isChallenge14 ||
+        isChallenge15) ? (
           <button type="button" disabled={!actionState.canExploit} title={actionState.exploitReason} onClick={onExploitChallenge}>
             {isChallenge10
               ? "Run AMM Swap"
               : isChallenge09
                 ? "Execute PTB"
+                : isChallenge15
+                  ? "Create Mismatch"
+                  : isChallenge14
+                    ? "Use Stale Price"
+                    : isChallenge13
+                      ? "Delegate Cap"
+                      : isChallenge12
+                        ? "Pollute State"
+                        : isChallenge11
+                          ? "Accept Custody"
                 : isChallenge08
                   ? "Use Old Path"
                   : isChallenge07
@@ -326,9 +409,9 @@ export function ChallengeDetailPanel({
                     : "Run Withdraw Call"}
           </button>
         ) : null}
-        {isChallenge04 || isChallenge05 ? (
+        {isChallenge04 || isChallenge05 || isChallenge13 ? (
           <button type="button" disabled={!actionState.canUseCapability} title={actionState.useCapabilityReason} onClick={onUseCapability}>
-            {isChallenge05 ? "Initialize State" : "Use Admin Cap"}
+            {isChallenge13 ? "Use Delegated Cap" : isChallenge05 ? "Initialize State" : "Use Admin Cap"}
           </button>
         ) : null}
         {!isSolved ? (
@@ -434,6 +517,24 @@ function PracticeInputs({
           <input value={inputs.swapAmount} onChange={(event) => onChange("swapAmount", event.target.value)} inputMode="numeric" />
         </label>
       ) : null}
+      {challengeId === "14" ? (
+        <>
+          <label>
+            checked_epoch
+            <input value={inputs.checkedEpoch} onChange={(event) => onChange("checkedEpoch", event.target.value)} inputMode="numeric" />
+          </label>
+          <label>
+            price_epoch
+            <input value={inputs.priceEpoch} onChange={(event) => onChange("priceEpoch", event.target.value)} inputMode="numeric" />
+          </label>
+        </>
+      ) : null}
+      {challengeId === "15" ? (
+        <label>
+          credit_amount
+          <input value={inputs.creditAmount} onChange={(event) => onChange("creditAmount", event.target.value)} inputMode="numeric" />
+        </label>
+      ) : null}
       <button type="button" disabled={!canRunPractice} title={challengeId === "1" ? actionState.solveReason : actionState.exploitReason} onClick={onRun}>
         {runLabel}
       </button>
@@ -453,6 +554,16 @@ function practiceRunLabel(challengeId: string): string {
       return "Execute PTB";
     case "10":
       return "Run AMM Swap";
+    case "11":
+      return "Accept Custody";
+    case "12":
+      return "Pollute State";
+    case "13":
+      return "Delegate Cap";
+    case "14":
+      return "Use Stale Price";
+    case "15":
+      return "Create Mismatch";
     default:
       return "Run Practice Call";
   }
